@@ -167,7 +167,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             Title = item.Name ?? "Unnamed Item",
             Subtitle = item.Subtitle,
-            Icon = GetItemIcon(item),
+            Icon = IconService.GetItemIcon(item),
             MoreCommands = GetContextCommands(item)
         };
 
@@ -203,18 +203,6 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
 
         return commands.ToArray();
-    }
-
-    private static IconInfo GetItemIcon(BitwardenItem item)
-    {
-        return item.ItemType switch
-        {
-            BitwardenItemType.Login => new IconInfo("\uE77B"), // Contact icon
-            BitwardenItemType.Card => new IconInfo("\uE8C7"), // Credit card icon
-            BitwardenItemType.Identity => new IconInfo("\uE779"), // Contact2 icon
-            BitwardenItemType.SecureNote => new IconInfo("\uE70B"), // Note icon
-            _ => new IconInfo("\uE72E") // Lock icon
-        };
     }
 
     private static ListItem CreateLoadingItem()
