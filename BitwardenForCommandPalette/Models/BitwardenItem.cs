@@ -249,3 +249,29 @@ public class BitwardenField
     [JsonPropertyName("linkedId")]
     public int? LinkedId { get; set; }
 }
+
+/// <summary>
+/// Custom field types
+/// </summary>
+public enum BitwardenFieldType
+{
+    Text = 0,
+    Hidden = 1,
+    Boolean = 2,
+    Linked = 3
+}
+
+/// <summary>
+/// Represents a folder in the vault
+/// </summary>
+public class BitwardenFolder
+{
+    [JsonPropertyName("object")]
+    public string? ObjectType { get; set; }
+
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+}

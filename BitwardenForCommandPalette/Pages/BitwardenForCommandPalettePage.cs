@@ -21,10 +21,11 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     private bool _isLoading;
     private string? _errorMessage;
     private BitwardenStatus? _lastStatus;
+    private VaultFilter _currentFilter = new();
 
     public BitwardenForCommandPalettePage()
     {
-        Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
+        Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
         Title = "Bitwarden For Command Palette";
         Name = "Open";
         PlaceholderText = "Search vault items...";
@@ -82,8 +83,90 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
 
         // Filter items based on search text
-        var filteredItems = FilterItems(_items, SearchText);
-        return filteredItems.Select(CreateListItem).ToArray();
+        var filteredItems = FilterItems(_items, SearchText, _currentFilter);
+
+        // Create list with utility commands at the end
+        var listItems = new List<IListItem>();
+
+        // Add filter button at the top if no search text
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            listItems.Add(CreateFilterItem());
+        }
+
+        listItems.AddRange(filteredItems.Select(CreateListItem));
+
+        // Add utility commands if no search text
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            listItems.Add(CreateSyncItem());
+            listItems.Add(CreateLockItem());
+        }
+
+        return listItems.ToArray();
+    }
+
+    private ListItem CreateFilterItem()
+    {
+        var filterPage = new FilterPage(_currentFilter, OnFilterApplied);
+        var subtitle = GetFilterDescription();
+        return new ListItem(filterPage)
+        {
+            Title = "🔍 Filter",
+            Subtitle = subtitle,
+            Icon = new IconInfo("\uE71C") // Filter icon
+        };
+    }
+
+    private string GetFilterDescription()
+    {
+        var parts = new List<string>();
+
+        if (_currentFilter.FavoritesOnly)
+            parts.Add("Favorites");
+
+        if (_currentFilter.ItemType.HasValue)
+        {
+            parts.Add(_currentFilter.ItemType.Value switch
+            {
+                BitwardenItemType.Login => "Logins",
+                BitwardenItemType.Card => "Cards",
+                BitwardenItemType.Identity => "Identities",
+                BitwardenItemType.SecureNote => "Notes",
+                _ => "All Types"
+            });
+        }
+
+        if (!string.IsNullOrEmpty(_currentFilter.FolderName))
+            parts.Add($"Folder: {_currentFilter.FolderName}");
+
+        return parts.Count > 0 ? string.Join(" | ", parts) : "No filter applied";
+    }
+
+    private void OnFilterApplied(VaultFilter filter)
+    {
+        _currentFilter = filter;
+        RaiseItemsChanged();
+    }
+
+    private static ListItem CreateSyncItem()
+    {
+        return new ListItem(new SyncVaultCommand())
+        {
+            Title = "🔄 Sync Vault",
+            Subtitle = "Sync your vault with the Bitwarden server",
+            Icon = new IconInfo("\uE895") // Sync icon
+        };
+    }
+
+    private static ListItem CreateLockItem()
+    {
+        return new ListItem(new LockVaultCommand())
+        {
+            Title = "🔒 Lock Vault",
+            Subtitle = "Lock your vault and clear the session",
+            Icon = new IconInfo("\uE72E") // Lock icon
+        };
     }
 
     private async Task CheckStatusAndLoadAsync()
@@ -142,16 +225,44 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
     }
 
-    private static IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText)
+    private static IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText, VaultFilter filter)
     {
-        if (string.IsNullOrWhiteSpace(searchText))
-            return items;
+        IEnumerable<BitwardenItem> result = items;
 
-        return items.Where(item =>
-            (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-            (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-            (item.Login?.Uris?.Any(u => u.Uri?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
-        );
+        // Apply filter options
+        if (filter.FavoritesOnly)
+        {
+            result = result.Where(item => item.Favorite);
+        }
+
+        if (filter.ItemType.HasValue)
+        {
+            result = result.Where(item => item.ItemType == filter.ItemType.Value);
+        }
+
+        if (filter.FolderId != null)
+        {
+            if (filter.FolderId == "null")
+            {
+                result = result.Where(item => item.FolderId == null);
+            }
+            else
+            {
+                result = result.Where(item => item.FolderId == filter.FolderId);
+            }
+        }
+
+        // Apply search text filter
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            result = result.Where(item =>
+                (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (item.Login?.Uris?.Any(u => u.Uri?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
+            );
+        }
+
+        return result;
     }
 
     private ListItem CreateListItem(BitwardenItem item)
@@ -160,49 +271,209 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         ICommand primaryCommand = item.ItemType switch
         {
             BitwardenItemType.Login => new CopyPasswordCommand(item),
+            BitwardenItemType.Card => new CopyCardNumberCommand(item),
+            BitwardenItemType.Identity => new CopyFullNameCommand(item),
+            BitwardenItemType.SecureNote => new CopyNotesCommand(item),
             _ => new CopyPasswordCommand(item)
         };
 
         var listItem = new ListItem(primaryCommand)
         {
             Title = item.Name ?? "Unnamed Item",
-            Subtitle = item.Subtitle,
+            Subtitle = GetItemSubtitle(item),
             Icon = IconService.GetItemIcon(item),
-            MoreCommands = GetContextCommands(item)
+            MoreCommands = GetContextCommands(item),
+            Tags = item.Favorite ? [new Tag { Text = "⭐" }] : []
         };
 
         return listItem;
+    }
+
+    private static string GetItemSubtitle(BitwardenItem item)
+    {
+        return item.ItemType switch
+        {
+            BitwardenItemType.Login => item.Login?.Username ?? string.Empty,
+            BitwardenItemType.Card => GetCardSubtitle(item.Card),
+            BitwardenItemType.Identity => GetIdentitySubtitle(item.Identity),
+            BitwardenItemType.SecureNote => "Secure Note",
+            _ => string.Empty
+        };
+    }
+
+    private static string GetCardSubtitle(BitwardenCard? card)
+    {
+        if (card == null) return string.Empty;
+        var parts = new List<string>();
+        if (!string.IsNullOrEmpty(card.Brand)) parts.Add(card.Brand);
+        if (!string.IsNullOrEmpty(card.Number) && card.Number.Length >= 4)
+        {
+            parts.Add($"****{card.Number[^4..]}");
+        }
+        return string.Join(" ", parts);
+    }
+
+    private static string GetIdentitySubtitle(BitwardenIdentity? identity)
+    {
+        if (identity == null) return string.Empty;
+        var nameParts = new[] { identity.FirstName, identity.LastName }
+            .Where(p => !string.IsNullOrWhiteSpace(p));
+        return string.Join(" ", nameParts);
     }
 
     private static ICommandContextItem[] GetContextCommands(BitwardenItem item)
     {
         var commands = new List<ICommandContextItem>();
 
-        if (item.ItemType == BitwardenItemType.Login)
+        switch (item.ItemType)
         {
-            if (!string.IsNullOrEmpty(item.Login?.Password))
-            {
-                commands.Add(new CommandContextItem(new CopyPasswordCommand(item)));
-            }
+            case BitwardenItemType.Login:
+                AddLoginCommands(commands, item);
+                break;
+            case BitwardenItemType.Card:
+                AddCardCommands(commands, item);
+                break;
+            case BitwardenItemType.Identity:
+                AddIdentityCommands(commands, item);
+                break;
+            case BitwardenItemType.SecureNote:
+                AddSecureNoteCommands(commands, item);
+                break;
+        }
 
-            if (!string.IsNullOrEmpty(item.Login?.Username))
-            {
-                commands.Add(new CommandContextItem(new CopyUsernameCommand(item)));
-            }
+        // Add notes command for all item types if notes exist
+        if (!string.IsNullOrEmpty(item.Notes) && item.ItemType != BitwardenItemType.SecureNote)
+        {
+            commands.Add(new CommandContextItem(new CopyNotesCommand(item)));
+        }
 
-            if (item.Login?.Uris?.Length > 0 && !string.IsNullOrEmpty(item.Login.Uris[0].Uri))
+        // Add custom field commands
+        if (item.Fields != null && item.Fields.Length > 0)
+        {
+            foreach (var field in item.Fields)
             {
-                commands.Add(new CommandContextItem(new CopyUrlCommand(item)));
-                commands.Add(new CommandContextItem(new Commands.OpenUrlCommand(item)));
-            }
-
-            if (!string.IsNullOrEmpty(item.Login?.Totp))
-            {
-                commands.Add(new CommandContextItem(new CopyTotpCommand(item)));
+                if (!string.IsNullOrEmpty(field.Value))
+                {
+                    commands.Add(new CommandContextItem(new CopyFieldCommand(field)));
+                }
             }
         }
 
         return commands.ToArray();
+    }
+
+    private static void AddLoginCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    {
+        if (!string.IsNullOrEmpty(item.Login?.Password))
+        {
+            commands.Add(new CommandContextItem(new CopyPasswordCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(item.Login?.Username))
+        {
+            commands.Add(new CommandContextItem(new CopyUsernameCommand(item)));
+        }
+
+        if (item.Login?.Uris?.Length > 0 && !string.IsNullOrEmpty(item.Login.Uris[0].Uri))
+        {
+            commands.Add(new CommandContextItem(new CopyUrlCommand(item)));
+            commands.Add(new CommandContextItem(new Commands.OpenUrlCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(item.Login?.Totp))
+        {
+            commands.Add(new CommandContextItem(new CopyTotpCommand(item)));
+        }
+    }
+
+    private static void AddCardCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    {
+        if (!string.IsNullOrEmpty(item.Card?.Number))
+        {
+            commands.Add(new CommandContextItem(new CopyCardNumberCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(item.Card?.Code))
+        {
+            commands.Add(new CommandContextItem(new CopyCardCvvCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(item.Card?.ExpMonth) && !string.IsNullOrEmpty(item.Card?.ExpYear))
+        {
+            commands.Add(new CommandContextItem(new CopyCardExpirationCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(item.Card?.CardholderName))
+        {
+            commands.Add(new CommandContextItem(new CopyCardholderNameCommand(item)));
+        }
+    }
+
+    private static void AddIdentityCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    {
+        var identity = item.Identity;
+        if (identity == null) return;
+
+        // Check if has any name parts
+        if (!string.IsNullOrWhiteSpace(identity.FirstName) || !string.IsNullOrWhiteSpace(identity.LastName))
+        {
+            commands.Add(new CommandContextItem(new CopyFullNameCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.Email))
+        {
+            commands.Add(new CommandContextItem(new CopyEmailCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.Phone))
+        {
+            commands.Add(new CommandContextItem(new CopyPhoneCommand(item)));
+        }
+
+        // Check if has any address parts
+        if (!string.IsNullOrWhiteSpace(identity.Address1) || !string.IsNullOrWhiteSpace(identity.City))
+        {
+            commands.Add(new CommandContextItem(new CopyAddressCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.Company))
+        {
+            commands.Add(new CommandContextItem(new CopyCompanyCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.Ssn))
+        {
+            commands.Add(new CommandContextItem(new CopySsnCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.PassportNumber))
+        {
+            commands.Add(new CommandContextItem(new CopyPassportCommand(item)));
+        }
+
+        if (!string.IsNullOrEmpty(identity.LicenseNumber))
+        {
+            commands.Add(new CommandContextItem(new CopyLicenseCommand(item)));
+        }
+
+        // Add username if different from name
+        if (!string.IsNullOrEmpty(identity.Username))
+        {
+            commands.Add(new CommandContextItem(new InlineCommand(() =>
+            {
+                ClipboardHelper.SetText(identity.Username);
+                return CommandResult.ShowToast(new ToastArgs { Message = "Username copied" });
+            })
+            { Name = "Copy Username", Icon = new IconInfo("\uE77B") }));
+        }
+    }
+
+    private static void AddSecureNoteCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    {
+        if (!string.IsNullOrEmpty(item.Notes))
+        {
+            commands.Add(new CommandContextItem(new CopyNotesCommand(item)));
+        }
     }
 
     private static ListItem CreateLoadingItem()
@@ -314,4 +585,19 @@ internal sealed partial class RefreshCommand : InvokableCommand
         _page.Refresh();
         return CommandResult.KeepOpen();
     }
+}
+
+/// <summary>
+/// Inline command helper for simple operations
+/// </summary>
+internal sealed partial class InlineCommand : InvokableCommand
+{
+    private readonly Func<CommandResult> _action;
+
+    public InlineCommand(Func<CommandResult> action)
+    {
+        _action = action;
+    }
+
+    public override CommandResult Invoke() => _action();
 }

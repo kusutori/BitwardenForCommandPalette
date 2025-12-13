@@ -19,6 +19,7 @@ namespace BitwardenForCommandPalette.Services;
 /// </summary>
 [JsonSerializable(typeof(BitwardenStatus))]
 [JsonSerializable(typeof(BitwardenItem[]))]
+[JsonSerializable(typeof(BitwardenFolder[]))]
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 internal sealed partial class BitwardenJsonContext : JsonSerializerContext
 {
@@ -253,5 +254,82 @@ public partial class BitwardenCliService
     public void ClearSession()
     {
         SessionKey = null;
+    }
+
+    /// <summary>
+    /// Gets the TOTP code for an item
+    /// </summary>
+    /// <param name="itemId">The item ID</param>
+    /// <returns>The TOTP code or null if not available</returns>
+    public async Task<string?> GetTotpAsync(string itemId)
+    {
+        if (string.IsNullOrEmpty(SessionKey))
+            return null;
+
+        var (output, error, exitCode) = await ExecuteCommandAsync($"get totp \"{itemId}\" --session \"{SessionKey}\"");
+
+        if (exitCode != 0)
+        {
+            Debug.WriteLine($"bw get totp failed: {error}");
+            return null;
+        }
+
+        return string.IsNullOrWhiteSpace(output) ? null : output.Trim();
+    }
+
+    /// <summary>
+    /// Gets items filtered by folder ID
+    /// </summary>
+    /// <param name="folderId">The folder ID (use "null" for items without folder)</param>
+    public async Task<BitwardenItem[]?> GetItemsByFolderAsync(string? folderId)
+    {
+        if (string.IsNullOrEmpty(SessionKey))
+            return null;
+
+        var folderArg = folderId ?? "null";
+        var (output, error, exitCode) = await ExecuteCommandAsync($"list items --folderid \"{folderArg}\" --session \"{SessionKey}\"");
+
+        if (exitCode != 0)
+        {
+            Debug.WriteLine($"bw list items by folder failed: {error}");
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenItemArray);
+        }
+        catch (JsonException ex)
+        {
+            Debug.WriteLine($"Failed to parse items: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets all folders from the vault
+    /// </summary>
+    public async Task<BitwardenFolder[]?> GetFoldersAsync()
+    {
+        if (string.IsNullOrEmpty(SessionKey))
+            return null;
+
+        var (output, error, exitCode) = await ExecuteCommandAsync($"list folders --session \"{SessionKey}\"");
+
+        if (exitCode != 0)
+        {
+            Debug.WriteLine($"bw list folders failed: {error}");
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenFolderArray);
+        }
+        catch (JsonException ex)
+        {
+            Debug.WriteLine($"Failed to parse folders: {ex.Message}");
+            return null;
+        }
     }
 }
