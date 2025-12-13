@@ -14,9 +14,9 @@ public partial class BitwardenForCommandPaletteCommandsProvider : CommandProvide
     public BitwardenForCommandPaletteCommandsProvider()
     {
         DisplayName = "Bitwarden For Command Palette";
-        Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
+        Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
         _commands = [
-            new CommandItem(new BitwardenForCommandPalettePage()) { Title = DisplayName },
+            new CommandItem(new BitwardenForCommandPalettePage()) { Title = DisplayName, Icon = Icon },
         ];
     }
 
