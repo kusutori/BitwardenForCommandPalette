@@ -4,7 +4,6 @@
 
 using System;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
@@ -90,34 +89,28 @@ internal sealed partial class UnlockForm : FormContent
         var formInput = JsonNode.Parse(payload)?.AsObject();
         if (formInput == null)
         {
-            return CommandResult.GoHome();
+            return CommandResult.GoBack();
         }
 
         var masterPassword = formInput["masterPassword"]?.GetValue<string>();
         if (string.IsNullOrEmpty(masterPassword))
         {
-            return CommandResult.GoHome();
+            return CommandResult.GoBack();
         }
 
-        // Perform unlock asynchronously
-        _ = UnlockAsync(masterPassword);
-
-        return CommandResult.KeepOpen();
-    }
-
-    private async Task UnlockAsync(string masterPassword)
-    {
+        // Perform unlock synchronously to get the result
         var service = BitwardenCliService.Instance;
-        var (success, message) = await service.UnlockAsync(masterPassword);
+        var (success, message) = service.UnlockAsync(masterPassword).GetAwaiter().GetResult();
 
         if (success)
         {
             _onUnlocked?.Invoke();
+            return CommandResult.GoBack();
         }
         else
         {
-            // TODO: Show error message to user
-            System.Diagnostics.Debug.WriteLine($"Unlock failed: {message}");
+            // Show error toast and keep form open for retry
+            return CommandResult.ShowToast($"❌ Unlock failed: {message}");
         }
     }
 }

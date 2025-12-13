@@ -4,8 +4,10 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BitwardenForCommandPalette.Models;
@@ -13,9 +15,19 @@ using BitwardenForCommandPalette.Models;
 namespace BitwardenForCommandPalette.Services;
 
 /// <summary>
+/// JSON serialization context for AOT compatibility
+/// </summary>
+[JsonSerializable(typeof(BitwardenStatus))]
+[JsonSerializable(typeof(BitwardenItem[]))]
+[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+internal sealed partial class BitwardenJsonContext : JsonSerializerContext
+{
+}
+
+/// <summary>
 /// Service class for interacting with the Bitwarden CLI (bw)
 /// </summary>
-public class BitwardenCliService
+public partial class BitwardenCliService
 {
     private static BitwardenCliService? _instance;
     private static readonly object _lock = new();
@@ -108,10 +120,7 @@ public class BitwardenCliService
 
         try
         {
-            return JsonSerializer.Deserialize<BitwardenStatus>(output, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenStatus);
         }
         catch (JsonException ex)
         {
@@ -196,10 +205,7 @@ public class BitwardenCliService
 
         try
         {
-            return JsonSerializer.Deserialize<BitwardenItem[]>(output, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenItemArray);
         }
         catch (JsonException ex)
         {
@@ -227,10 +233,7 @@ public class BitwardenCliService
 
         try
         {
-            return JsonSerializer.Deserialize<BitwardenItem[]>(output, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenItemArray);
         }
         catch (JsonException ex)
         {

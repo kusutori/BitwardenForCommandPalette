@@ -142,16 +142,15 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
     }
 
-    private IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText)
+    private static IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText)
     {
         if (string.IsNullOrWhiteSpace(searchText))
             return items;
 
-        var search = searchText.ToLowerInvariant();
         return items.Where(item =>
-            (item.Name?.ToLowerInvariant().Contains(search) ?? false) ||
-            (item.Login?.Username?.ToLowerInvariant().Contains(search) ?? false) ||
-            (item.Login?.Uris?.Any(u => u.Uri?.ToLowerInvariant().Contains(search) ?? false) ?? false)
+            (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (item.Login?.Uris?.Any(u => u.Uri?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
         );
     }
 
@@ -175,7 +174,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         return listItem;
     }
 
-    private ICommandContextItem[] GetContextCommands(BitwardenItem item)
+    private static ICommandContextItem[] GetContextCommands(BitwardenItem item)
     {
         var commands = new List<ICommandContextItem>();
 
@@ -206,7 +205,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         return commands.ToArray();
     }
 
-    private IconInfo GetItemIcon(BitwardenItem item)
+    private static IconInfo GetItemIcon(BitwardenItem item)
     {
         return item.ItemType switch
         {
@@ -218,7 +217,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         };
     }
 
-    private ListItem CreateLoadingItem()
+    private static ListItem CreateLoadingItem()
     {
         return new ListItem(new NoOpCommand())
         {
@@ -238,7 +237,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         };
     }
 
-    private ListItem CreateNotLoggedInItem()
+    private static ListItem CreateNotLoggedInItem()
     {
         return new ListItem(new NoOpCommand())
         {

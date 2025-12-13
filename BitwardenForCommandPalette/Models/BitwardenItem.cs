@@ -13,7 +13,7 @@ namespace BitwardenForCommandPalette.Models;
 public class BitwardenItem
 {
     [JsonPropertyName("object")]
-    public string? Object { get; set; }
+    public string? ObjectType { get; set; }
 
     [JsonPropertyName("id")]
     public string? Id { get; set; }
