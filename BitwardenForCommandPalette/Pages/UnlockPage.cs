@@ -4,6 +4,7 @@
 
 using System;
 using System.Text.Json.Nodes;
+using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
@@ -21,8 +22,8 @@ internal sealed partial class UnlockPage : ContentPage
     {
         _unlockForm = new UnlockForm(onUnlocked);
         Icon = new IconInfo("\uE72E"); // Lock icon
-        Name = "Unlock";
-        Title = "Unlock Bitwarden Vault";
+        Name = ResourceHelper.ActionUnlock;
+        Title = ResourceHelper.UnlockPageTitle;
     }
 
     public override IContent[] GetContent() => [_unlockForm];
@@ -39,7 +40,7 @@ internal sealed partial class UnlockForm : FormContent
     {
         _onUnlocked = onUnlocked;
 
-        TemplateJson = """
+        TemplateJson = $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "type": "AdaptiveCard",
@@ -49,31 +50,31 @@ internal sealed partial class UnlockForm : FormContent
             "type": "TextBlock",
             "size": "medium",
             "weight": "bolder",
-            "text": "🔐 Unlock Bitwarden Vault",
+            "text": "{{ResourceHelper.UnlockCardTitle}}",
             "horizontalAlignment": "center",
             "wrap": true,
             "style": "heading"
         },
         {
             "type": "TextBlock",
-            "text": "Enter your master password to unlock the vault.",
+            "text": "{{ResourceHelper.UnlockCardDescription}}",
             "wrap": true,
             "spacing": "medium"
         },
         {
             "type": "Input.Text",
             "id": "masterPassword",
-            "label": "Master Password",
+            "label": "{{ResourceHelper.UnlockMasterPasswordLabel}}",
             "style": "password",
             "isRequired": true,
-            "errorMessage": "Master password is required",
-            "placeholder": "Enter your master password"
+            "errorMessage": "{{ResourceHelper.UnlockMasterPasswordRequired}}",
+            "placeholder": "{{ResourceHelper.UnlockMasterPasswordPlaceholder}}"
         }
     ],
     "actions": [
         {
             "type": "Action.Submit",
-            "title": "Unlock",
+            "title": "{{ResourceHelper.UnlockButtonText}}",
             "style": "positive",
             "data": {
                 "action": "unlock"
@@ -110,7 +111,7 @@ internal sealed partial class UnlockForm : FormContent
         else
         {
             // Show error toast and keep form open for retry
-            return CommandResult.ShowToast($"❌ Unlock failed: {message}");
+            return CommandResult.ShowToast(ResourceHelper.UnlockFailed);
         }
     }
 }

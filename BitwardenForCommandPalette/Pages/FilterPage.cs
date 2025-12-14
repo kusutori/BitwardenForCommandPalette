@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
@@ -38,9 +39,9 @@ internal sealed partial class FilterPage : DynamicListPage
         _currentFilter = currentFilter;
         _onFilterSelected = onFilterSelected;
         Icon = new IconInfo("\uE71C"); // Filter icon
-        Name = "Filter";
-        Title = "Filter Vault";
-        PlaceholderText = "Select filter option...";
+        Name = ResourceHelper.ActionFilter;
+        Title = ResourceHelper.FilterPageTitle;
+        PlaceholderText = ResourceHelper.FilterPagePlaceholder;
 
         _ = LoadFoldersAsync();
     }
@@ -70,7 +71,7 @@ internal sealed partial class FilterPage : DynamicListPage
     {
         if (_isLoading)
         {
-            return [new ListItem(new NoOpFilterCommand()) { Title = "Loading folders...", Icon = new IconInfo("\uE117") }];
+            return [new ListItem(new NoOpFilterCommand()) { Title = ResourceHelper.FilterLoadingFolders, Icon = new IconInfo("\uE117") }];
         }
 
         var items = new List<IListItem>
@@ -78,69 +79,69 @@ internal sealed partial class FilterPage : DynamicListPage
             // Clear all filters
             new ListItem(new ApplyFilterCommand(new VaultFilter(), _onFilterSelected))
             {
-                Title = "📋 All Items",
-                Subtitle = "Show all vault items",
+                Title = ResourceHelper.FilterAllItems,
+                Subtitle = ResourceHelper.FilterAllItemsSubtitle,
                 Icon = new IconInfo("\uE8A5"),
                 Tags = _currentFilter.FolderId == null && !_currentFilter.FavoritesOnly && _currentFilter.ItemType == null
-                    ? [new Tag { Text = "✓ Active" }]
+                    ? [new Tag { Text = ResourceHelper.FilterTagActive }]
                     : []
             },
 
             // Favorites only
             new ListItem(new ApplyFilterCommand(new VaultFilter { FavoritesOnly = true }, _onFilterSelected))
             {
-                Title = "⭐ Favorites Only",
-                Subtitle = "Show only favorited items",
+                Title = ResourceHelper.FilterFavoritesOnly,
+                Subtitle = ResourceHelper.FilterFavoritesSubtitle,
                 Icon = new IconInfo("\uE734"),
-                Tags = _currentFilter.FavoritesOnly ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.FavoritesOnly ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
             // By item type section
             new ListItem(new ApplyFilterCommand(new VaultFilter { ItemType = BitwardenItemType.Login }, _onFilterSelected))
             {
-                Title = "🔑 Logins Only",
-                Subtitle = "Show only login items",
+                Title = ResourceHelper.FilterLoginsOnly,
+                Subtitle = ResourceHelper.FilterLoginsSubtitle,
                 Icon = new IconInfo("\uE77B"),
-                Tags = _currentFilter.ItemType == BitwardenItemType.Login ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.ItemType == BitwardenItemType.Login ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
             new ListItem(new ApplyFilterCommand(new VaultFilter { ItemType = BitwardenItemType.Card }, _onFilterSelected))
             {
-                Title = "💳 Cards Only",
-                Subtitle = "Show only card items",
+                Title = ResourceHelper.FilterCardsOnly,
+                Subtitle = ResourceHelper.FilterCardsSubtitle,
                 Icon = new IconInfo("\uE8C7"),
-                Tags = _currentFilter.ItemType == BitwardenItemType.Card ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.ItemType == BitwardenItemType.Card ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
             new ListItem(new ApplyFilterCommand(new VaultFilter { ItemType = BitwardenItemType.Identity }, _onFilterSelected))
             {
-                Title = "👤 Identities Only",
-                Subtitle = "Show only identity items",
+                Title = ResourceHelper.FilterIdentitiesOnly,
+                Subtitle = ResourceHelper.FilterIdentitiesSubtitle,
                 Icon = new IconInfo("\uE77B"),
-                Tags = _currentFilter.ItemType == BitwardenItemType.Identity ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.ItemType == BitwardenItemType.Identity ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
             new ListItem(new ApplyFilterCommand(new VaultFilter { ItemType = BitwardenItemType.SecureNote }, _onFilterSelected))
             {
-                Title = "📝 Secure Notes Only",
-                Subtitle = "Show only secure notes",
+                Title = ResourceHelper.FilterNotesOnly,
+                Subtitle = ResourceHelper.FilterNotesSubtitle,
                 Icon = new IconInfo("\uE8A0"),
-                Tags = _currentFilter.ItemType == BitwardenItemType.SecureNote ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.ItemType == BitwardenItemType.SecureNote ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             }
         };
 
         // Add folder filters
         if (_folders != null && _folders.Length > 0)
         {
-            items.Add(new SectionHeaderItem("📁 By Folder"));
+            items.Add(new SectionHeaderItem(ResourceHelper.FilterByFolder));
 
             // "No Folder" option
             items.Add(new ListItem(new ApplyFilterCommand(new VaultFilter { FolderId = "null", FolderName = "No Folder" }, _onFilterSelected))
             {
-                Title = "   📂 No Folder",
-                Subtitle = "Items without a folder",
+                Title = ResourceHelper.FilterNoFolder,
+                Subtitle = ResourceHelper.FilterNoFolderSubtitle,
                 Icon = new IconInfo("\uE8B7"),
-                Tags = _currentFilter.FolderId == "null" ? [new Tag { Text = "✓ Active" }] : []
+                Tags = _currentFilter.FolderId == "null" ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             });
 
             foreach (var folder in _folders)
@@ -149,10 +150,10 @@ internal sealed partial class FilterPage : DynamicListPage
                 var filter = new VaultFilter { FolderId = folder.Id, FolderName = folder.Name };
                 items.Add(new ListItem(new ApplyFilterCommand(filter, _onFilterSelected))
                 {
-                    Title = $"   📂 {folder.Name}",
-                    Subtitle = $"Filter by folder",
+                    Title = ResourceHelper.FilterFolderItem(folder.Name ?? string.Empty),
+                    Subtitle = ResourceHelper.FilterFolderSubtitle,
                     Icon = new IconInfo("\uE8B7"),
-                    Tags = _currentFilter.FolderId == folder.Id ? [new Tag { Text = "✓ Active" }] : []
+                    Tags = _currentFilter.FolderId == folder.Id ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
                 });
             }
         }
@@ -173,7 +174,7 @@ internal sealed partial class ApplyFilterCommand : InvokableCommand
     {
         _filter = filter;
         _onApply = onApply;
-        Name = "Apply Filter";
+        Name = ResourceHelper.ActionApplyFilter;
     }
 
     public override CommandResult Invoke()

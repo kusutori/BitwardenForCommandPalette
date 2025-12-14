@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Application -->
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Bitwarden 命令面板扩展</value>
+  </data>
+  
+  <!-- Common Actions -->
+  <data name="ActionOpen" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="ActionUnlock" xml:space="preserve">
+    <value>解锁</value>
+  </data>
+  <data name="ActionFilter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="ActionApplyFilter" xml:space="preserve">
+    <value>应用筛选</value>
+  </data>
+  <data name="ActionRefresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ActionNoAction" xml:space="preserve">
+    <value>无操作</value>
+  </data>
+  
+  <!-- Copy Commands -->
+  <data name="CommandCopyPassword" xml:space="preserve">
+    <value>复制密码</value>
+  </data>
+  <data name="CommandCopyUsername" xml:space="preserve">
+    <value>复制用户名</value>
+  </data>
+  <data name="CommandCopyUrl" xml:space="preserve">
+    <value>复制网址</value>
+  </data>
+  <data name="CommandOpenUrl" xml:space="preserve">
+    <value>打开网址</value>
+  </data>
+  <data name="CommandCopyTotp" xml:space="preserve">
+    <value>复制验证码</value>
+  </data>
+  <data name="CommandCopyCardNumber" xml:space="preserve">
+    <value>复制卡号</value>
+  </data>
+  <data name="CommandCopyCvv" xml:space="preserve">
+    <value>复制 CVV</value>
+  </data>
+  <data name="CommandCopyExpiration" xml:space="preserve">
+    <value>复制有效期</value>
+  </data>
+  <data name="CommandCopyCardholderName" xml:space="preserve">
+    <value>复制持卡人姓名</value>
+  </data>
+  <data name="CommandCopyFullName" xml:space="preserve">
+    <value>复制姓名</value>
+  </data>
+  <data name="CommandCopyEmail" xml:space="preserve">
+    <value>复制邮箱</value>
+  </data>
+  <data name="CommandCopyPhone" xml:space="preserve">
+    <value>复制电话</value>
+  </data>
+  <data name="CommandCopyAddress" xml:space="preserve">
+    <value>复制地址</value>
+  </data>
+  <data name="CommandCopyCompany" xml:space="preserve">
+    <value>复制公司</value>
+  </data>
+  <data name="CommandCopySsn" xml:space="preserve">
+    <value>复制社保号</value>
+  </data>
+  <data name="CommandCopyPassportNumber" xml:space="preserve">
+    <value>复制护照号</value>
+  </data>
+  <data name="CommandCopyLicenseNumber" xml:space="preserve">
+    <value>复制驾照号</value>
+  </data>
+  <data name="CommandCopyNotes" xml:space="preserve">
+    <value>复制笔记</value>
+  </data>
+  <data name="CommandCopyField" xml:space="preserve">
+    <value>复制 {0}</value>
+  </data>
+  <data name="CommandSyncVault" xml:space="preserve">
+    <value>同步密码库</value>
+  </data>
+  <data name="CommandLockVault" xml:space="preserve">
+    <value>锁定密码库</value>
+  </data>
+  
+  <!-- Toast Messages -->
+  <data name="ToastTotpCopied" xml:space="preserve">
+    <value>TOTP copied: {0}</value>
+  </data>
+  <data name="ToastTotpFailed" xml:space="preserve">
+    <value>❌ Failed to generate TOTP</value>
+  </data>
+  <data name="ToastCardNumberCopied" xml:space="preserve">
+    <value>Card number copied (****{0})</value>
+  </data>
+  <data name="ToastCvvCopied" xml:space="preserve">
+    <value>CVV copied</value>
+  </data>
+  <data name="ToastExpirationCopied" xml:space="preserve">
+    <value>Expiration copied: {0}</value>
+  </data>
+  <data name="ToastCardholderNameCopied" xml:space="preserve">
+    <value>Cardholder name copied</value>
+  </data>
+  <data name="ToastNameCopied" xml:space="preserve">
+    <value>Name copied</value>
+  </data>
+  <data name="ToastEmailCopied" xml:space="preserve">
+    <value>Email copied</value>
+  </data>
+  <data name="ToastPhoneCopied" xml:space="preserve">
+    <value>Phone copied</value>
+  </data>
+  <data name="ToastAddressCopied" xml:space="preserve">
+    <value>Address copied</value>
+  </data>
+  <data name="ToastCompanyCopied" xml:space="preserve">
+    <value>Company copied</value>
+  </data>
+  <data name="ToastSsnCopied" xml:space="preserve">
+    <value>SSN copied</value>
+  </data>
+  <data name="ToastPassportCopied" xml:space="preserve">
+    <value>Passport number copied</value>
+  </data>
+  <data name="ToastLicenseCopied" xml:space="preserve">
+    <value>License number copied</value>
+  </data>
+  <data name="ToastNotesCopied" xml:space="preserve">
+    <value>Notes copied</value>
+  </data>
+  <data name="ToastFieldCopied" xml:space="preserve">
+    <value>{0} copied</value>
+  </data>
+  <data name="ToastVaultSynced" xml:space="preserve">
+    <value>Vault synced successfully</value>
+  </data>
+  <data name="ToastVaultSyncFailed" xml:space="preserve">
+    <value>❌ Failed to sync vault</value>
+  </data>
+  <data name="ToastVaultLocked" xml:space="preserve">
+    <value>Vault locked</value>
+  </data>
+  <data name="ToastVaultLockFailed" xml:space="preserve">
+    <value>❌ Failed to lock vault</value>
+  </data>
+  <data name="ToastUsernameCopied" xml:space="preserve">
+    <value>Username copied</value>
+  </data>
+  
+  <!-- Unlock Page -->
+  <data name="UnlockPageTitle" xml:space="preserve">
+    <value>解锁 Bitwarden 密码库</value>
+  </data>
+  <data name="UnlockCardTitle" xml:space="preserve">
+    <value>🔐 解锁 Bitwarden 密码库</value>
+  </data>
+  <data name="UnlockCardDescription" xml:space="preserve">
+    <value>输入主密码来解锁密码库。</value>
+  </data>
+  <data name="UnlockMasterPasswordLabel" xml:space="preserve">
+    <value>主密码</value>
+  </data>
+  <data name="UnlockMasterPasswordPlaceholder" xml:space="preserve">
+    <value>请输入主密码</value>
+  </data>
+  <data name="UnlockMasterPasswordRequired" xml:space="preserve">
+    <value>必须输入主密码</value>
+  </data>
+  <data name="UnlockButtonText" xml:space="preserve">
+    <value>解锁</value>
+  </data>
+  <data name="UnlockSuccess" xml:space="preserve">
+    <value>密码库解锁成功</value>
+  </data>
+  <data name="UnlockFailed" xml:space="preserve">
+    <value>解锁密码库失败，请检查密码。</value>
+  </data>
+  
+  <!-- Filter Page -->
+  <data name="FilterPageTitle" xml:space="preserve">
+    <value>筛选密码库</value>
+  </data>
+  <data name="FilterPagePlaceholder" xml:space="preserve">
+    <value>选择筛选选项...</value>
+  </data>
+  <data name="FilterLoadingFolders" xml:space="preserve">
+    <value>加载文件夹中...</value>
+  </data>
+  <data name="FilterAllItems" xml:space="preserve">
+    <value>📋 所有项目</value>
+  </data>
+  <data name="FilterAllItemsSubtitle" xml:space="preserve">
+    <value>显示所有密码库项目</value>
+  </data>
+  <data name="FilterFavoritesOnly" xml:space="preserve">
+    <value>⭐ 仅收藏</value>
+  </data>
+  <data name="FilterFavoritesSubtitle" xml:space="preserve">
+    <value>仅显示收藏的项目</value>
+  </data>
+  <data name="FilterLoginsOnly" xml:space="preserve">
+    <value>🔑 仅登录项</value>
+  </data>
+  <data name="FilterLoginsSubtitle" xml:space="preserve">
+    <value>仅显示登录项目</value>
+  </data>
+  <data name="FilterCardsOnly" xml:space="preserve">
+    <value>💳 仅银行卡</value>
+  </data>
+  <data name="FilterCardsSubtitle" xml:space="preserve">
+    <value>仅显示银行卡项目</value>
+  </data>
+  <data name="FilterIdentitiesOnly" xml:space="preserve">
+    <value>👤 仅身份</value>
+  </data>
+  <data name="FilterIdentitiesSubtitle" xml:space="preserve">
+    <value>仅显示身份项目</value>
+  </data>
+  <data name="FilterNotesOnly" xml:space="preserve">
+    <value>📝 仅安全笔记</value>
+  </data>
+  <data name="FilterNotesSubtitle" xml:space="preserve">
+    <value>仅显示安全笔记</value>
+  </data>
+  <data name="FilterByFolder" xml:space="preserve">
+    <value>📁 By Folder</value>
+  </data>
+  <data name="FilterNoFolder" xml:space="preserve">
+    <value>   📂 No Folder</value>
+  </data>
+  <data name="FilterNoFolderSubtitle" xml:space="preserve">
+    <value>Items without a folder</value>
+  </data>
+  <data name="FilterFolderItem" xml:space="preserve">
+    <value>   📂 {0}</value>
+  </data>
+  <data name="FilterFolderSubtitle" xml:space="preserve">
+    <value>Filter by folder</value>
+  </data>
+  <data name="FilterTagActive" xml:space="preserve">
+    <value>✓ Active</value>
+  </data>
+  
+  <!-- Main Page -->
+  <data name="MainPageTitle" xml:space="preserve">
+    <value>Bitwarden 命令面板扩展</value>
+  </data>
+  <data name="MainPagePlaceholder" xml:space="preserve">
+    <value>搜索密码库项目...</value>
+  </data>
+  <data name="MainFilterButton" xml:space="preserve">
+    <value>🔍 筛选</value>
+  </data>
+  <data name="MainSyncButton" xml:space="preserve">
+    <value>🔄 同步密码库</value>
+  </data>
+  <data name="MainSyncSubtitle" xml:space="preserve">
+    <value>与 Bitwarden 服务器同步密码库</value>
+  </data>
+  <data name="MainLockButton" xml:space="preserve">
+    <value>🔒 锁定密码库</value>
+  </data>
+  <data name="MainLockSubtitle" xml:space="preserve">
+    <value>锁定密码库并清除会话</value>
+  </data>
+  <data name="MainUnlockButton" xml:space="preserve">
+    <value>🔐 解锁密码库</value>
+  </data>
+  <data name="MainUnlockSubtitle" xml:space="preserve">
+    <value>输入主密码来解锁</value>
+  </data>
+  
+  <!-- Status Messages -->
+  <data name="StatusLoading" xml:space="preserve">
+    <value>加载中...</value>
+  </data>
+  <data name="StatusLoadingSubtitle" xml:space="preserve">
+    <value>请稍候，正在加载密码库数据</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="StatusNotLoggedIn" xml:space="preserve">
+    <value>未登录</value>
+  </data>
+  <data name="StatusNotLoggedInSubtitle" xml:space="preserve">
+    <value>请先使用 'bw login' 命令登录</value>
+  </data>
+  <data name="StatusNoItems" xml:space="preserve">
+    <value>无项目</value>
+  </data>
+  <data name="StatusNoItemsSubtitle" xml:space="preserve">
+    <value>密码库为空或没有匹配的项目</value>
+  </data>
+  <data name="StatusCliNotInstalled" xml:space="preserve">
+    <value>获取 Bitwarden 状态失败。CLI 已安装吗？</value>
+  </data>
+  <data name="StatusLoadItemsFailed" xml:space="preserve">
+    <value>加载项目失败：{0}</value>
+  </data>
+  
+  <!-- Filter Descriptions -->
+  <data name="FilterDescFavorites" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="FilterDescLogins" xml:space="preserve">
+    <value>Logins</value>
+  </data>
+  <data name="FilterDescCards" xml:space="preserve">
+    <value>Cards</value>
+  </data>
+  <data name="FilterDescIdentities" xml:space="preserve">
+    <value>Identities</value>
+  </data>
+  <data name="FilterDescNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="FilterDescAllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="FilterDescFolder" xml:space="preserve">
+    <value>Folder: {0}</value>
+  </data>
+  <data name="FilterDescNoFilter" xml:space="preserve">
+    <value>No filter applied</value>
+  </data>
+  
+  <!-- Item Subtitles -->
+  <data name="ItemSubtitleSecureNote" xml:space="preserve">
+    <value>Secure Note</value>
+  </data>
+  <data name="ItemSubtitleUnnamed" xml:space="preserve">
+    <value>Unnamed Item</value>
+  </data>
+  <data name="ItemTagFavorite" xml:space="preserve">
+    <value>⭐</value>
+  </data>
+</root>

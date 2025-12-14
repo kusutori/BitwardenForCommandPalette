@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
@@ -21,7 +22,7 @@ internal sealed partial class CopyPasswordCommand : InvokableCommand
     public CopyPasswordCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Password";
+        Name = ResourceHelper.CommandCopyPassword;
         Icon = new IconInfo("\uE8C8"); // Copy icon
     }
 
@@ -46,7 +47,7 @@ internal sealed partial class CopyUsernameCommand : InvokableCommand
     public CopyUsernameCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Username";
+        Name = ResourceHelper.CommandCopyUsername;
         Icon = new IconInfo("\uE77B"); // Contact icon
     }
 
@@ -71,7 +72,7 @@ internal sealed partial class CopyUrlCommand : InvokableCommand
     public CopyUrlCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy URL";
+        Name = ResourceHelper.CommandCopyUrl;
         Icon = new IconInfo("\uE71B"); // Link icon
     }
 
@@ -96,7 +97,7 @@ internal sealed partial class OpenUrlCommand : InvokableCommand
     public OpenUrlCommand(BitwardenItem item)
     {
         _url = item.Login?.Uris?.Length > 0 ? item.Login.Uris[0].Uri : null;
-        Name = "Open URL";
+        Name = ResourceHelper.CommandOpenUrl;
         Icon = new IconInfo("\uE774"); // Globe icon
     }
 
@@ -131,7 +132,7 @@ internal sealed partial class CopyTotpCommand : InvokableCommand
     public CopyTotpCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy TOTP";
+        Name = ResourceHelper.CommandCopyTotp;
         Icon = new IconInfo("\uE121"); // Time icon
     }
 
@@ -148,10 +149,10 @@ internal sealed partial class CopyTotpCommand : InvokableCommand
         if (!string.IsNullOrEmpty(totp))
         {
             ClipboardHelper.SetText(totp);
-            return CommandResult.ShowToast($"TOTP copied: {totp}");
+            return CommandResult.ShowToast(ResourceHelper.ToastTotpCopied(totp));
         }
 
-        return CommandResult.ShowToast("❌ Failed to generate TOTP");
+        return CommandResult.ShowToast(ResourceHelper.ToastTotpFailed);
     }
 }
 
@@ -167,7 +168,7 @@ internal sealed partial class CopyCardNumberCommand : InvokableCommand
     public CopyCardNumberCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Card Number";
+        Name = ResourceHelper.CommandCopyCardNumber;
         Icon = new IconInfo("\uE8C7"); // Card icon
     }
 
@@ -179,7 +180,7 @@ internal sealed partial class CopyCardNumberCommand : InvokableCommand
             ClipboardHelper.SetText(number);
             // Show only last 4 digits in toast for security
             var lastFour = number.Length > 4 ? number[^4..] : number;
-            return CommandResult.ShowToast($"Card number copied (****{lastFour})");
+            return CommandResult.ShowToast(ResourceHelper.ToastCardNumberCopied(lastFour));
         }
         return CommandResult.Dismiss();
     }
@@ -195,7 +196,7 @@ internal sealed partial class CopyCardCvvCommand : InvokableCommand
     public CopyCardCvvCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy CVV";
+        Name = ResourceHelper.CommandCopyCvv;
         Icon = new IconInfo("\uE8D7"); // Shield icon
     }
 
@@ -205,7 +206,7 @@ internal sealed partial class CopyCardCvvCommand : InvokableCommand
         if (!string.IsNullOrEmpty(code))
         {
             ClipboardHelper.SetText(code);
-            return CommandResult.ShowToast("CVV copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastCvvCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -221,7 +222,7 @@ internal sealed partial class CopyCardExpirationCommand : InvokableCommand
     public CopyCardExpirationCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Expiration";
+        Name = ResourceHelper.CommandCopyExpiration;
         Icon = new IconInfo("\uE787"); // Calendar icon
     }
 
@@ -232,7 +233,7 @@ internal sealed partial class CopyCardExpirationCommand : InvokableCommand
         {
             var expiration = $"{card.ExpMonth}/{card.ExpYear}";
             ClipboardHelper.SetText(expiration);
-            return CommandResult.ShowToast($"Expiration copied: {expiration}");
+            return CommandResult.ShowToast(ResourceHelper.ToastExpirationCopied(expiration));
         }
         return CommandResult.Dismiss();
     }
@@ -248,7 +249,7 @@ internal sealed partial class CopyCardholderNameCommand : InvokableCommand
     public CopyCardholderNameCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Cardholder Name";
+        Name = ResourceHelper.CommandCopyCardholderName;
         Icon = new IconInfo("\uE77B"); // Contact icon
     }
 
@@ -258,7 +259,7 @@ internal sealed partial class CopyCardholderNameCommand : InvokableCommand
         if (!string.IsNullOrEmpty(name))
         {
             ClipboardHelper.SetText(name);
-            return CommandResult.ShowToast($"Cardholder name copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastCardholderNameCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -278,7 +279,7 @@ internal sealed partial class CopyFullNameCommand : InvokableCommand
     public CopyFullNameCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Full Name";
+        Name = ResourceHelper.CommandCopyFullName;
         Icon = new IconInfo("\uE77B"); // Contact icon
     }
 
@@ -293,7 +294,7 @@ internal sealed partial class CopyFullNameCommand : InvokableCommand
             if (!string.IsNullOrEmpty(fullName))
             {
                 ClipboardHelper.SetText(fullName);
-                return CommandResult.ShowToast($"Name copied");
+                return CommandResult.ShowToast(ResourceHelper.ToastNameCopied);
             }
         }
         return CommandResult.Dismiss();
@@ -310,7 +311,7 @@ internal sealed partial class CopyEmailCommand : InvokableCommand
     public CopyEmailCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Email";
+        Name = ResourceHelper.CommandCopyEmail;
         Icon = new IconInfo("\uE715"); // Mail icon
     }
 
@@ -320,7 +321,7 @@ internal sealed partial class CopyEmailCommand : InvokableCommand
         if (!string.IsNullOrEmpty(email))
         {
             ClipboardHelper.SetText(email);
-            return CommandResult.ShowToast($"Email copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastEmailCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -336,7 +337,7 @@ internal sealed partial class CopyPhoneCommand : InvokableCommand
     public CopyPhoneCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Phone";
+        Name = ResourceHelper.CommandCopyPhone;
         Icon = new IconInfo("\uE717"); // Phone icon
     }
 
@@ -346,7 +347,7 @@ internal sealed partial class CopyPhoneCommand : InvokableCommand
         if (!string.IsNullOrEmpty(phone))
         {
             ClipboardHelper.SetText(phone);
-            return CommandResult.ShowToast($"Phone copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastPhoneCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -362,7 +363,7 @@ internal sealed partial class CopyAddressCommand : InvokableCommand
     public CopyAddressCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Address";
+        Name = ResourceHelper.CommandCopyAddress;
         Icon = new IconInfo("\uE81D"); // Home icon
     }
 
@@ -386,7 +387,7 @@ internal sealed partial class CopyAddressCommand : InvokableCommand
             if (!string.IsNullOrEmpty(fullAddress))
             {
                 ClipboardHelper.SetText(fullAddress);
-                return CommandResult.ShowToast("Address copied");
+                return CommandResult.ShowToast(ResourceHelper.ToastAddressCopied);
             }
         }
         return CommandResult.Dismiss();
@@ -403,7 +404,7 @@ internal sealed partial class CopyCompanyCommand : InvokableCommand
     public CopyCompanyCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Company";
+        Name = ResourceHelper.CommandCopyCompany;
         Icon = new IconInfo("\uE731"); // Building icon
     }
 
@@ -413,7 +414,7 @@ internal sealed partial class CopyCompanyCommand : InvokableCommand
         if (!string.IsNullOrEmpty(company))
         {
             ClipboardHelper.SetText(company);
-            return CommandResult.ShowToast($"Company copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastCompanyCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -429,7 +430,7 @@ internal sealed partial class CopySsnCommand : InvokableCommand
     public CopySsnCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy SSN";
+        Name = ResourceHelper.CommandCopySsn;
         Icon = new IconInfo("\uE8D7"); // Shield icon
     }
 
@@ -439,7 +440,7 @@ internal sealed partial class CopySsnCommand : InvokableCommand
         if (!string.IsNullOrEmpty(ssn))
         {
             ClipboardHelper.SetText(ssn);
-            return CommandResult.ShowToast("SSN copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastSsnCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -455,7 +456,7 @@ internal sealed partial class CopyPassportCommand : InvokableCommand
     public CopyPassportCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Passport Number";
+        Name = ResourceHelper.CommandCopyPassportNumber;
         Icon = new IconInfo("\uE8F1"); // Airplane icon
     }
 
@@ -465,7 +466,7 @@ internal sealed partial class CopyPassportCommand : InvokableCommand
         if (!string.IsNullOrEmpty(passport))
         {
             ClipboardHelper.SetText(passport);
-            return CommandResult.ShowToast("Passport number copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastPassportCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -481,7 +482,7 @@ internal sealed partial class CopyLicenseCommand : InvokableCommand
     public CopyLicenseCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy License Number";
+        Name = ResourceHelper.CommandCopyLicenseNumber;
         Icon = new IconInfo("\uE7EF"); // Car icon
     }
 
@@ -491,7 +492,7 @@ internal sealed partial class CopyLicenseCommand : InvokableCommand
         if (!string.IsNullOrEmpty(license))
         {
             ClipboardHelper.SetText(license);
-            return CommandResult.ShowToast("License number copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastLicenseCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -511,7 +512,7 @@ internal sealed partial class CopyNotesCommand : InvokableCommand
     public CopyNotesCommand(BitwardenItem item)
     {
         _item = item;
-        Name = "Copy Notes";
+        Name = ResourceHelper.CommandCopyNotes;
         Icon = new IconInfo("\uE8A0"); // Note icon
     }
 
@@ -521,7 +522,7 @@ internal sealed partial class CopyNotesCommand : InvokableCommand
         if (!string.IsNullOrEmpty(notes))
         {
             ClipboardHelper.SetText(notes);
-            return CommandResult.ShowToast("Notes copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastNotesCopied);
         }
         return CommandResult.Dismiss();
     }
@@ -541,7 +542,7 @@ internal sealed partial class CopyFieldCommand : InvokableCommand
     public CopyFieldCommand(BitwardenField field)
     {
         _field = field;
-        Name = $"Copy {field.Name}";
+        Name = ResourceHelper.GetString("CommandCopyField", field.Name ?? string.Empty);
         Icon = new IconInfo("\uE8C8"); // Copy icon
     }
 
@@ -551,7 +552,7 @@ internal sealed partial class CopyFieldCommand : InvokableCommand
         if (!string.IsNullOrEmpty(value))
         {
             ClipboardHelper.SetText(value);
-            return CommandResult.ShowToast($"{_field.Name} copied");
+            return CommandResult.ShowToast(ResourceHelper.ToastFieldCopied(_field.Name ?? string.Empty));
         }
         return CommandResult.Dismiss();
     }
@@ -568,7 +569,7 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
 {
     public SyncVaultCommand()
     {
-        Name = "Sync Vault";
+        Name = ResourceHelper.CommandSyncVault;
         Icon = new IconInfo("\uE895"); // Sync icon
     }
 
@@ -577,9 +578,9 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
         var success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
         if (success)
         {
-            return CommandResult.ShowToast("Vault synced successfully");
+            return CommandResult.ShowToast(ResourceHelper.ToastVaultSynced);
         }
-        return CommandResult.ShowToast("❌ Failed to sync vault");
+        return CommandResult.ShowToast(ResourceHelper.ToastVaultSyncFailed);
     }
 }
 
@@ -590,7 +591,7 @@ internal sealed partial class LockVaultCommand : InvokableCommand
 {
     public LockVaultCommand()
     {
-        Name = "Lock Vault";
+        Name = ResourceHelper.CommandLockVault;
         Icon = new IconInfo("\uE72E"); // Lock icon
     }
 
@@ -599,9 +600,9 @@ internal sealed partial class LockVaultCommand : InvokableCommand
         var success = BitwardenCliService.Instance.LockAsync().GetAwaiter().GetResult();
         if (success)
         {
-            return CommandResult.ShowToast("Vault locked");
+            return CommandResult.ShowToast(ResourceHelper.ToastVaultLocked);
         }
-        return CommandResult.ShowToast("❌ Failed to lock vault");
+        return CommandResult.ShowToast(ResourceHelper.ToastVaultLockFailed);
     }
 }
 

@@ -2,6 +2,7 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using BitwardenForCommandPalette.Helpers;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -13,7 +14,7 @@ public partial class BitwardenForCommandPaletteCommandsProvider : CommandProvide
 
     public BitwardenForCommandPaletteCommandsProvider()
     {
-        DisplayName = "Bitwarden For Command Palette";
+        DisplayName = ResourceHelper.AppDisplayName;
         Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
         _commands = [
             new CommandItem(new BitwardenForCommandPalettePage()) { Title = DisplayName, Icon = Icon },

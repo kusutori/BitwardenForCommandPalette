@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BitwardenForCommandPalette.Commands;
+using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 using BitwardenForCommandPalette.Pages;
 using BitwardenForCommandPalette.Services;
@@ -26,9 +27,9 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     public BitwardenForCommandPalettePage()
     {
         Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
-        Title = "Bitwarden For Command Palette";
-        Name = "Open";
-        PlaceholderText = "Search vault items...";
+        Title = ResourceHelper.MainPageTitle;
+        Name = ResourceHelper.ActionOpen;
+        PlaceholderText = ResourceHelper.MainPagePlaceholder;
 
         // Initial load
         _ = LoadItemsAsync();
@@ -112,7 +113,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         var subtitle = GetFilterDescription();
         return new ListItem(filterPage)
         {
-            Title = "🔍 Filter",
+            Title = ResourceHelper.MainFilterButton,
             Subtitle = subtitle,
             Icon = new IconInfo("\uE71C") // Filter icon
         };
@@ -123,24 +124,24 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         var parts = new List<string>();
 
         if (_currentFilter.FavoritesOnly)
-            parts.Add("Favorites");
+            parts.Add(ResourceHelper.FilterDescFavorites);
 
         if (_currentFilter.ItemType.HasValue)
         {
             parts.Add(_currentFilter.ItemType.Value switch
             {
-                BitwardenItemType.Login => "Logins",
-                BitwardenItemType.Card => "Cards",
-                BitwardenItemType.Identity => "Identities",
-                BitwardenItemType.SecureNote => "Notes",
-                _ => "All Types"
+                BitwardenItemType.Login => ResourceHelper.FilterDescLogins,
+                BitwardenItemType.Card => ResourceHelper.FilterDescCards,
+                BitwardenItemType.Identity => ResourceHelper.FilterDescIdentities,
+                BitwardenItemType.SecureNote => ResourceHelper.FilterDescNotes,
+                _ => ResourceHelper.FilterDescAllTypes
             });
         }
 
         if (!string.IsNullOrEmpty(_currentFilter.FolderName))
-            parts.Add($"Folder: {_currentFilter.FolderName}");
+            parts.Add(ResourceHelper.FilterDescFolder(_currentFilter.FolderName));
 
-        return parts.Count > 0 ? string.Join(" | ", parts) : "No filter applied";
+        return parts.Count > 0 ? string.Join(" | ", parts) : ResourceHelper.FilterDescNoFilter;
     }
 
     private void OnFilterApplied(VaultFilter filter)
@@ -153,8 +154,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new SyncVaultCommand())
         {
-            Title = "🔄 Sync Vault",
-            Subtitle = "Sync your vault with the Bitwarden server",
+            Title = ResourceHelper.MainSyncButton,
+            Subtitle = ResourceHelper.MainSyncSubtitle,
             Icon = new IconInfo("\uE895") // Sync icon
         };
     }
@@ -163,8 +164,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new LockVaultCommand())
         {
-            Title = "🔒 Lock Vault",
-            Subtitle = "Lock your vault and clear the session",
+            Title = ResourceHelper.MainLockButton,
+            Subtitle = ResourceHelper.MainLockSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
         };
     }
@@ -181,7 +182,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
             if (_lastStatus == null)
             {
-                _errorMessage = "Failed to get Bitwarden status. Is the CLI installed?";
+                _errorMessage = ResourceHelper.StatusCliNotInstalled;
             }
             else if (_lastStatus.IsUnlocked || service.IsUnlocked)
             {
@@ -216,7 +217,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
         catch (Exception ex)
         {
-            _errorMessage = $"Failed to load items: {ex.Message}";
+            _errorMessage = ResourceHelper.StatusLoadItemsFailed(ex.Message);
         }
         finally
         {
@@ -279,11 +280,11 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         var listItem = new ListItem(primaryCommand)
         {
-            Title = item.Name ?? "Unnamed Item",
+            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
             Subtitle = GetItemSubtitle(item),
             Icon = IconService.GetItemIcon(item),
             MoreCommands = GetContextCommands(item),
-            Tags = item.Favorite ? [new Tag { Text = "⭐" }] : []
+            Tags = item.Favorite ? [new Tag { Text = ResourceHelper.ItemTagFavorite }] : []
         };
 
         return listItem;
@@ -296,7 +297,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             BitwardenItemType.Login => item.Login?.Username ?? string.Empty,
             BitwardenItemType.Card => GetCardSubtitle(item.Card),
             BitwardenItemType.Identity => GetIdentitySubtitle(item.Identity),
-            BitwardenItemType.SecureNote => "Secure Note",
+            BitwardenItemType.SecureNote => ResourceHelper.ItemSubtitleSecureNote,
             _ => string.Empty
         };
     }
@@ -462,9 +463,9 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             commands.Add(new CommandContextItem(new InlineCommand(() =>
             {
                 ClipboardHelper.SetText(identity.Username);
-                return CommandResult.ShowToast(new ToastArgs { Message = "Username copied" });
+                return CommandResult.ShowToast(new ToastArgs { Message = ResourceHelper.ToastUsernameCopied });
             })
-            { Name = "Copy Username", Icon = new IconInfo("\uE77B") }));
+            { Name = ResourceHelper.CommandCopyUsername, Icon = new IconInfo("\uE77B") }));
         }
     }
 
@@ -480,8 +481,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new NoOpCommand())
         {
-            Title = "Loading...",
-            Subtitle = "Please wait while loading vault data",
+            Title = ResourceHelper.StatusLoading,
+            Subtitle = ResourceHelper.StatusLoadingSubtitle,
             Icon = new IconInfo("\uE117") // Sync icon
         };
     }
@@ -490,7 +491,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new RefreshCommand(this))
         {
-            Title = "Error",
+            Title = ResourceHelper.StatusError,
             Subtitle = message,
             Icon = new IconInfo("\uE783") // Error icon
         };
@@ -500,8 +501,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new NoOpCommand())
         {
-            Title = "Not Logged In",
-            Subtitle = "Please login using 'bw login' command first",
+            Title = ResourceHelper.StatusNotLoggedIn,
+            Subtitle = ResourceHelper.StatusNotLoggedInSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
         };
     }
@@ -513,8 +514,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         var unlockPage = new UnlockPage(() => OnUnlocked());
         return new ListItem(unlockPage)
         {
-            Title = "🔐 Unlock Vault",
-            Subtitle = _lastStatus?.UserEmail ?? "Enter your master password to unlock",
+            Title = ResourceHelper.MainUnlockButton,
+            Subtitle = _lastStatus?.UserEmail ?? ResourceHelper.MainUnlockSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
         };
     }
@@ -523,8 +524,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     {
         return new ListItem(new RefreshCommand(this))
         {
-            Title = "No Items",
-            Subtitle = "Your vault is empty or no items match the search",
+            Title = ResourceHelper.StatusNoItems,
+            Subtitle = ResourceHelper.StatusNoItemsSubtitle,
             Icon = new IconInfo("\uE7C3") // Empty icon
         };
     }
@@ -557,7 +558,7 @@ internal sealed partial class NoOpCommand : InvokableCommand
 {
     public NoOpCommand()
     {
-        Name = "No Action";
+        Name = ResourceHelper.ActionNoAction;
     }
 
     public override CommandResult Invoke()
@@ -576,7 +577,7 @@ internal sealed partial class RefreshCommand : InvokableCommand
     public RefreshCommand(BitwardenForCommandPalettePage page)
     {
         _page = page;
-        Name = "Refresh";
+        Name = ResourceHelper.ActionRefresh;
         Icon = new IconInfo("\uE72C"); // Refresh icon
     }
 
