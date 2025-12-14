@@ -461,4 +461,30 @@
   <data name="ItemTagFavorite" xml:space="preserve">
     <value>⭐</value>
   </data>
+
+  <!-- Settings -->
+  <data name="SettingsBwPathLabel" xml:space="preserve">
+    <value>Bitwarden CLI Path</value>
+  </data>
+  <data name="SettingsBwPathDescription" xml:space="preserve">
+    <value>Path to the Bitwarden CLI executable (bw.exe). Default is "bw" which assumes bw is in your system PATH.</value>
+  </data>
+  <data name="SettingsCustomEnvLabel" xml:space="preserve">
+    <value>Custom Environment Variables</value>
+  </data>
+  <data name="SettingsCustomEnvDescription" xml:space="preserve">
+    <value>Custom environment variables for Bitwarden CLI in format: KEY1=VALUE1;KEY2=VALUE2 (e.g., BW_SERVER=https://vault.example.com;NODE_EXTRA_CA_CERTS=cert.pem)</value>
+  </data>
+  <data name="SettingsBwClientIdLabel" xml:space="preserve">
+    <value>Bitwarden API Client ID</value>
+  </data>
+  <data name="SettingsBwClientIdDescription" xml:space="preserve">
+    <value>API Client ID for API Key authentication (bw login --apikey). Leave empty if using password authentication.</value>
+  </data>
+  <data name="SettingsBwClientSecretLabel" xml:space="preserve">
+    <value>Bitwarden API Client Secret</value>
+  </data>
+  <data name="SettingsBwClientSecretDescription" xml:space="preserve">
+    <value>API Client Secret for API Key authentication. Required when Client ID is set. This will be set as BW_CLIENTSECRET environment variable.</value>
+  </data>
 </root>

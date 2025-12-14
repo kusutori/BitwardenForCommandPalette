@@ -178,7 +178,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         try
         {
             var service = BitwardenCliService.Instance;
-            _lastStatus = await service.GetStatusAsync();
+            _lastStatus = await BitwardenCliService.GetStatusAsync();
 
             if (_lastStatus == null)
             {

@@ -176,4 +176,14 @@ internal static class ResourceHelper
     public static string ItemSubtitleSecureNote => GetString("ItemSubtitleSecureNote");
     public static string ItemSubtitleUnnamed => GetString("ItemSubtitleUnnamed");
     public static string ItemTagFavorite => GetString("ItemTagFavorite");
+
+    // Settings
+    public static string SettingsBwPathLabel => GetString("SettingsBwPathLabel");
+    public static string SettingsBwPathDescription => GetString("SettingsBwPathDescription");
+    public static string SettingsBwClientIdLabel => GetString("SettingsBwClientIdLabel");
+    public static string SettingsBwClientIdDescription => GetString("SettingsBwClientIdDescription");
+    public static string SettingsBwClientSecretLabel => GetString("SettingsBwClientSecretLabel");
+    public static string SettingsBwClientSecretDescription => GetString("SettingsBwClientSecretDescription");
+    public static string SettingsCustomEnvLabel => GetString("SettingsCustomEnvLabel");
+    public static string SettingsCustomEnvDescription => GetString("SettingsCustomEnvDescription");
 }

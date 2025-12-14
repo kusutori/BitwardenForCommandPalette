@@ -448,17 +448,43 @@
     <value>Folder: {0}</value>
   </data>
   <data name="FilterDescNoFilter" xml:space="preserve">
-    <value>No filter applied</value>
+    <value>未应用筛选</value>
   </data>
   
   <!-- Item Subtitles -->
   <data name="ItemSubtitleSecureNote" xml:space="preserve">
-    <value>Secure Note</value>
+    <value>安全笔记</value>
   </data>
   <data name="ItemSubtitleUnnamed" xml:space="preserve">
-    <value>Unnamed Item</value>
+    <value>未命名项</value>
   </data>
   <data name="ItemTagFavorite" xml:space="preserve">
     <value>⭐</value>
+  </data>
+
+  <!-- Settings -->
+  <data name="SettingsBwPathLabel" xml:space="preserve">
+    <value>Bitwarden CLI 路径</value>
+  </data>
+  <data name="SettingsBwPathDescription" xml:space="preserve">
+    <value>Bitwarden CLI 可执行文件 (bw.exe) 的路径。默认是 "bw"，假设 bw 在系统 PATH 中。</value>
+  </data>
+  <data name="SettingsCustomEnvLabel" xml:space="preserve">
+    <value>自定义环境变量</value>
+  </data>
+  <data name="SettingsCustomEnvDescription" xml:space="preserve">
+    <value>Bitwarden CLI 的自定义环境变量，格式：KEY1=VALUE1;KEY2=VALUE2（例如：BW_SERVER=https://vault.example.com;NODE_EXTRA_CA_CERTS=cert.pem）</value>
+  </data>
+  <data name="SettingsBwClientIdLabel" xml:space="preserve">
+    <value>Bitwarden API Client ID</value>
+  </data>
+  <data name="SettingsBwClientIdDescription" xml:space="preserve">
+    <value>用于 API Key 认证的 Client ID（bw login --apikey）。如果使用密码认证则留空。</value>
+  </data>
+  <data name="SettingsBwClientSecretLabel" xml:space="preserve">
+    <value>Bitwarden API Client Secret</value>
+  </data>
+  <data name="SettingsBwClientSecretDescription" xml:space="preserve">
+    <value>用于 API Key 认证的 Client Secret。当设置了 Client ID 时必填。将被设置为 BW_CLIENTSECRET 环境变量。</value>
   </data>
 </root>

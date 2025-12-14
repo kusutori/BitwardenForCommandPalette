@@ -28,10 +28,13 @@
 - [x] **错误提示** - 操作失败时显示错误消息
 - [x] **收藏标记** - 收藏的项目会显示 ⭐ 标记
 
+- [x] **设置页面** - 在 Command Palette 设置中配置扩展
+  - 自定义 Bitwarden CLI 路径
+  - 配置自定义环境变量（支持自建服务器等场景）
+
 ### 待开发 📋
 
 - [ ] **项目详情页** - 查看项目的完整详情
-- [ ] **Bitwarden CLI 路径配置** - 自定义 `bw` 命令路径
 - [ ] **自动锁定** - 一段时间后自动锁定密码库
 - [ ] **键盘快捷键** - 支持自定义快捷键操作
 - [ ] **深色/浅色主题图标** - 根据系统主题显示不同图标
@@ -64,12 +67,47 @@
 
 ## 使用方法
 
+### 基本使用
+
 1. 打开 PowerToys Command Palette（默认快捷键：`Alt + Space`）
 2. 找到 "Bitwarden For Command Palette" 并按 Enter
 3. 如果密码库已锁定，按 Enter 进入解锁页面，输入主密码
 4. 解锁后即可浏览所有密码项
 5. 输入文字可搜索项目
 6. 按 Enter 复制密码，或使用右键菜单查看更多操作
+
+### 配置设置
+
+1. 打开 PowerToys 设置 → Command Palette
+2. 在扩展列表中找到 "Bitwarden For Command Palette"
+3. 点击设置图标可配置：
+   - **Bitwarden CLI 路径**：自定义 `bw.exe` 的路径（默认使用 PATH 中的 `bw`）
+   - **Bitwarden API Client ID**：配置 API Key 认证的 Client ID（可选）
+   - **Bitwarden API Client Secret**：配置 API Key 认证的 Client Secret（可选）
+   - **自定义环境变量**：配置 Bitwarden CLI 的其他环境变量
+     - `BW_SERVER`：自建 Bitwarden 服务器地址（如 `https://vault.example.com`）
+     - `NODE_EXTRA_CA_CERTS`：自签名证书路径
+     - 其他 Bitwarden CLI 支持的环境变量
+   - 格式：`KEY1=VALUE1;KEY2=VALUE2`
+
+### API Key 认证（推荐）
+
+为了避免每次重启后重新登录，建议使用 API Key 认证：
+
+1. 登录 Bitwarden Web 控制台
+2. 进入 **设置** → **安全** → **密钥** (Settings → Security → Keys)
+3. 在 "API 密钥" 部分查看或创建新的 API Key
+4. 复制 **client_id** 和 **client_secret**
+5. 在扩展设置中填入这两项：
+   - 将 **client_id** 粘贴到 "Bitwarden API Client ID"
+   - 将 **client_secret** 粘贴到 "Bitwarden API Client Secret"
+6. 保存设置后，扩展会自动将这些凭据设置为环境变量 `BW_CLIENTID` 和 `BW_CLIENTSECRET`
+7. Bitwarden CLI 会自动使用这些环境变量进行认证，无需手动 `bw login`
+
+**注意**：
+- 如果同时设置了 API Key 和使用 `bw login`，API Key 优先级更高
+- API Key 仅用于认证（登录），解锁密码库仍需要主密码
+- 首次使用 API Key 时，CLI 会自动执行类似 `bw login --apikey` 的操作
 
 ## 项目结构
 
@@ -91,7 +129,8 @@ BitwardenForCommandPalette/
 │   └── FilterPage.cs                  # 筛选页面
 ├── Services/
 │   ├── BitwardenCliService.cs         # Bitwarden CLI 封装服务
-│   └── IconService.cs                 # 网站图标服务（带缓存）
+│   ├── IconService.cs                 # 网站图标服务（带缓存）
+│   └── SettingsManager.cs             # 设置管理服务
 └── Strings/
     ├── en-US/
     │   └── Resources.resw             # 英文资源

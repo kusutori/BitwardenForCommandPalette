@@ -39,11 +39,6 @@ public partial class BitwardenCliService
     public string? SessionKey { get; private set; }
 
     /// <summary>
-    /// Path to the bw CLI executable. Default is "bw" assuming it's in PATH
-    /// </summary>
-    public string BwPath { get; set; } = "bw";
-
-    /// <summary>
     /// Singleton instance of the BitwardenCliService
     /// </summary>
     public static BitwardenCliService Instance
@@ -66,11 +61,14 @@ public partial class BitwardenCliService
     /// <summary>
     /// Executes a bw CLI command and returns the output
     /// </summary>
-    private async Task<(string output, string error, int exitCode)> ExecuteCommandAsync(string arguments)
+    private static async Task<(string output, string error, int exitCode)> ExecuteCommandAsync(string arguments)
     {
+        var settings = SettingsManager.Instance;
+        var bwPath = settings.BwPath;
+
         var processInfo = new ProcessStartInfo
         {
-            FileName = BwPath,
+            FileName = bwPath,
             Arguments = arguments,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -79,6 +77,13 @@ public partial class BitwardenCliService
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8
         };
+
+        // Add custom environment variables
+        var customEnvVars = settings.GetEnvironmentVariables();
+        foreach (var kvp in customEnvVars)
+        {
+            processInfo.Environment[kvp.Key] = kvp.Value;
+        }
 
         using var process = new Process { StartInfo = processInfo };
 
@@ -109,7 +114,7 @@ public partial class BitwardenCliService
     /// <summary>
     /// Gets the current status of the Bitwarden vault
     /// </summary>
-    public async Task<BitwardenStatus?> GetStatusAsync()
+    public static async Task<BitwardenStatus?> GetStatusAsync()
     {
         var (output, error, exitCode) = await ExecuteCommandAsync("status");
 
