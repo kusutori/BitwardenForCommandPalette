@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using BitwardenForCommandPalette.Models;
 using Microsoft.CommandPalette.Extensions.Toolkit;
@@ -18,6 +19,16 @@ public static partial class IconService
     /// Bitwarden icon service base URL
     /// </summary>
     private const string IconServiceBaseUrl = "https://icons.bitwarden.net";
+
+    /// <summary>
+    /// Cache for icon URLs - Key: domain, Value: IconInfo
+    /// </summary>
+    private static readonly Dictionary<string, IconInfo> _iconCache = new();
+
+    /// <summary>
+    /// Maximum cached icons before eviction
+    /// </summary>
+    private const int MaxCacheSize = 200;
 
     /// <summary>
     /// Default icons for different item types
@@ -36,10 +47,33 @@ public static partial class IconService
         // For login items, try to get website icon
         if (item.ItemType == BitwardenItemType.Login)
         {
-            var iconUrl = GetWebsiteIconUrl(item);
-            if (!string.IsNullOrEmpty(iconUrl))
+            var domain = ExtractDomainFromItem(item);
+            if (!string.IsNullOrEmpty(domain))
             {
-                return new IconInfo(iconUrl);
+                // Check cache first
+                if (_iconCache.TryGetValue(domain, out var cachedIcon))
+                {
+                    return cachedIcon;
+                }
+
+                // Create new icon and cache it
+                var iconUrl = $"{IconServiceBaseUrl}/{domain}/icon.png";
+                var iconInfo = new IconInfo(iconUrl);
+
+                // Manage cache size
+                if (_iconCache.Count >= MaxCacheSize)
+                {
+                    // Remove oldest half when cache is full
+                    var toRemove = MaxCacheSize / 2;
+                    var keys = new List<string>(_iconCache.Keys);
+                    for (int i = 0; i < toRemove && i < keys.Count; i++)
+                    {
+                        _iconCache.Remove(keys[i]);
+                    }
+                }
+
+                _iconCache[domain] = iconInfo;
+                return iconInfo;
             }
             return DefaultLoginIcon;
         }
@@ -55,9 +89,9 @@ public static partial class IconService
     }
 
     /// <summary>
-    /// Gets the website icon URL for a login item
+    /// Extracts domain from a login item for icon lookup
     /// </summary>
-    private static string? GetWebsiteIconUrl(BitwardenItem item)
+    private static string? ExtractDomainFromItem(BitwardenItem item)
     {
         // Only process login items with URIs
         if (item.Login?.Uris == null || item.Login.Uris.Length == 0)
@@ -68,13 +102,8 @@ public static partial class IconService
         if (string.IsNullOrWhiteSpace(uri))
             return null;
 
-        // Extract hostname from URI
-        var hostname = ExtractHostname(uri);
-        if (string.IsNullOrEmpty(hostname))
-            return null;
-
-        // Build the icon URL
-        return $"{IconServiceBaseUrl}/{hostname}/icon.png";
+        // Extract and return the domain
+        return ExtractHostname(uri);
     }
 
     /// <summary>

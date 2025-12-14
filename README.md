@@ -80,14 +80,23 @@ BitwardenForCommandPalette/
 ├── Program.cs                          # 程序入口
 ├── Commands/
 │   └── ItemCommands.cs                # 复制密码、用户名等命令
+├── Helpers/
+│   └── ResourceHelper.cs              # 多语言资源助手
 ├── Models/
 │   ├── BitwardenItem.cs               # 密码项数据模型
 │   └── BitwardenStatus.cs             # 状态数据模型
 ├── Pages/
 │   ├── BitwardenForCommandPalettePage.cs  # 主列表页面
-│   └── UnlockPage.cs                  # 解锁表单页面
-└── Services/
-    └── BitwardenCliService.cs         # Bitwarden CLI 封装服务
+│   ├── UnlockPage.cs                  # 解锁表单页面
+│   └── FilterPage.cs                  # 筛选页面
+├── Services/
+│   ├── BitwardenCliService.cs         # Bitwarden CLI 封装服务
+│   └── IconService.cs                 # 网站图标服务（带缓存）
+└── Strings/
+    ├── en-US/
+    │   └── Resources.resw             # 英文资源
+    └── zh-CN/
+        └── Resources.resw             # 简体中文资源
 ```
 
 ## 技术栈
@@ -95,6 +104,39 @@ BitwardenForCommandPalette/
 - **.NET 9.0** - Windows 10.0.26100.0
 - **Microsoft.CommandPalette.Extensions** - PowerToys Command Palette 扩展 SDK
 - **Bitwarden CLI** - 本地密码库交互
+- **WinRT ResourceLoader** - 多语言本地化支持
+
+## 多语言支持
+
+本项目支持多语言界面，目前已实现：
+- **英文 (en-US)** - 默认语言
+- **简体中文 (zh-CN)** - 部分翻译
+
+### 添加新语言
+
+1. 在 `Strings/` 目录下创建新的语言文件夹（如 `ja-JP`）
+2. 复制 `en-US/Resources.resw` 到新文件夹
+3. 翻译 `<value>` 标签中的内容
+4. 重新构建项目，资源会自动包含
+
+### 资源结构
+
+所有 UI 文本都存储在 `.resw` 文件中，通过 `ResourceHelper` 类访问。关键资源包括：
+- `AppDisplayName` - 应用名称
+- `Action*` - 操作按钮（复制、打开等）
+- `Command*` - 命令名称
+- `Toast*` - 提示消息
+- `UnlockPage*`, `FilterPage*`, `MainPage*` - 页面相关文本
+- `Status*` - 状态消息
+- `Item*` - 项目类型和字段名称
+
+## 性能优化
+
+### 图标缓存
+`IconService` 使用内存缓存来存储网站图标 URL，避免重复请求：
+- 最多缓存 200 个图标
+- 超出限制时自动清理旧条目
+- 以域名为键进行缓存
 
 ## 开发说明
 
