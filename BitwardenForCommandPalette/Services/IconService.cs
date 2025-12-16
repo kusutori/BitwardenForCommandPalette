@@ -26,6 +26,17 @@ public static partial class IconService
     private static readonly Dictionary<string, IconInfo> _iconCache = new();
 
     /// <summary>
+    /// Set of domains where icon is known to be unavailable
+    /// Populated manually based on actual testing
+    /// </summary>
+    private static readonly HashSet<string> _unavailableIconDomains = new(StringComparer.OrdinalIgnoreCase)
+    {
+        // Known domains where Bitwarden icon service doesn't have icons
+        "adobe.com",
+        "account.adobe.com"
+    };
+
+    /// <summary>
     /// Maximum cached icons before eviction
     /// </summary>
     private const int MaxCacheSize = 200;
@@ -34,6 +45,7 @@ public static partial class IconService
     /// Default icons for different item types
     /// </summary>
     private static readonly IconInfo DefaultLoginIcon = new("\uE77B"); // Contact icon
+    private static readonly IconInfo DefaultWebIcon = new("\uE774"); // Web/Globe icon for websites
     private static readonly IconInfo DefaultCardIcon = new("\uE8C7"); // Credit card icon
     private static readonly IconInfo DefaultIdentityIcon = new("\uE779"); // Contact2 icon
     private static readonly IconInfo DefaultSecureNoteIcon = new("\uE70B"); // Note icon
@@ -56,9 +68,21 @@ public static partial class IconService
                     return cachedIcon;
                 }
 
-                // Create new icon and cache it
-                var iconUrl = $"{IconServiceBaseUrl}/{domain}/icon.png";
-                var iconInfo = new IconInfo(iconUrl);
+                IconInfo iconInfo;
+
+                // Check if domain is in unavailable list
+                if (_unavailableIconDomains.Contains(domain))
+                {
+                    // Use default web icon for known unavailable domains
+                    iconInfo = DefaultWebIcon;
+                }
+                else
+                {
+                    // Use icon service URL
+                    // UI layer will handle fallback if image fails to load
+                    var iconUrl = $"{IconServiceBaseUrl}/{domain}/icon.png";
+                    iconInfo = new IconInfo(iconUrl);
+                }
 
                 // Manage cache size
                 if (_iconCache.Count >= MaxCacheSize)
@@ -75,7 +99,7 @@ public static partial class IconService
                 _iconCache[domain] = iconInfo;
                 return iconInfo;
             }
-            return DefaultLoginIcon;
+            return DefaultWebIcon;
         }
 
         // For other item types, return default icons

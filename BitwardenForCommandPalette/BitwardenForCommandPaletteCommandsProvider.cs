@@ -18,9 +18,9 @@ public partial class BitwardenForCommandPaletteCommandsProvider : CommandProvide
     {
         DisplayName = ResourceHelper.AppDisplayName;
         Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
-        
+
         InitializeSettings();
-        
+
         _commands = [
             new CommandItem(new BitwardenForCommandPalettePage()) { Title = DisplayName, Icon = Icon },
         ];
