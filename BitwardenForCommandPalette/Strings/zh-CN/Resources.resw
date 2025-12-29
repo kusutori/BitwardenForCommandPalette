@@ -487,4 +487,79 @@
   <data name="SettingsBwClientSecretDescription" xml:space="preserve">
     <value>用于 API Key 认证的 Client Secret。当设置了 Client ID 时必填。将被设置为 BW_CLIENTSECRET 环境变量。</value>
   </data>
+
+  <!-- Details Panel - Common -->
+  <data name="DetailsUsername" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="DetailsPassword" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="DetailsTotp" xml:space="preserve">
+    <value>两步验证</value>
+  </data>
+  <data name="DetailsEnabled" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="DetailsUrls" xml:space="preserve">
+    <value>网址</value>
+  </data>
+  <data name="DetailsWebsite" xml:space="preserve">
+    <value>网站</value>
+  </data>
+  <data name="DetailsNotes" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="DetailsCustomFields" xml:space="preserve">
+    <value>自定义字段</value>
+  </data>
+
+  <!-- Details Panel - Card -->
+  <data name="DetailsBrand" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="DetailsCardNumber" xml:space="preserve">
+    <value>卡号</value>
+  </data>
+  <data name="DetailsExpiration" xml:space="preserve">
+    <value>有效期</value>
+  </data>
+  <data name="DetailsCvv" xml:space="preserve">
+    <value>安全码</value>
+  </data>
+  <data name="DetailsCardholderName" xml:space="preserve">
+    <value>持卡人姓名</value>
+  </data>
+
+  <!-- Details Panel - Identity -->
+  <data name="DetailsPersonalInfo" xml:space="preserve">
+    <value>个人信息</value>
+  </data>
+  <data name="DetailsFullName" xml:space="preserve">
+    <value>全名</value>
+  </data>
+  <data name="DetailsEmail" xml:space="preserve">
+    <value>电子邮箱</value>
+  </data>
+  <data name="DetailsPhone" xml:space="preserve">
+    <value>电话</value>
+  </data>
+  <data name="DetailsCompany" xml:space="preserve">
+    <value>公司</value>
+  </data>
+  <data name="DetailsAddress" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="DetailsIdentification" xml:space="preserve">
+    <value>身份证明</value>
+  </data>
+  <data name="DetailsSsn" xml:space="preserve">
+    <value>社会安全号</value>
+  </data>
+  <data name="DetailsPassport" xml:space="preserve">
+    <value>护照号码</value>
+  </data>
+  <data name="DetailsLicense" xml:space="preserve">
+    <value>驾照号码</value>
+  </data>
 </root>

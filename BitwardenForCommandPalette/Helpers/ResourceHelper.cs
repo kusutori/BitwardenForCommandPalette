@@ -186,4 +186,33 @@ internal static class ResourceHelper
     public static string SettingsBwClientSecretDescription => GetString("SettingsBwClientSecretDescription");
     public static string SettingsCustomEnvLabel => GetString("SettingsCustomEnvLabel");
     public static string SettingsCustomEnvDescription => GetString("SettingsCustomEnvDescription");
+
+    // Details Panel - Common
+    public static string DetailsUsername => GetString("DetailsUsername");
+    public static string DetailsPassword => GetString("DetailsPassword");
+    public static string DetailsTotp => GetString("DetailsTotp");
+    public static string DetailsEnabled => GetString("DetailsEnabled");
+    public static string DetailsUrls => GetString("DetailsUrls");
+    public static string DetailsWebsite => GetString("DetailsWebsite");
+    public static string DetailsNotes => GetString("DetailsNotes");
+    public static string DetailsCustomFields => GetString("DetailsCustomFields");
+
+    // Details Panel - Card
+    public static string DetailsBrand => GetString("DetailsBrand");
+    public static string DetailsCardNumber => GetString("DetailsCardNumber");
+    public static string DetailsExpiration => GetString("DetailsExpiration");
+    public static string DetailsCvv => GetString("DetailsCvv");
+    public static string DetailsCardholderName => GetString("DetailsCardholderName");
+
+    // Details Panel - Identity
+    public static string DetailsPersonalInfo => GetString("DetailsPersonalInfo");
+    public static string DetailsFullName => GetString("DetailsFullName");
+    public static string DetailsEmail => GetString("DetailsEmail");
+    public static string DetailsPhone => GetString("DetailsPhone");
+    public static string DetailsCompany => GetString("DetailsCompany");
+    public static string DetailsAddress => GetString("DetailsAddress");
+    public static string DetailsIdentification => GetString("DetailsIdentification");
+    public static string DetailsSsn => GetString("DetailsSsn");
+    public static string DetailsPassport => GetString("DetailsPassport");
+    public static string DetailsLicense => GetString("DetailsLicense");
 }

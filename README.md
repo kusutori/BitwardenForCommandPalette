@@ -2,6 +2,8 @@
 
 一个用于 Windows PowerToys Command Palette 的 Bitwarden 密码管理器扩展。通过本地 Bitwarden CLI (`bw`) 与您的密码库进行交互。
 
+[📖 更新日志](docs/CHANGELOG.md) · [🏗️ 架构文档](docs/ARCHITECTURE.md) · [📘 开发指南](docs/Project-Architecture.md)
+
 ## 功能特性
 
 ### 已实现 ✅

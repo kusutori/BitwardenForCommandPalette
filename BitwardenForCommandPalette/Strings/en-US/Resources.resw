@@ -487,4 +487,79 @@
   <data name="SettingsBwClientSecretDescription" xml:space="preserve">
     <value>API Client Secret for API Key authentication. Required when Client ID is set. This will be set as BW_CLIENTSECRET environment variable.</value>
   </data>
+
+  <!-- Details Panel - Common -->
+  <data name="DetailsUsername" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="DetailsPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="DetailsTotp" xml:space="preserve">
+    <value>TOTP</value>
+  </data>
+  <data name="DetailsEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="DetailsUrls" xml:space="preserve">
+    <value>URLs</value>
+  </data>
+  <data name="DetailsWebsite" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="DetailsNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="DetailsCustomFields" xml:space="preserve">
+    <value>Custom Fields</value>
+  </data>
+
+  <!-- Details Panel - Card -->
+  <data name="DetailsBrand" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="DetailsCardNumber" xml:space="preserve">
+    <value>Card Number</value>
+  </data>
+  <data name="DetailsExpiration" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
+  <data name="DetailsCvv" xml:space="preserve">
+    <value>CVV</value>
+  </data>
+  <data name="DetailsCardholderName" xml:space="preserve">
+    <value>Cardholder Name</value>
+  </data>
+
+  <!-- Details Panel - Identity -->
+  <data name="DetailsPersonalInfo" xml:space="preserve">
+    <value>Personal Information</value>
+  </data>
+  <data name="DetailsFullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="DetailsEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="DetailsPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="DetailsCompany" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="DetailsAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="DetailsIdentification" xml:space="preserve">
+    <value>Identification</value>
+  </data>
+  <data name="DetailsSsn" xml:space="preserve">
+    <value>SSN</value>
+  </data>
+  <data name="DetailsPassport" xml:space="preserve">
+    <value>Passport</value>
+  </data>
+  <data name="DetailsLicense" xml:space="preserve">
+    <value>License</value>
+  </data>
 </root>
