@@ -81,7 +81,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterAllItems,
                 Subtitle = ResourceHelper.FilterAllItemsSubtitle,
-                Icon = new IconInfo("\uE8A5"),
+                Icon = new IconInfo("\U0001F4CB"), // 📋
                 Tags = _currentFilter.FolderId == null && !_currentFilter.FavoritesOnly && _currentFilter.ItemType == null
                     ? [new Tag { Text = ResourceHelper.FilterTagActive }]
                     : []
@@ -92,7 +92,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterFavoritesOnly,
                 Subtitle = ResourceHelper.FilterFavoritesSubtitle,
-                Icon = new IconInfo("\uE734"),
+                Icon = new IconInfo("\u2B50"), // ⭐
                 Tags = _currentFilter.FavoritesOnly ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
@@ -101,7 +101,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterLoginsOnly,
                 Subtitle = ResourceHelper.FilterLoginsSubtitle,
-                Icon = new IconInfo("\uE77B"),
+                Icon = new IconInfo("\U0001F511"), // 🔑
                 Tags = _currentFilter.ItemType == BitwardenItemType.Login ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
@@ -109,7 +109,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterCardsOnly,
                 Subtitle = ResourceHelper.FilterCardsSubtitle,
-                Icon = new IconInfo("\uE8C7"),
+                Icon = new IconInfo("\U0001F4B3"), // 💳
                 Tags = _currentFilter.ItemType == BitwardenItemType.Card ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
@@ -117,7 +117,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterIdentitiesOnly,
                 Subtitle = ResourceHelper.FilterIdentitiesSubtitle,
-                Icon = new IconInfo("\uE77B"),
+                Icon = new IconInfo("\U0001F464"), // 👤
                 Tags = _currentFilter.ItemType == BitwardenItemType.Identity ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             },
 
@@ -125,7 +125,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterNotesOnly,
                 Subtitle = ResourceHelper.FilterNotesSubtitle,
-                Icon = new IconInfo("\uE8A0"),
+                Icon = new IconInfo("\U0001F4DD"), // 📝
                 Tags = _currentFilter.ItemType == BitwardenItemType.SecureNote ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             }
         };
@@ -140,7 +140,7 @@ internal sealed partial class FilterPage : DynamicListPage
             {
                 Title = ResourceHelper.FilterNoFolder,
                 Subtitle = ResourceHelper.FilterNoFolderSubtitle,
-                Icon = new IconInfo("\uE8B7"),
+                Icon = new IconInfo("\U0001F4C2"), // 📂
                 Tags = _currentFilter.FolderId == "null" ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
             });
 
@@ -152,7 +152,7 @@ internal sealed partial class FilterPage : DynamicListPage
                 {
                     Title = ResourceHelper.FilterFolderItem(folder.Name ?? string.Empty),
                     Subtitle = ResourceHelper.FilterFolderSubtitle,
-                    Icon = new IconInfo("\uE8B7"),
+                    Icon = new IconInfo("\U0001F4C2"), // 📂
                     Tags = _currentFilter.FolderId == folder.Id ? [new Tag { Text = ResourceHelper.FilterTagActive }] : []
                 });
             }
@@ -200,6 +200,6 @@ internal sealed partial class SectionHeaderItem : ListItem
     public SectionHeaderItem(string title) : base(new NoOpFilterCommand())
     {
         Title = title;
-        Icon = new IconInfo("\uE8B7"); // Folder icon
+        Icon = new IconInfo("\U0001F4C1"); // 📁
     }
 }

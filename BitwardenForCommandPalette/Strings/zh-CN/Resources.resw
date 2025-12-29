@@ -313,58 +313,58 @@
     <value>加载文件夹中...</value>
   </data>
   <data name="FilterAllItems" xml:space="preserve">
-    <value>📋 所有项目</value>
+    <value>所有项目</value>
   </data>
   <data name="FilterAllItemsSubtitle" xml:space="preserve">
     <value>显示所有密码库项目</value>
   </data>
   <data name="FilterFavoritesOnly" xml:space="preserve">
-    <value>⭐ 仅收藏</value>
+    <value>仅收藏</value>
   </data>
   <data name="FilterFavoritesSubtitle" xml:space="preserve">
     <value>仅显示收藏的项目</value>
   </data>
   <data name="FilterLoginsOnly" xml:space="preserve">
-    <value>🔑 仅登录项</value>
+    <value>仅登录项</value>
   </data>
   <data name="FilterLoginsSubtitle" xml:space="preserve">
     <value>仅显示登录项目</value>
   </data>
   <data name="FilterCardsOnly" xml:space="preserve">
-    <value>💳 仅银行卡</value>
+    <value>仅银行卡</value>
   </data>
   <data name="FilterCardsSubtitle" xml:space="preserve">
     <value>仅显示银行卡项目</value>
   </data>
   <data name="FilterIdentitiesOnly" xml:space="preserve">
-    <value>👤 仅身份</value>
+    <value>仅身份</value>
   </data>
   <data name="FilterIdentitiesSubtitle" xml:space="preserve">
     <value>仅显示身份项目</value>
   </data>
   <data name="FilterNotesOnly" xml:space="preserve">
-    <value>📝 仅安全笔记</value>
+    <value>仅安全笔记</value>
   </data>
   <data name="FilterNotesSubtitle" xml:space="preserve">
     <value>仅显示安全笔记</value>
   </data>
   <data name="FilterByFolder" xml:space="preserve">
-    <value>📁 By Folder</value>
+    <value>按文件夹</value>
   </data>
   <data name="FilterNoFolder" xml:space="preserve">
-    <value>   📂 No Folder</value>
+    <value>无文件夹</value>
   </data>
   <data name="FilterNoFolderSubtitle" xml:space="preserve">
-    <value>Items without a folder</value>
+    <value>未分类的项目</value>
   </data>
   <data name="FilterFolderItem" xml:space="preserve">
-    <value>   📂 {0}</value>
+    <value>{0}</value>
   </data>
   <data name="FilterFolderSubtitle" xml:space="preserve">
-    <value>Filter by folder</value>
+    <value>按文件夹筛选</value>
   </data>
   <data name="FilterTagActive" xml:space="preserve">
-    <value>✓ Active</value>
+    <value>✓ 已选</value>
   </data>
   
   <!-- Main Page -->

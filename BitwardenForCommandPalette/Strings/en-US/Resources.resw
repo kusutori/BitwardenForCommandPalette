@@ -313,52 +313,52 @@
     <value>Loading folders...</value>
   </data>
   <data name="FilterAllItems" xml:space="preserve">
-    <value>📋 All Items</value>
+    <value>All Items</value>
   </data>
   <data name="FilterAllItemsSubtitle" xml:space="preserve">
     <value>Show all vault items</value>
   </data>
   <data name="FilterFavoritesOnly" xml:space="preserve">
-    <value>⭐ Favorites Only</value>
+    <value>Favorites Only</value>
   </data>
   <data name="FilterFavoritesSubtitle" xml:space="preserve">
     <value>Show only favorited items</value>
   </data>
   <data name="FilterLoginsOnly" xml:space="preserve">
-    <value>🔑 Logins Only</value>
+    <value>Logins Only</value>
   </data>
   <data name="FilterLoginsSubtitle" xml:space="preserve">
     <value>Show only login items</value>
   </data>
   <data name="FilterCardsOnly" xml:space="preserve">
-    <value>💳 Cards Only</value>
+    <value>Cards Only</value>
   </data>
   <data name="FilterCardsSubtitle" xml:space="preserve">
     <value>Show only card items</value>
   </data>
   <data name="FilterIdentitiesOnly" xml:space="preserve">
-    <value>👤 Identities Only</value>
+    <value>Identities Only</value>
   </data>
   <data name="FilterIdentitiesSubtitle" xml:space="preserve">
     <value>Show only identity items</value>
   </data>
   <data name="FilterNotesOnly" xml:space="preserve">
-    <value>📝 Secure Notes Only</value>
+    <value>Secure Notes Only</value>
   </data>
   <data name="FilterNotesSubtitle" xml:space="preserve">
     <value>Show only secure notes</value>
   </data>
   <data name="FilterByFolder" xml:space="preserve">
-    <value>📁 By Folder</value>
+    <value>By Folder</value>
   </data>
   <data name="FilterNoFolder" xml:space="preserve">
-    <value>   📂 No Folder</value>
+    <value>No Folder</value>
   </data>
   <data name="FilterNoFolderSubtitle" xml:space="preserve">
     <value>Items without a folder</value>
   </data>
   <data name="FilterFolderItem" xml:space="preserve">
-    <value>   📂 {0}</value>
+    <value>{0}</value>
   </data>
   <data name="FilterFolderSubtitle" xml:space="preserve">
     <value>Filter by folder</value>

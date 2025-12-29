@@ -264,6 +264,10 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             );
         }
 
+        // Sort: favorites first, then by name
+        result = result.OrderByDescending(item => item.Favorite)
+                       .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase);
+
         return result;
     }
 
