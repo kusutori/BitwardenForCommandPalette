@@ -22,7 +22,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     private bool _isLoading;
     private string? _errorMessage;
     private BitwardenStatus? _lastStatus;
-    private VaultFilter _currentFilter = new();
+    private readonly VaultFilters _vaultFilters;
 
     public BitwardenForCommandPalettePage()
     {
@@ -32,8 +32,19 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         PlaceholderText = ResourceHelper.MainPagePlaceholder;
         ShowDetails = true; // Enable dual-column layout with details panel
 
+        // Setup search bar filters dropdown
+        _vaultFilters = new VaultFilters();
+        _vaultFilters.PropChanged += VaultFilters_PropChanged;
+        Filters = _vaultFilters;
+
         // Initial load
         _ = LoadItemsAsync();
+    }
+
+    private void VaultFilters_PropChanged(object sender, IPropChangedEventArgs args)
+    {
+        // Refresh items when filter changes
+        RaiseItemsChanged();
     }
 
     public override void UpdateSearchText(string oldSearch, string newSearch)
@@ -84,16 +95,16 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             return [CreateEmptyItem()];
         }
 
-        // Filter items based on search text
-        var filteredItems = FilterItems(_items, SearchText, _currentFilter);
+        // Filter items based on search text and dropdown filter
+        var currentFilter = _vaultFilters.ToVaultFilter();
+        var filteredItems = FilterItems(_items, SearchText, currentFilter);
 
         // Create list with utility commands at the end
         var listItems = new List<IListItem>();
 
-        // Add filter button at the top if no search text
+        // Add TOTP entry at the top if no search text
         if (string.IsNullOrWhiteSpace(SearchText))
         {
-            listItems.Add(CreateFilterItem());
             listItems.Add(CreateTotpItem());
         }
 
@@ -107,49 +118,6 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
 
         return listItems.ToArray();
-    }
-
-    private ListItem CreateFilterItem()
-    {
-        var filterPage = new FilterPage(_currentFilter, OnFilterApplied);
-        var subtitle = GetFilterDescription();
-        return new ListItem(filterPage)
-        {
-            Title = ResourceHelper.MainFilterButton,
-            Subtitle = subtitle,
-            Icon = new IconInfo("\uE71C") // Filter icon
-        };
-    }
-
-    private string GetFilterDescription()
-    {
-        var parts = new List<string>();
-
-        if (_currentFilter.FavoritesOnly)
-            parts.Add(ResourceHelper.FilterDescFavorites);
-
-        if (_currentFilter.ItemType.HasValue)
-        {
-            parts.Add(_currentFilter.ItemType.Value switch
-            {
-                BitwardenItemType.Login => ResourceHelper.FilterDescLogins,
-                BitwardenItemType.Card => ResourceHelper.FilterDescCards,
-                BitwardenItemType.Identity => ResourceHelper.FilterDescIdentities,
-                BitwardenItemType.SecureNote => ResourceHelper.FilterDescNotes,
-                _ => ResourceHelper.FilterDescAllTypes
-            });
-        }
-
-        if (!string.IsNullOrEmpty(_currentFilter.FolderName))
-            parts.Add(ResourceHelper.FilterDescFolder(_currentFilter.FolderName));
-
-        return parts.Count > 0 ? string.Join(" | ", parts) : ResourceHelper.FilterDescNoFilter;
-    }
-
-    private void OnFilterApplied(VaultFilter filter)
-    {
-        _currentFilter = filter;
-        RaiseItemsChanged();
     }
 
     private static ListItem CreateSyncItem()
@@ -229,8 +197,18 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         try
         {
-            _items = await service.GetItemsAsync();
+            // Load items and folders in parallel
+            var itemsTask = service.GetItemsAsync();
+            var foldersTask = service.GetFoldersAsync();
+
+            await Task.WhenAll(itemsTask, foldersTask);
+
+            _items = await itemsTask;
             _errorMessage = null;
+
+            // Update filters with folder information
+            var folders = await foldersTask;
+            _vaultFilters.UpdateFolders(folders);
         }
         catch (Exception ex)
         {
