@@ -40,6 +40,8 @@ internal sealed partial class UnlockForm : FormContent
     {
         _onUnlocked = onUnlocked;
 
+        // Note: Enter key submission is handled by the AdaptiveCards renderer in Command Palette.
+        // Single Input.Text forms automatically submit on Enter key press.
         TemplateJson = $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -47,19 +49,52 @@ internal sealed partial class UnlockForm : FormContent
     "version": "1.6",
     "body": [
         {
-            "type": "TextBlock",
-            "size": "medium",
-            "weight": "bolder",
-            "text": "{{ResourceHelper.UnlockCardTitle}}",
-            "horizontalAlignment": "center",
-            "wrap": true,
-            "style": "heading"
+            "type": "Container",
+            "style": "emphasis",
+            "bleed": true,
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "auto",
+                            "verticalContentAlignment": "center",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://raw.githubusercontent.com/bitwarden/clients/main/apps/web/src/images/icons/android-chrome-192x192.png",
+                                    "size": "small",
+                                    "style": "default",
+                                    "altText": "Bitwarden Logo"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "verticalContentAlignment": "center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "size": "large",
+                                    "weight": "bolder",
+                                    "text": "{{ResourceHelper.UnlockCardTitle}}",
+                                    "wrap": true,
+                                    "style": "heading"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "type": "TextBlock",
             "text": "{{ResourceHelper.UnlockCardDescription}}",
             "wrap": true,
-            "spacing": "medium"
+            "spacing": "medium",
+            "isSubtle": true
         },
         {
             "type": "Input.Text",
@@ -68,7 +103,16 @@ internal sealed partial class UnlockForm : FormContent
             "style": "password",
             "isRequired": true,
             "errorMessage": "{{ResourceHelper.UnlockMasterPasswordRequired}}",
-            "placeholder": "{{ResourceHelper.UnlockMasterPasswordPlaceholder}}"
+            "placeholder": "{{ResourceHelper.UnlockMasterPasswordPlaceholder}}",
+            "spacing": "medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": "💡 {{ResourceHelper.UnlockHint}}",
+            "wrap": true,
+            "spacing": "small",
+            "isSubtle": true,
+            "size": "small"
         }
     ],
     "actions": [
@@ -76,6 +120,7 @@ internal sealed partial class UnlockForm : FormContent
             "type": "Action.Submit",
             "title": "{{ResourceHelper.UnlockButtonText}}",
             "style": "positive",
+            "tooltip": "{{ResourceHelper.UnlockButtonTooltip}}",
             "data": {
                 "action": "unlock"
             }

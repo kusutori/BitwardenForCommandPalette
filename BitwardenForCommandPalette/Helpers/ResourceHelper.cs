@@ -114,6 +114,8 @@ internal static class ResourceHelper
     public static string UnlockMasterPasswordPlaceholder => GetString("UnlockMasterPasswordPlaceholder");
     public static string UnlockMasterPasswordRequired => GetString("UnlockMasterPasswordRequired");
     public static string UnlockButtonText => GetString("UnlockButtonText");
+    public static string UnlockButtonTooltip => GetString("UnlockButtonTooltip");
+    public static string UnlockHint => GetString("UnlockHint");
     public static string UnlockSuccess => GetString("UnlockSuccess");
     public static string UnlockFailed => GetString("UnlockFailed");
 

@@ -295,6 +295,12 @@
   <data name="UnlockButtonText" xml:space="preserve">
     <value>Unlock</value>
   </data>
+  <data name="UnlockButtonTooltip" xml:space="preserve">
+    <value>Click to unlock your vault (or press Enter)</value>
+  </data>
+  <data name="UnlockHint" xml:space="preserve">
+    <value>Press Enter to unlock quickly</value>
+  </data>
   <data name="UnlockSuccess" xml:space="preserve">
     <value>Vault unlocked successfully</value>
   </data>

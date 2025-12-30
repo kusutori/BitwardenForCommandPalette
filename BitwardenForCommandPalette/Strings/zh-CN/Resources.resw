@@ -295,6 +295,12 @@
   <data name="UnlockButtonText" xml:space="preserve">
     <value>解锁</value>
   </data>
+  <data name="UnlockButtonTooltip" xml:space="preserve">
+    <value>点击解锁密码库（或按回车键）</value>
+  </data>
+  <data name="UnlockHint" xml:space="preserve">
+    <value>按回车键快速解锁</value>
+  </data>
   <data name="UnlockSuccess" xml:space="preserve">
     <value>密码库解锁成功</value>
   </data>
