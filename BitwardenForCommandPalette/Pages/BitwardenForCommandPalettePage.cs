@@ -94,6 +94,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         if (string.IsNullOrWhiteSpace(SearchText))
         {
             listItems.Add(CreateFilterItem());
+            listItems.Add(CreateTotpItem());
         }
 
         listItems.AddRange(filteredItems.Select(CreateListItem));
@@ -168,6 +169,21 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             Title = ResourceHelper.MainLockButton,
             Subtitle = ResourceHelper.MainLockSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
+        };
+    }
+
+    private ListItem CreateTotpItem()
+    {
+        // Count items with TOTP configured
+        var totpCount = _items?.Count(i => !string.IsNullOrEmpty(i.Login?.Totp)) ?? 0;
+        var totpPage = new TotpPage(_items ?? []);
+        return new ListItem(totpPage)
+        {
+            Title = ResourceHelper.TotpPageTitle,
+            Subtitle = totpCount > 0
+                ? string.Format(System.Globalization.CultureInfo.CurrentCulture, ResourceHelper.TotpItemCount, totpCount)
+                : ResourceHelper.TotpNoItems,
+            Icon = new IconInfo("\uE8D7") // Stopwatch/Timer icon
         };
     }
 

@@ -568,4 +568,36 @@
   <data name="DetailsLicense" xml:space="preserve">
     <value>License</value>
   </data>
+  
+  <!-- TOTP Page -->
+  <data name="TotpPageTitle" xml:space="preserve">
+    <value>TOTP Authenticator</value>
+  </data>
+  <data name="TotpPagePlaceholder" xml:space="preserve">
+    <value>Search TOTP items...</value>
+  </data>
+  <data name="TotpLoading" xml:space="preserve">
+    <value>Loading TOTP codes...</value>
+  </data>
+  <data name="TotpLoadingSubtitle" xml:space="preserve">
+    <value>Please wait while we generate verification codes</value>
+  </data>
+  <data name="TotpNoItems" xml:space="preserve">
+    <value>No TOTP items</value>
+  </data>
+  <data name="TotpNoItemsSubtitle" xml:space="preserve">
+    <value>No items in your vault have TOTP configured</value>
+  </data>
+  <data name="TotpNoMatch" xml:space="preserve">
+    <value>No matching items</value>
+  </data>
+  <data name="TotpNoMatchSubtitle" xml:space="preserve">
+    <value>Try a different search term</value>
+  </data>
+  <data name="TotpCodeLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="TotpItemCount" xml:space="preserve">
+    <value>{0} items with TOTP</value>
+  </data>
 </root>

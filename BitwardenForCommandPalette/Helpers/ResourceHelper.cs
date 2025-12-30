@@ -217,4 +217,16 @@ internal static class ResourceHelper
     public static string DetailsSsn => GetString("DetailsSsn");
     public static string DetailsPassport => GetString("DetailsPassport");
     public static string DetailsLicense => GetString("DetailsLicense");
+
+    // TOTP Page
+    public static string TotpPageTitle => GetString("TotpPageTitle");
+    public static string TotpPagePlaceholder => GetString("TotpPagePlaceholder");
+    public static string TotpLoading => GetString("TotpLoading");
+    public static string TotpLoadingSubtitle => GetString("TotpLoadingSubtitle");
+    public static string TotpNoItems => GetString("TotpNoItems");
+    public static string TotpNoItemsSubtitle => GetString("TotpNoItemsSubtitle");
+    public static string TotpNoMatch => GetString("TotpNoMatch");
+    public static string TotpNoMatchSubtitle => GetString("TotpNoMatchSubtitle");
+    public static string TotpCodeLoading => GetString("TotpCodeLoading");
+    public static string TotpItemCount => GetString("TotpItemCount");
 }
