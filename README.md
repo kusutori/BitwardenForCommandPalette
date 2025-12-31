@@ -2,16 +2,19 @@
 
 一个用于 Windows PowerToys Command Palette 的 Bitwarden 密码管理器扩展。通过本地 Bitwarden CLI (`bw`) 与您的密码库进行交互。
 
-[📖 更新日志](docs/CHANGELOG.md) · [🏗️ 架构文档](docs/ARCHITECTURE.md) · [📘 开发指南](docs/Project-Architecture.md)
+[📖 更新日志](docs/CHANGELOG.md) · [🏗️ 架构文档](docs/ARCHITECTURE.md) · [📘 开发指南](docs/Project-Architecture.md) · [🔧 问题解决](docs/Troubleshooting.md)
 
 ## 功能特性
 
 ### 已实现 ✅
 
+#### 密码库管理
 - [x] **密码库状态检测** - 自动检测 Bitwarden CLI 是否已安装和登录状态
 - [x] **密码库解锁** - 支持通过主密码解锁密码库
 - [x] **密码库同步** - 手动同步密码库与服务器
 - [x] **锁定密码库** - 手动锁定密码库
+
+#### 项目浏览与搜索
 - [x] **列出所有项目** - 显示密码库中的所有项目（登录、银行卡、身份、安全笔记）
 - [x] **网站图标** - 自动获取并显示登录项的网站图标（使用 Bitwarden 官方图标服务）
 - [x] **搜索功能** - 支持按名称、用户名、URL 搜索项目
@@ -19,18 +22,37 @@
 - [x] **收藏置顶** - 收藏的项目会自动排在列表最前面
 - [x] **文件夹筛选** - 按文件夹筛选项目
 - [x] **类型筛选** - 按项目类型（登录、银行卡、身份、安全笔记）筛选
+- [x] **回收站** - 查看和管理已删除的项目
+
+#### 项目类型支持
 - [x] **登录项支持**
   - 复制密码、用户名、URL
   - 打开 URL
-  - **TOTP 支持** - 生成并复制 TOTP 验证码
+  - **TOTP 支持** - 生成并复制 TOTP 验证码（独立页面显示实时倒计时）
 - [x] **银行卡支持** - 复制卡号、CVV、有效期、持卡人姓名
 - [x] **身份信息支持** - 复制姓名、邮箱、电话、地址、公司、SSN、护照号、驾照号
 - [x] **安全笔记支持** - 复制笔记内容
 - [x] **自定义字段支持** - 显示和复制自定义字段
-- [x] **解锁后自动返回** - 解锁成功后自动返回密码库列表
-- [x] **错误提示** - 操作失败时显示错误消息
-- [x] **收藏标记** - 收藏的项目会显示 ⭐ 标记
 
+#### 项目管理 (CRUD)
+- [x] **创建项目** - 创建新的登录、银行卡、身份、安全笔记
+- [x] **创建文件夹** - 创建新的文件夹来组织项目
+- [x] **编辑项目** - 编辑现有项目的所有字段
+- [x] **删除项目** - 将项目移动到回收站
+- [x] **恢复项目** - 从回收站恢复已删除的项目
+- [x] **永久删除** - 从回收站永久删除项目
+- [x] **文件夹选择** - 创建项目时可选择目标文件夹
+
+#### 密码生成器
+- [x] **密码生成器** - 生成随机密码
+  - 可配置长度（5-128字符）
+  - 可选大写字母、小写字母、数字、特殊字符
+- [x] **口令生成器** - 生成易记的口令短语
+  - 可配置单词数量（3-20个）
+  - 可配置分隔符
+  - 可选首字母大写、包含数字
+
+#### 界面与体验
 - [x] **双栏详情面板** - 选中项目时右侧显示详细信息
   - 显示项目图标、名称
   - 登录项：用户名、密码（掩码）、TOTP 状态、网址列表
@@ -38,7 +60,12 @@
   - 身份：全名、邮箱、电话、公司、地址、身份证明
   - 安全笔记：以 Markdown 格式显示笔记内容
   - 自定义字段和备注
+- [x] **收藏标记** - 收藏的项目会显示 ⭐ 标记
+- [x] **解锁后自动返回** - 解锁成功后自动返回密码库列表
+- [x] **错误提示** - 操作失败时显示错误消息
+- [x] **多语言支持** - 支持英文和简体中文
 
+#### 设置页面
 - [x] **设置页面** - 在 Command Palette 设置中配置扩展
   - 自定义 Bitwarden CLI 路径
   - 配置 API Key 认证（Client ID / Secret）
@@ -49,8 +76,8 @@
 - [ ] **自动锁定** - 一段时间后自动锁定密码库
 - [ ] **键盘快捷键** - 支持自定义快捷键操作
 - [ ] **深色/浅色主题图标** - 根据系统主题显示不同图标
-- [ ] **密码生成器** - 生成安全密码
 - [ ] **密码健康报告** - 检测弱密码、重复密码等
+- [ ] **附件支持** - 查看和下载项目附件
 
 ## 前置要求
 
@@ -137,17 +164,31 @@ BitwardenForCommandPalette/
 │   └── BitwardenStatus.cs             # 状态数据模型
 ├── Pages/
 │   ├── BitwardenForCommandPalettePage.cs  # 主列表页面
+│   ├── CreateItemPage.cs              # 创建项目页面（含创建文件夹）
+│   ├── EditItemPage.cs                # 编辑项目页面
+│   ├── FilterPage.cs                  # 筛选页面
+│   ├── GeneratorPage.cs               # 密码/口令生成器页面
+│   ├── TotpPage.cs                    # TOTP 验证码页面
 │   ├── UnlockPage.cs                  # 解锁表单页面
-│   └── FilterPage.cs                  # 筛选页面
+│   └── VaultFilters.cs                # 筛选状态管理
 ├── Services/
 │   ├── BitwardenCliService.cs         # Bitwarden CLI 封装服务
 │   ├── IconService.cs                 # 网站图标服务（带缓存）
 │   └── SettingsManager.cs             # 设置管理服务
-└── Strings/
-    ├── en-US/
-    │   └── Resources.resw             # 英文资源
-    └── zh-CN/
-        └── Resources.resw             # 简体中文资源
+├── Strings/
+│   ├── en-US/
+│   │   └── Resources.resw             # 英文资源
+│   └── zh-CN/
+│       └── Resources.resw             # 简体中文资源
+└── docs/
+    ├── ARCHITECTURE.md                # 架构概述
+    ├── Project-Architecture.md        # 详细项目架构
+    ├── CHANGELOG.md                   # 更新日志
+    ├── Troubleshooting.md             # 问题解决指南
+    ├── Adaptive-Cards-Guide.md        # Adaptive Cards 开发指南
+    ├── Bitwarden-CLI-Guide.md         # Bitwarden CLI 指南
+    ├── CommandPalette-Extensions-Guide.md  # 扩展开发指南
+    └── Localization-Guide.md          # 本地化指南
 ```
 
 ## 技术栈

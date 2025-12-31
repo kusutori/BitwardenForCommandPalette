@@ -11,6 +11,91 @@
 
 ---
 
+## [v1.2.0] - 2025-12-31
+
+### ✨ 新增功能
+
+#### 🔐 密码/口令生成器
+- **密码生成器** (`PasswordGeneratorPage`)
+  - 可配置长度（5-128 字符）
+  - 可选大写字母、小写字母、数字、特殊字符
+  - 一键生成并复制到剪贴板
+- **口令生成器** (`PassphraseGeneratorPage`)
+  - 可配置单词数量（3-20 个）
+  - 可配置分隔符
+  - 可选首字母大写、包含数字
+  - 一键生成并复制到剪贴板
+
+#### 📁 创建项目时选择文件夹
+- 创建登录、银行卡、身份、安全笔记时可选择目标文件夹
+- 使用 `Input.ChoiceSet` 下拉框动态加载文件夹列表
+- 默认选项"无文件夹"
+
+#### 📁 创建文件夹功能
+- 在创建项目页面添加"创建文件夹"选项
+- 简单的表单界面，只需输入文件夹名称
+- 调用 `bw create folder` 命令
+
+### 🌐 国际化
+- 新增密码生成器相关字符串（en-US / zh-CN）
+- 新增创建文件夹相关字符串
+- 新增文件夹选择相关字符串
+
+### 🔧 技术改进
+- 使用 `JsonObject.ToJsonString()` 替代 `JsonSerializer.Serialize()` 避免 AOT 警告
+- 使用 `JsonNode.Parse()` 动态构建 JSON 数组避免泛型警告
+- 优化 Adaptive Cards 模板动态生成
+
+### 📚 文档
+- 更新 README.md 功能特性列表
+- 全面更新 Project-Architecture.md 架构文档
+- 新增 Troubleshooting.md 问题解决指南
+
+---
+
+## [v1.1.0] - 2025-12-28
+
+### ✨ 新增功能
+
+#### 🗑️ 回收站功能
+- **查看回收站** - 在筛选页面添加"回收站"选项
+- **恢复项目** (`RestoreCommand`) - 从回收站恢复已删除的项目
+- **永久删除** (`PermanentDeleteCommand`) - 从回收站永久删除项目
+- 回收站视图中的项目显示不同的命令菜单
+- 删除命令显示为红色（`IsCritical = true`）
+
+#### ✏️ 编辑项目功能
+- **编辑项目** (`EditItemPage`) - 使用 Adaptive Cards 表单编辑现有项目
+- 支持编辑所有项目类型（登录、银行卡、身份、安全笔记）
+- 预填充现有数据
+- 调用 `bw edit item` 命令
+
+#### ➕ 创建项目功能
+- **创建项目** (`CreateItemPage`) - 使用 Adaptive Cards 表单创建新项目
+- 支持创建所有项目类型
+- 类型选择页面 (`CreateItemTypeSelectorPage`)
+- 调用 `bw create item` 命令
+
+#### ⏱️ TOTP 页面增强
+- **独立 TOTP 页面** (`TotpPage`) - 实时显示 TOTP 验证码
+- 倒计时进度条显示
+- 一键复制功能
+- 每秒自动刷新
+
+### 🔧 CLI 服务扩展
+- `CreateItemAsync()` - 创建项目
+- `EditItemAsync()` - 编辑项目
+- `DeleteItemAsync()` - 删除项目（移到回收站）
+- `RestoreItemAsync()` - 恢复项目
+- `PermanentDeleteItemAsync()` - 永久删除项目
+
+### 🌐 国际化
+- 新增 CRUD 操作相关字符串
+- 新增回收站相关字符串
+- 新增 TOTP 页面相关字符串
+
+---
+
 ## [v1.0.0] - 2025-12-16
 
 ### ✨ 新增功能
