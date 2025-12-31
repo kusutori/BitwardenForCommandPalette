@@ -56,6 +56,19 @@ internal sealed partial class CreateItemTypeSelectorPage : ListPage
                 Title = ResourceHelper.CreateItemTypeNote,
                 Subtitle = ResourceHelper.CreateItemTypeNoteSubtitle,
                 Icon = new IconInfo("\uE8F1") // Document icon
+            },
+            // Separator for generators
+            new ListItem(new PasswordGeneratorPage())
+            {
+                Title = ResourceHelper.GeneratorPassword,
+                Subtitle = ResourceHelper.GeneratorPasswordSubtitle,
+                Icon = new IconInfo("\uE8D7") // Key icon
+            },
+            new ListItem(new PassphraseGeneratorPage())
+            {
+                Title = ResourceHelper.GeneratorPassphrase,
+                Subtitle = ResourceHelper.GeneratorPassphraseSubtitle,
+                Icon = new IconInfo("\uE8F1") // Document icon
             }
         ];
     }

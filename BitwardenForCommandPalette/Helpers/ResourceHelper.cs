@@ -294,4 +294,31 @@ internal static class ResourceHelper
     public static string CommandPermanentDelete => GetString("CommandPermanentDelete");
     public static string PermanentDeleteSuccess => GetString("PermanentDeleteSuccess");
     public static string PermanentDeleteFailed => GetString("PermanentDeleteFailed");
+
+    // Password/Passphrase Generator
+    public static string GeneratorPassword => GetString("GeneratorPassword");
+    public static string GeneratorPasswordTitle => GetString("GeneratorPasswordTitle");
+    public static string GeneratorPasswordSubtitle => GetString("GeneratorPasswordSubtitle");
+    public static string GeneratorPasswordDescription => GetString("GeneratorPasswordDescription");
+    public static string GeneratorPassphrase => GetString("GeneratorPassphrase");
+    public static string GeneratorPassphraseTitle => GetString("GeneratorPassphraseTitle");
+    public static string GeneratorPassphraseSubtitle => GetString("GeneratorPassphraseSubtitle");
+    public static string GeneratorPassphraseDescription => GetString("GeneratorPassphraseDescription");
+    public static string GeneratorLengthLabel => GetString("GeneratorLengthLabel");
+    public static string GeneratorUppercaseLabel => GetString("GeneratorUppercaseLabel");
+    public static string GeneratorLowercaseLabel => GetString("GeneratorLowercaseLabel");
+    public static string GeneratorNumbersLabel => GetString("GeneratorNumbersLabel");
+    public static string GeneratorSpecialLabel => GetString("GeneratorSpecialLabel");
+    public static string GeneratorWordsLabel => GetString("GeneratorWordsLabel");
+    public static string GeneratorSeparatorLabel => GetString("GeneratorSeparatorLabel");
+    public static string GeneratorCapitalizeLabel => GetString("GeneratorCapitalizeLabel");
+    public static string GeneratorIncludeNumberLabel => GetString("GeneratorIncludeNumberLabel");
+    public static string GeneratorGenerateButton => GetString("GeneratorGenerateButton");
+    public static string GeneratorCopyButton => GetString("GeneratorCopyButton");
+    public static string GeneratorClickGenerate => GetString("GeneratorClickGenerate");
+    public static string GeneratorGenerateFailed => GetString("GeneratorGenerateFailed");
+    public static string GeneratorNoPassword => GetString("GeneratorNoPassword");
+    public static string GeneratorNoPassphrase => GetString("GeneratorNoPassphrase");
+    public static string GeneratorPasswordCopied => GetString("GeneratorPasswordCopied");
+    public static string GeneratorPassphraseCopied => GetString("GeneratorPassphraseCopied");
 }

@@ -776,4 +776,80 @@
   <data name="PermanentDeleteFailed" xml:space="preserve">
     <value>Failed to permanently delete item</value>
   </data>
+  <!-- Password/Passphrase Generator -->
+  <data name="GeneratorPassword" xml:space="preserve">
+    <value>Password Generator</value>
+  </data>
+  <data name="GeneratorPasswordTitle" xml:space="preserve">
+    <value>Generate Password</value>
+  </data>
+  <data name="GeneratorPasswordSubtitle" xml:space="preserve">
+    <value>Generate a random secure password</value>
+  </data>
+  <data name="GeneratorPasswordDescription" xml:space="preserve">
+    <value>Configure the options below and click Generate to create a secure random password.</value>
+  </data>
+  <data name="GeneratorPassphrase" xml:space="preserve">
+    <value>Passphrase Generator</value>
+  </data>
+  <data name="GeneratorPassphraseTitle" xml:space="preserve">
+    <value>Generate Passphrase</value>
+  </data>
+  <data name="GeneratorPassphraseSubtitle" xml:space="preserve">
+    <value>Generate a random memorable passphrase</value>
+  </data>
+  <data name="GeneratorPassphraseDescription" xml:space="preserve">
+    <value>Configure the options below and click Generate to create a memorable passphrase.</value>
+  </data>
+  <data name="GeneratorLengthLabel" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="GeneratorUppercaseLabel" xml:space="preserve">
+    <value>Include uppercase letters (A-Z)</value>
+  </data>
+  <data name="GeneratorLowercaseLabel" xml:space="preserve">
+    <value>Include lowercase letters (a-z)</value>
+  </data>
+  <data name="GeneratorNumbersLabel" xml:space="preserve">
+    <value>Include numbers (0-9)</value>
+  </data>
+  <data name="GeneratorSpecialLabel" xml:space="preserve">
+    <value>Include special characters (!@#$%^&amp;*)</value>
+  </data>
+  <data name="GeneratorWordsLabel" xml:space="preserve">
+    <value>Number of words</value>
+  </data>
+  <data name="GeneratorSeparatorLabel" xml:space="preserve">
+    <value>Word separator</value>
+  </data>
+  <data name="GeneratorCapitalizeLabel" xml:space="preserve">
+    <value>Capitalize words</value>
+  </data>
+  <data name="GeneratorIncludeNumberLabel" xml:space="preserve">
+    <value>Include number</value>
+  </data>
+  <data name="GeneratorGenerateButton" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="GeneratorCopyButton" xml:space="preserve">
+    <value>Copy to Clipboard</value>
+  </data>
+  <data name="GeneratorClickGenerate" xml:space="preserve">
+    <value>Click Generate to create</value>
+  </data>
+  <data name="GeneratorGenerateFailed" xml:space="preserve">
+    <value>Failed to generate</value>
+  </data>
+  <data name="GeneratorNoPassword" xml:space="preserve">
+    <value>No password generated yet</value>
+  </data>
+  <data name="GeneratorNoPassphrase" xml:space="preserve">
+    <value>No passphrase generated yet</value>
+  </data>
+  <data name="GeneratorPasswordCopied" xml:space="preserve">
+    <value>Password copied to clipboard</value>
+  </data>
+  <data name="GeneratorPassphraseCopied" xml:space="preserve">
+    <value>Passphrase copied to clipboard</value>
+  </data>
 </root>

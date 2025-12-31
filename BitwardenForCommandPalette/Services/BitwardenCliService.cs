@@ -585,4 +585,87 @@ public partial class BitwardenCliService
             return false;
         }
     }
+
+    /// <summary>
+    /// Generates a random password using the Bitwarden CLI
+    /// </summary>
+    /// <param name="length">Password length (minimum 5)</param>
+    /// <param name="uppercase">Include uppercase letters</param>
+    /// <param name="lowercase">Include lowercase letters</param>
+    /// <param name="number">Include numbers</param>
+    /// <param name="special">Include special characters</param>
+    /// <returns>Generated password or null if generation failed</returns>
+    public static async Task<string?> GeneratePasswordAsync(
+        int length = 14,
+        bool uppercase = true,
+        bool lowercase = true,
+        bool number = true,
+        bool special = false)
+    {
+        try
+        {
+            var args = new StringBuilder("generate");
+
+            if (uppercase) args.Append(" -u");
+            if (lowercase) args.Append(" -l");
+            if (number) args.Append(" -n");
+            if (special) args.Append(" -s");
+            args.Append(" --length ").Append(Math.Max(5, length));
+
+            var (output, error, exitCode) = await ExecuteCommandAsync(args.ToString());
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw generate failed: {error}");
+                return null;
+            }
+
+            return output.Trim();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"GeneratePasswordAsync failed: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Generates a random passphrase using the Bitwarden CLI
+    /// </summary>
+    /// <param name="words">Number of words (default 3)</param>
+    /// <param name="separator">Word separator (default "-")</param>
+    /// <param name="capitalize">Capitalize first letter of each word</param>
+    /// <param name="includeNumber">Include a number in the passphrase</param>
+    /// <returns>Generated passphrase or null if generation failed</returns>
+    public static async Task<string?> GeneratePassphraseAsync(
+        int words = 3,
+        string separator = "-",
+        bool capitalize = false,
+        bool includeNumber = false)
+    {
+        try
+        {
+            var args = new StringBuilder("generate --passphrase");
+
+            args.Append(" --words ").Append(Math.Max(3, words));
+            args.Append(" --separator \"").Append(separator).Append('"');
+            if (capitalize) args.Append(" -c");
+            if (includeNumber) args.Append(" --includeNumber");
+
+            var (output, error, exitCode) = await ExecuteCommandAsync(args.ToString());
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw generate passphrase failed: {error}");
+                return null;
+            }
+
+            return output.Trim();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"GeneratePassphraseAsync failed: {ex.Message}");
+            return null;
+        }
+    }
 }

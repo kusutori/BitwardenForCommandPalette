@@ -776,4 +776,80 @@
   <data name="PermanentDeleteFailed" xml:space="preserve">
     <value>永久删除项目失败</value>
   </data>
+  <!-- Password/Passphrase Generator -->
+  <data name="GeneratorPassword" xml:space="preserve">
+    <value>密码生成器</value>
+  </data>
+  <data name="GeneratorPasswordTitle" xml:space="preserve">
+    <value>生成密码</value>
+  </data>
+  <data name="GeneratorPasswordSubtitle" xml:space="preserve">
+    <value>生成随机安全密码</value>
+  </data>
+  <data name="GeneratorPasswordDescription" xml:space="preserve">
+    <value>配置以下选项，然后点击生成来创建安全的随机密码。</value>
+  </data>
+  <data name="GeneratorPassphrase" xml:space="preserve">
+    <value>密码短语生成器</value>
+  </data>
+  <data name="GeneratorPassphraseTitle" xml:space="preserve">
+    <value>生成密码短语</value>
+  </data>
+  <data name="GeneratorPassphraseSubtitle" xml:space="preserve">
+    <value>生成随机易记的密码短语</value>
+  </data>
+  <data name="GeneratorPassphraseDescription" xml:space="preserve">
+    <value>配置以下选项，然后点击生成来创建易记的密码短语。</value>
+  </data>
+  <data name="GeneratorLengthLabel" xml:space="preserve">
+    <value>长度</value>
+  </data>
+  <data name="GeneratorUppercaseLabel" xml:space="preserve">
+    <value>包含大写字母 (A-Z)</value>
+  </data>
+  <data name="GeneratorLowercaseLabel" xml:space="preserve">
+    <value>包含小写字母 (a-z)</value>
+  </data>
+  <data name="GeneratorNumbersLabel" xml:space="preserve">
+    <value>包含数字 (0-9)</value>
+  </data>
+  <data name="GeneratorSpecialLabel" xml:space="preserve">
+    <value>包含特殊字符 (!@#$%^&amp;*)</value>
+  </data>
+  <data name="GeneratorWordsLabel" xml:space="preserve">
+    <value>单词数量</value>
+  </data>
+  <data name="GeneratorSeparatorLabel" xml:space="preserve">
+    <value>单词分隔符</value>
+  </data>
+  <data name="GeneratorCapitalizeLabel" xml:space="preserve">
+    <value>首字母大写</value>
+  </data>
+  <data name="GeneratorIncludeNumberLabel" xml:space="preserve">
+    <value>包含数字</value>
+  </data>
+  <data name="GeneratorGenerateButton" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="GeneratorCopyButton" xml:space="preserve">
+    <value>复制到剪贴板</value>
+  </data>
+  <data name="GeneratorClickGenerate" xml:space="preserve">
+    <value>点击生成按钮创建</value>
+  </data>
+  <data name="GeneratorGenerateFailed" xml:space="preserve">
+    <value>生成失败</value>
+  </data>
+  <data name="GeneratorNoPassword" xml:space="preserve">
+    <value>尚未生成密码</value>
+  </data>
+  <data name="GeneratorNoPassphrase" xml:space="preserve">
+    <value>尚未生成密码短语</value>
+  </data>
+  <data name="GeneratorPasswordCopied" xml:space="preserve">
+    <value>密码已复制到剪贴板</value>
+  </data>
+  <data name="GeneratorPassphraseCopied" xml:space="preserve">
+    <value>密码短语已复制到剪贴板</value>
+  </data>
 </root>
