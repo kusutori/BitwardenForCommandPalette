@@ -13,6 +13,7 @@ using BitwardenForCommandPalette.Pages;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
+using Windows.System;
 
 namespace BitwardenForCommandPalette;
 
@@ -896,48 +897,81 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
     private static void AddLoginCommands(List<ICommandContextItem> commands, BitwardenItem item)
     {
-        if (!string.IsNullOrEmpty(item.Login?.Password))
-        {
-            commands.Add(new CommandContextItem(new CopyPasswordCommand(item)));
-        }
+        // NOTE: The first item in MoreCommands becomes the "secondary command" (Ctrl+Enter)
+        // Since primaryCommand (Enter) is CopyPassword, we put CopyUsername first here for Ctrl+Enter
 
         if (!string.IsNullOrEmpty(item.Login?.Username))
         {
-            commands.Add(new CommandContextItem(new CopyUsernameCommand(item)));
+            commands.Add(new CommandContextItem(new CopyUsernameCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.U)
+            });
         }
 
         if (item.Login?.Uris?.Length > 0 && !string.IsNullOrEmpty(item.Login.Uris[0].Uri))
         {
-            commands.Add(new CommandContextItem(new CopyUrlCommand(item)));
-            commands.Add(new CommandContextItem(new Commands.OpenUrlCommand(item)));
+            commands.Add(new CommandContextItem(new CopyUrlCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.C)
+            });
+            commands.Add(new CommandContextItem(new Commands.OpenUrlCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.O)
+            });
         }
 
         if (!string.IsNullOrEmpty(item.Login?.Totp))
         {
-            commands.Add(new CommandContextItem(new CopyTotpCommand(item)));
+            commands.Add(new CommandContextItem(new CopyTotpCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.T)
+            });
+        }
+
+        // Password is already the primary command (Enter key), but add it to More menu with shortcut
+        if (!string.IsNullOrEmpty(item.Login?.Password))
+        {
+            commands.Add(new CommandContextItem(new CopyPasswordCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.P)
+            });
         }
     }
 
     private static void AddCardCommands(List<ICommandContextItem> commands, BitwardenItem item)
     {
-        if (!string.IsNullOrEmpty(item.Card?.Number))
-        {
-            commands.Add(new CommandContextItem(new CopyCardNumberCommand(item)));
-        }
-
+        // CVV first for Ctrl+Enter (card number is primary command)
         if (!string.IsNullOrEmpty(item.Card?.Code))
         {
-            commands.Add(new CommandContextItem(new CopyCardCvvCommand(item)));
+            commands.Add(new CommandContextItem(new CopyCardCvvCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.V)
+            });
         }
 
         if (!string.IsNullOrEmpty(item.Card?.ExpMonth) && !string.IsNullOrEmpty(item.Card?.ExpYear))
         {
-            commands.Add(new CommandContextItem(new CopyCardExpirationCommand(item)));
+            commands.Add(new CommandContextItem(new CopyCardExpirationCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+            });
         }
 
         if (!string.IsNullOrEmpty(item.Card?.CardholderName))
         {
-            commands.Add(new CommandContextItem(new CopyCardholderNameCommand(item)));
+            commands.Add(new CommandContextItem(new CopyCardholderNameCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.N)
+            });
+        }
+
+        // Card number is already primary command, but add to More menu
+        if (!string.IsNullOrEmpty(item.Card?.Number))
+        {
+            commands.Add(new CommandContextItem(new CopyCardNumberCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.N)
+            });
         }
     }
 
@@ -946,26 +980,30 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         var identity = item.Identity;
         if (identity == null) return;
 
-        // Check if has any name parts
-        if (!string.IsNullOrWhiteSpace(identity.FirstName) || !string.IsNullOrWhiteSpace(identity.LastName))
-        {
-            commands.Add(new CommandContextItem(new CopyFullNameCommand(item)));
-        }
-
+        // Email first for Ctrl+Enter (full name is primary command)
         if (!string.IsNullOrEmpty(identity.Email))
         {
-            commands.Add(new CommandContextItem(new CopyEmailCommand(item)));
+            commands.Add(new CommandContextItem(new CopyEmailCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+            });
         }
 
         if (!string.IsNullOrEmpty(identity.Phone))
         {
-            commands.Add(new CommandContextItem(new CopyPhoneCommand(item)));
+            commands.Add(new CommandContextItem(new CopyPhoneCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.P)
+            });
         }
 
         // Check if has any address parts
         if (!string.IsNullOrWhiteSpace(identity.Address1) || !string.IsNullOrWhiteSpace(identity.City))
         {
-            commands.Add(new CommandContextItem(new CopyAddressCommand(item)));
+            commands.Add(new CommandContextItem(new CopyAddressCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.A)
+            });
         }
 
         if (!string.IsNullOrEmpty(identity.Company))
@@ -975,7 +1013,10 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         if (!string.IsNullOrEmpty(identity.Ssn))
         {
-            commands.Add(new CommandContextItem(new CopySsnCommand(item)));
+            commands.Add(new CommandContextItem(new CopySsnCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.S)
+            });
         }
 
         if (!string.IsNullOrEmpty(identity.PassportNumber))
@@ -988,6 +1029,15 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             commands.Add(new CommandContextItem(new CopyLicenseCommand(item)));
         }
 
+        // Full name is already primary command, but add to More menu
+        if (!string.IsNullOrWhiteSpace(identity.FirstName) || !string.IsNullOrWhiteSpace(identity.LastName))
+        {
+            commands.Add(new CommandContextItem(new CopyFullNameCommand(item))
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.N)
+            });
+        }
+
         // Add username if different from name
         if (!string.IsNullOrEmpty(identity.Username))
         {
@@ -996,7 +1046,10 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
                 ClipboardHelper.SetText(identity.Username);
                 return CommandResult.ShowToast(new ToastArgs { Message = ResourceHelper.ToastUsernameCopied });
             })
-            { Name = ResourceHelper.CommandCopyUsername, Icon = new IconInfo("\uE77B") }));
+            { Name = ResourceHelper.CommandCopyUsername, Icon = new IconInfo("\uE77B") })
+            {
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.U)
+            });
         }
     }
 
@@ -1014,7 +1067,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             Title = ResourceHelper.StatusLoading,
             Subtitle = ResourceHelper.StatusLoadingSubtitle,
-            Icon = new IconInfo("\uE117") // Sync icon
+            Icon = new IconInfo("\uE895") // Sync icon
         };
     }
 

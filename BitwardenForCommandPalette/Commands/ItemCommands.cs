@@ -133,7 +133,7 @@ internal sealed partial class CopyTotpCommand : InvokableCommand
     {
         _item = item;
         Name = ResourceHelper.CommandCopyTotp;
-        Icon = new IconInfo("\uE121"); // Time icon
+        Icon = new IconInfo("\uE917"); // clock icon
     }
 
     public override CommandResult Invoke()
