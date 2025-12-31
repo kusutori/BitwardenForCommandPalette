@@ -854,9 +854,9 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         return string.Join(" ", nameParts);
     }
 
-    private static ICommandContextItem[] GetContextCommands(BitwardenItem item)
+    private IContextItem[] GetContextCommands(BitwardenItem item)
     {
-        var commands = new List<ICommandContextItem>();
+        var commands = new List<IContextItem>();
 
         switch (item.ItemType)
         {
@@ -892,10 +892,21 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             }
         }
 
+        // Add separator and edit command at the bottom
+        commands.Add(new Separator());
+        commands.Add(new CommandContextItem(new EditItemPage(item, () =>
+        {
+            // Refresh the page after editing
+            _ = LoadItemsAsync();
+        }))
+        {
+            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+        });
+
         return commands.ToArray();
     }
 
-    private static void AddLoginCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    private static void AddLoginCommands(List<IContextItem> commands, BitwardenItem item)
     {
         // NOTE: The first item in MoreCommands becomes the "secondary command" (Ctrl+Enter)
         // Since primaryCommand (Enter) is CopyPassword, we put CopyUsername first here for Ctrl+Enter
@@ -938,7 +949,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
     }
 
-    private static void AddCardCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    private static void AddCardCommands(List<IContextItem> commands, BitwardenItem item)
     {
         // CVV first for Ctrl+Enter (card number is primary command)
         if (!string.IsNullOrEmpty(item.Card?.Code))
@@ -975,7 +986,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
     }
 
-    private static void AddIdentityCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    private static void AddIdentityCommands(List<IContextItem> commands, BitwardenItem item)
     {
         var identity = item.Identity;
         if (identity == null) return;
@@ -1053,7 +1064,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
     }
 
-    private static void AddSecureNoteCommands(List<ICommandContextItem> commands, BitwardenItem item)
+    private static void AddSecureNoteCommands(List<IContextItem> commands, BitwardenItem item)
     {
         if (!string.IsNullOrEmpty(item.Notes))
         {

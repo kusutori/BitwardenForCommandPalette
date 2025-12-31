@@ -600,4 +600,81 @@
   <data name="TotpItemCount" xml:space="preserve">
     <value>{0} 个项目配置了 TOTP</value>
   </data>
+  
+  <!-- Edit Item Page -->
+  <data name="CommandEditItem" xml:space="preserve">
+    <value>编辑项目</value>
+  </data>
+  <data name="EditItemPageTitle" xml:space="preserve">
+    <value>编辑：{0}</value>
+  </data>
+  <data name="EditItemNameLabel" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="EditItemNameRequired" xml:space="preserve">
+    <value>名称是必填项</value>
+  </data>
+  <data name="EditItemUsernameLabel" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="EditItemPasswordLabel" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="EditItemUrlLabel" xml:space="preserve">
+    <value>网址</value>
+  </data>
+  <data name="EditItemTotpLabel" xml:space="preserve">
+    <value>TOTP 密钥</value>
+  </data>
+  <data name="EditItemNotesLabel" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="EditItemCardholderNameLabel" xml:space="preserve">
+    <value>持卡人姓名</value>
+  </data>
+  <data name="EditItemCardNumberLabel" xml:space="preserve">
+    <value>卡号</value>
+  </data>
+  <data name="EditItemExpMonthLabel" xml:space="preserve">
+    <value>到期月份</value>
+  </data>
+  <data name="EditItemExpYearLabel" xml:space="preserve">
+    <value>到期年份</value>
+  </data>
+  <data name="EditItemCvvLabel" xml:space="preserve">
+    <value>安全码</value>
+  </data>
+  <data name="EditItemFirstNameLabel" xml:space="preserve">
+    <value>名</value>
+  </data>
+  <data name="EditItemLastNameLabel" xml:space="preserve">
+    <value>姓</value>
+  </data>
+  <data name="EditItemEmailLabel" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="EditItemPhoneLabel" xml:space="preserve">
+    <value>电话</value>
+  </data>
+  <data name="EditItemCompanyLabel" xml:space="preserve">
+    <value>公司</value>
+  </data>
+  <data name="EditItemAddressLabel" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="EditItemCityLabel" xml:space="preserve">
+    <value>城市</value>
+  </data>
+  <data name="EditItemPostalCodeLabel" xml:space="preserve">
+    <value>邮政编码</value>
+  </data>
+  <data name="EditItemSaveButton" xml:space="preserve">
+    <value>保存更改</value>
+  </data>
+  <data name="EditItemSuccess" xml:space="preserve">
+    <value>项目保存成功</value>
+  </data>
+  <data name="EditItemFailed" xml:space="preserve">
+    <value>保存项目失败</value>
+  </data>
 </root>

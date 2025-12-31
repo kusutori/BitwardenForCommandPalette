@@ -229,4 +229,31 @@ internal static class ResourceHelper
     public static string TotpNoMatchSubtitle => GetString("TotpNoMatchSubtitle");
     public static string TotpCodeLoading => GetString("TotpCodeLoading");
     public static string TotpItemCount => GetString("TotpItemCount");
+
+    // Edit Item Page
+    public static string CommandEditItem => GetString("CommandEditItem");
+    public static string EditItemPageTitle => GetString("EditItemPageTitle");
+    public static string EditItemNameLabel => GetString("EditItemNameLabel");
+    public static string EditItemNameRequired => GetString("EditItemNameRequired");
+    public static string EditItemUsernameLabel => GetString("EditItemUsernameLabel");
+    public static string EditItemPasswordLabel => GetString("EditItemPasswordLabel");
+    public static string EditItemUrlLabel => GetString("EditItemUrlLabel");
+    public static string EditItemTotpLabel => GetString("EditItemTotpLabel");
+    public static string EditItemNotesLabel => GetString("EditItemNotesLabel");
+    public static string EditItemCardholderNameLabel => GetString("EditItemCardholderNameLabel");
+    public static string EditItemCardNumberLabel => GetString("EditItemCardNumberLabel");
+    public static string EditItemExpMonthLabel => GetString("EditItemExpMonthLabel");
+    public static string EditItemExpYearLabel => GetString("EditItemExpYearLabel");
+    public static string EditItemCvvLabel => GetString("EditItemCvvLabel");
+    public static string EditItemFirstNameLabel => GetString("EditItemFirstNameLabel");
+    public static string EditItemLastNameLabel => GetString("EditItemLastNameLabel");
+    public static string EditItemEmailLabel => GetString("EditItemEmailLabel");
+    public static string EditItemPhoneLabel => GetString("EditItemPhoneLabel");
+    public static string EditItemCompanyLabel => GetString("EditItemCompanyLabel");
+    public static string EditItemAddressLabel => GetString("EditItemAddressLabel");
+    public static string EditItemCityLabel => GetString("EditItemCityLabel");
+    public static string EditItemPostalCodeLabel => GetString("EditItemPostalCodeLabel");
+    public static string EditItemSaveButton => GetString("EditItemSaveButton");
+    public static string EditItemSuccess => GetString("EditItemSuccess");
+    public static string EditItemFailed => GetString("EditItemFailed");
 }

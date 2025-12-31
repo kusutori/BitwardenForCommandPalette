@@ -337,4 +337,123 @@ public partial class BitwardenCliService
             return null;
         }
     }
+
+    /// <summary>
+    /// Executes a bw CLI command with stdin input and returns the output
+    /// </summary>
+    private static async Task<(string output, string error, int exitCode)> ExecuteCommandWithInputAsync(string arguments, string input)
+    {
+        var settings = SettingsManager.Instance;
+        var bwPath = settings.BwPath;
+
+        var processInfo = new ProcessStartInfo
+        {
+            FileName = bwPath,
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            StandardOutputEncoding = Encoding.UTF8,
+            StandardErrorEncoding = Encoding.UTF8
+        };
+
+        // Add custom environment variables
+        var customEnvVars = settings.GetEnvironmentVariables();
+        foreach (var kvp in customEnvVars)
+        {
+            processInfo.Environment[kvp.Key] = kvp.Value;
+        }
+
+        using var process = new Process { StartInfo = processInfo };
+
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (e.Data != null)
+                outputBuilder.AppendLine(e.Data);
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (e.Data != null)
+                errorBuilder.AppendLine(e.Data);
+        };
+
+        process.Start();
+
+        // Write input to stdin
+        await process.StandardInput.WriteAsync(input);
+        process.StandardInput.Close();
+
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        await process.WaitForExitAsync();
+
+        return (outputBuilder.ToString().Trim(), errorBuilder.ToString().Trim(), process.ExitCode);
+    }
+
+    /// <summary>
+    /// Edits an existing item in the vault
+    /// </summary>
+    /// <param name="itemId">The item ID to edit</param>
+    /// <param name="updatedFields">JSON object containing the fields to update</param>
+    /// <returns>True if edit was successful</returns>
+    public static async Task<bool> EditItemAsync(string itemId, System.Text.Json.Nodes.JsonObject updatedFields)
+    {
+        var instance = Instance;
+        if (string.IsNullOrEmpty(instance.SessionKey))
+            return false;
+
+        try
+        {
+            // First, get the current item
+            var (getOutput, getError, getExitCode) = await ExecuteCommandAsync($"get item \"{itemId}\" --session \"{instance.SessionKey}\"");
+
+            if (getExitCode != 0)
+            {
+                Debug.WriteLine($"bw get item failed: {getError}");
+                return false;
+            }
+
+            // Parse the current item
+            var currentItem = System.Text.Json.Nodes.JsonNode.Parse(getOutput)?.AsObject();
+            if (currentItem == null)
+            {
+                Debug.WriteLine("Failed to parse current item");
+                return false;
+            }
+
+            // Merge the updated fields into the current item
+            foreach (var field in updatedFields)
+            {
+                currentItem[field.Key] = field.Value?.DeepClone();
+            }
+
+            // Convert to JSON string and encode
+            var updatedJson = currentItem.ToJsonString();
+            var encodedJson = Convert.ToBase64String(Encoding.UTF8.GetBytes(updatedJson));
+
+            // Execute the edit command
+            var (editOutput, editError, editExitCode) = await ExecuteCommandAsync(
+                $"edit item \"{itemId}\" \"{encodedJson}\" --session \"{instance.SessionKey}\"");
+
+            if (editExitCode != 0)
+            {
+                Debug.WriteLine($"bw edit item failed: {editError}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"EditItemAsync failed: {ex.Message}");
+            return false;
+        }
+    }
 }
