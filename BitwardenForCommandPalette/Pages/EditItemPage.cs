@@ -25,7 +25,7 @@ internal sealed partial class EditItemPage : ContentPage
         _editForm = new EditItemForm(item, onSaved);
         Icon = new IconInfo("\uE70F"); // Edit icon
         Name = ResourceHelper.CommandEditItem;
-        Title = string.Format(System.Globalization.CultureInfo.CurrentCulture, ResourceHelper.EditItemPageTitle, item.Name);
+        Title = ResourceHelper.GetString("EditItemPageTitle", item.Name ?? "");
     }
 
     public override IContent[] GetContent() => [_editForm];

@@ -22,6 +22,7 @@ internal sealed class VaultFilter
     public string? FolderId { get; set; }
     public string? FolderName { get; set; }
     public BitwardenItemType? ItemType { get; set; }
+    public bool IsTrash { get; set; }
 }
 
 /// <summary>

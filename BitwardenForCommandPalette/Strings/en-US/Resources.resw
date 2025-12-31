@@ -735,4 +735,45 @@
   <data name="CreateItemFailed" xml:space="preserve">
     <value>Failed to create item</value>
   </data>
+  <!-- Delete Item -->
+  <data name="CommandDeleteItem" xml:space="preserve">
+    <value>Delete Item</value>
+  </data>
+  <data name="DeleteItemSuccess" xml:space="preserve">
+    <value>Item deleted successfully</value>
+  </data>
+  <data name="DeleteItemFailed" xml:space="preserve">
+    <value>Failed to delete item</value>
+  </data>
+  <!-- Trash / Recycle Bin -->
+  <data name="FilterTrash" xml:space="preserve">
+    <value>Trash</value>
+  </data>
+  <data name="FilterTrashSubtitle" xml:space="preserve">
+    <value>Deleted items</value>
+  </data>
+  <data name="TrashEmpty" xml:space="preserve">
+    <value>Trash is empty</value>
+  </data>
+  <data name="TrashEmptySubtitle" xml:space="preserve">
+    <value>Deleted items will appear here</value>
+  </data>
+  <data name="CommandRestoreItem" xml:space="preserve">
+    <value>Restore Item</value>
+  </data>
+  <data name="RestoreItemSuccess" xml:space="preserve">
+    <value>Item restored successfully</value>
+  </data>
+  <data name="RestoreItemFailed" xml:space="preserve">
+    <value>Failed to restore item</value>
+  </data>
+  <data name="CommandPermanentDelete" xml:space="preserve">
+    <value>Delete Permanently</value>
+  </data>
+  <data name="PermanentDeleteSuccess" xml:space="preserve">
+    <value>Item permanently deleted</value>
+  </data>
+  <data name="PermanentDeleteFailed" xml:space="preserve">
+    <value>Failed to permanently delete item</value>
+  </data>
 </root>

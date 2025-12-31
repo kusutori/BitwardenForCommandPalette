@@ -23,6 +23,7 @@ internal sealed partial class VaultFilters : Filters
     public const string CardsFilterId = "cards";
     public const string IdentitiesFilterId = "identities";
     public const string NotesFilterId = "notes";
+    public const string TrashFilterId = "trash";
     public const string NoFolderFilterId = "folder_none";
     public const string FolderFilterIdPrefix = "folder_";
 
@@ -94,6 +95,16 @@ internal sealed partial class VaultFilters : Filters
                 Id = NotesFilterId,
                 Name = ResourceHelper.FilterNotesOnly,
                 Icon = new IconInfo("\U0001F4DD") // 📝
+            },
+
+            new Separator(),
+
+            // Trash
+            new Filter
+            {
+                Id = TrashFilterId,
+                Name = ResourceHelper.FilterTrash,
+                Icon = new IconInfo("\U0001F5D1") // 🗑️
             }
         };
 
@@ -151,6 +162,7 @@ internal sealed partial class VaultFilters : Filters
             CardsFilterId => new VaultFilter { ItemType = BitwardenItemType.Card },
             IdentitiesFilterId => new VaultFilter { ItemType = BitwardenItemType.Identity },
             NotesFilterId => new VaultFilter { ItemType = BitwardenItemType.SecureNote },
+            TrashFilterId => new VaultFilter { IsTrash = true },
             _ => new VaultFilter() // AllItemsFilterId or any other
         };
     }

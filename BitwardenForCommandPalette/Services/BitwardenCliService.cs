@@ -398,6 +398,99 @@ public partial class BitwardenCliService
     }
 
     /// <summary>
+    /// Gets all items from the trash
+    /// </summary>
+    public async Task<BitwardenItem[]?> GetTrashItemsAsync()
+    {
+        if (string.IsNullOrEmpty(SessionKey))
+            return null;
+
+        var (output, error, exitCode) = await ExecuteCommandAsync($"list items --trash --session \"{SessionKey}\"");
+
+        if (exitCode != 0)
+        {
+            Debug.WriteLine($"bw list items --trash failed: {error}");
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize(output, BitwardenJsonContext.Default.BitwardenItemArray);
+        }
+        catch (JsonException ex)
+        {
+            Debug.WriteLine($"Failed to parse trash items: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Restores an item from the trash
+    /// </summary>
+    /// <param name="itemId">The item ID to restore</param>
+    /// <returns>True if restore was successful</returns>
+    public static async Task<bool> RestoreItemAsync(string itemId)
+    {
+        var instance = Instance;
+        if (string.IsNullOrEmpty(instance.SessionKey))
+            return false;
+
+        try
+        {
+            var (output, error, exitCode) = await ExecuteCommandAsync(
+                $"restore item \"{itemId}\" --session \"{instance.SessionKey}\"");
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw restore item failed: {error}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"RestoreItemAsync failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Deletes an item from the vault
+    /// </summary>
+    /// <param name="itemId">The item ID to delete</param>
+    /// <param name="permanent">If true, permanently delete instead of moving to trash</param>
+    /// <returns>True if deletion was successful</returns>
+    public static async Task<bool> DeleteItemAsync(string itemId, bool permanent = false)
+    {
+        var instance = Instance;
+        if (string.IsNullOrEmpty(instance.SessionKey))
+            return false;
+
+        try
+        {
+            var args = permanent
+                ? $"delete item \"{itemId}\" --permanent --session \"{instance.SessionKey}\""
+                : $"delete item \"{itemId}\" --session \"{instance.SessionKey}\"";
+
+            var (output, error, exitCode) = await ExecuteCommandAsync(args);
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw delete item failed: {error}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"DeleteItemAsync failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Creates a new item in the vault
     /// </summary>
     /// <param name="newItem">JSON object containing the item data</param>

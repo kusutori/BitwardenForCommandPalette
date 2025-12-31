@@ -735,4 +735,45 @@
   <data name="CreateItemFailed" xml:space="preserve">
     <value>创建项目失败</value>
   </data>
+  <!-- Delete Item -->
+  <data name="CommandDeleteItem" xml:space="preserve">
+    <value>删除项目</value>
+  </data>
+  <data name="DeleteItemSuccess" xml:space="preserve">
+    <value>项目删除成功</value>
+  </data>
+  <data name="DeleteItemFailed" xml:space="preserve">
+    <value>删除项目失败</value>
+  </data>
+  <!-- Trash / Recycle Bin -->
+  <data name="FilterTrash" xml:space="preserve">
+    <value>回收站</value>
+  </data>
+  <data name="FilterTrashSubtitle" xml:space="preserve">
+    <value>已删除的项目</value>
+  </data>
+  <data name="TrashEmpty" xml:space="preserve">
+    <value>回收站为空</value>
+  </data>
+  <data name="TrashEmptySubtitle" xml:space="preserve">
+    <value>已删除的项目将显示在这里</value>
+  </data>
+  <data name="CommandRestoreItem" xml:space="preserve">
+    <value>还原项目</value>
+  </data>
+  <data name="RestoreItemSuccess" xml:space="preserve">
+    <value>项目还原成功</value>
+  </data>
+  <data name="RestoreItemFailed" xml:space="preserve">
+    <value>还原项目失败</value>
+  </data>
+  <data name="CommandPermanentDelete" xml:space="preserve">
+    <value>永久删除</value>
+  </data>
+  <data name="PermanentDeleteSuccess" xml:space="preserve">
+    <value>项目已永久删除</value>
+  </data>
+  <data name="PermanentDeleteFailed" xml:space="preserve">
+    <value>永久删除项目失败</value>
+  </data>
 </root>

@@ -20,6 +20,7 @@ namespace BitwardenForCommandPalette;
 internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 {
     private BitwardenItem[]? _items;
+    private BitwardenItem[]? _trashItems;
     private bool _isLoading;
     private string? _errorMessage;
     private BitwardenStatus? _lastStatus;
@@ -44,8 +45,18 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
     private void VaultFilters_PropChanged(object sender, IPropChangedEventArgs args)
     {
-        // Refresh items when filter changes
-        RaiseItemsChanged();
+        // Check if trash filter changed
+        var currentFilter = _vaultFilters.ToVaultFilter();
+        if (currentFilter.IsTrash && _trashItems == null)
+        {
+            // Load trash items when switching to trash view
+            _ = LoadTrashItemsAsync();
+        }
+        else
+        {
+            // Refresh items when filter changes
+            RaiseItemsChanged();
+        }
     }
 
     public override void UpdateSearchText(string oldSearch, string newSearch)
@@ -91,13 +102,20 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }
 
         // Show vault items
+        var currentFilter = _vaultFilters.ToVaultFilter();
+
+        // Check if we're in trash view
+        if (currentFilter.IsTrash)
+        {
+            return GetTrashViewItems(currentFilter);
+        }
+
         if (_items == null || _items.Length == 0)
         {
             return [CreateEmptyItem()];
         }
 
         // Filter items based on search text and dropdown filter
-        var currentFilter = _vaultFilters.ToVaultFilter();
         var filteredItems = FilterItems(_items, SearchText, currentFilter);
 
         // Create list with utility commands at the end
@@ -166,7 +184,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             Title = ResourceHelper.TotpPageTitle,
             Subtitle = totpCount > 0
-                ? string.Format(System.Globalization.CultureInfo.CurrentCulture, ResourceHelper.TotpItemCount, totpCount)
+                ? ResourceHelper.GetString("TotpItemCount", totpCount)
                 : ResourceHelper.TotpNoItems,
             Icon = new IconInfo("\uE8D7") // Stopwatch/Timer icon
         };
@@ -236,6 +254,125 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             _isLoading = false;
             RaiseItemsChanged();
         }
+    }
+
+    private async Task LoadTrashItemsAsync()
+    {
+        var service = BitwardenCliService.Instance;
+
+        if (!service.IsUnlocked)
+            return;
+
+        _isLoading = true;
+        RaiseItemsChanged();
+
+        try
+        {
+            _trashItems = await service.GetTrashItemsAsync();
+            _errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ResourceHelper.StatusLoadItemsFailed(ex.Message);
+        }
+        finally
+        {
+            _isLoading = false;
+            RaiseItemsChanged();
+        }
+    }
+
+    private IListItem[] GetTrashViewItems(VaultFilter currentFilter)
+    {
+        if (_trashItems == null || _trashItems.Length == 0)
+        {
+            return [CreateTrashEmptyItem()];
+        }
+
+        // Filter trash items based on search text
+        var filteredItems = FilterTrashItems(_trashItems, SearchText);
+
+        var listItems = new List<IListItem>();
+        listItems.AddRange(filteredItems.Select(CreateTrashListItem));
+
+        return listItems.ToArray();
+    }
+
+    private static IEnumerable<BitwardenItem> FilterTrashItems(BitwardenItem[] items, string? searchText)
+    {
+        IEnumerable<BitwardenItem> result = items;
+
+        // Apply search text filter
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            result = result.Where(item =>
+                (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
+            );
+        }
+
+        // Sort by name
+        result = result.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase);
+
+        return result;
+    }
+
+    private ListItem CreateTrashListItem(BitwardenItem item)
+    {
+        // Primary command for trash items is restore
+        ICommand primaryCommand = new RestoreItemCommand(item, async () =>
+        {
+            await LoadItemsAsync();
+            await LoadTrashItemsAsync();
+        });
+
+        var listItem = new ListItem(primaryCommand)
+        {
+            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
+            Subtitle = GetItemSubtitle(item),
+            Icon = IconService.GetItemIcon(item),
+            MoreCommands = GetTrashContextCommands(item),
+            Details = CreateItemDetails(item)
+        };
+
+        return listItem;
+    }
+
+    private IContextItem[] GetTrashContextCommands(BitwardenItem item)
+    {
+        var commands = new List<IContextItem>
+        {
+            // Restore command
+            new CommandContextItem(new RestoreItemCommand(item, async () =>
+            {
+                await LoadItemsAsync();
+                await LoadTrashItemsAsync();
+            })),
+
+            new Separator(),
+
+            // Permanent delete command (critical/red)
+            new CommandContextItem(new PermanentDeleteCommand(item, async () =>
+            {
+                await LoadTrashItemsAsync();
+            }))
+            {
+                IsCritical = true,
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.Delete)
+            }
+        };
+
+        return commands.ToArray();
+    }
+
+    private static ListItem CreateTrashEmptyItem()
+    {
+        return new ListItem(new NoOpCommand())
+        {
+            Title = ResourceHelper.TrashEmpty,
+            Subtitle = ResourceHelper.TrashEmptySubtitle,
+            Icon = new IconInfo("\uE74D") // Delete/Trash icon
+        };
     }
 
     private static IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText, VaultFilter filter)
@@ -908,7 +1045,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             }
         }
 
-        // Add separator and edit command at the bottom
+        // Add separator, edit command, and delete command at the bottom
         commands.Add(new Separator());
         commands.Add(new CommandContextItem(new EditItemPage(item, () =>
         {
@@ -917,6 +1054,15 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         }))
         {
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+        });
+        commands.Add(new CommandContextItem(new DeleteItemCommand(item, () =>
+        {
+            // Refresh the page after deleting
+            _ = LoadItemsAsync();
+        }))
+        {
+            IsCritical = true,
+            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.Delete)
         });
 
         return commands.ToArray();

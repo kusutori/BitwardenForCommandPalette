@@ -277,4 +277,21 @@ internal static class ResourceHelper
     public static string CreateItemButton => GetString("CreateItemButton");
     public static string CreateItemSuccess => GetString("CreateItemSuccess");
     public static string CreateItemFailed => GetString("CreateItemFailed");
+
+    // Delete Item
+    public static string CommandDeleteItem => GetString("CommandDeleteItem");
+    public static string DeleteItemSuccess => GetString("DeleteItemSuccess");
+    public static string DeleteItemFailed => GetString("DeleteItemFailed");
+
+    // Trash / Recycle Bin
+    public static string FilterTrash => GetString("FilterTrash");
+    public static string FilterTrashSubtitle => GetString("FilterTrashSubtitle");
+    public static string TrashEmpty => GetString("TrashEmpty");
+    public static string TrashEmptySubtitle => GetString("TrashEmptySubtitle");
+    public static string CommandRestoreItem => GetString("CommandRestoreItem");
+    public static string RestoreItemSuccess => GetString("RestoreItemSuccess");
+    public static string RestoreItemFailed => GetString("RestoreItemFailed");
+    public static string CommandPermanentDelete => GetString("CommandPermanentDelete");
+    public static string PermanentDeleteSuccess => GetString("PermanentDeleteSuccess");
+    public static string PermanentDeleteFailed => GetString("PermanentDeleteFailed");
 }

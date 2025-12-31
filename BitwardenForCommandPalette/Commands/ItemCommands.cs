@@ -606,4 +606,103 @@ internal sealed partial class LockVaultCommand : InvokableCommand
     }
 }
 
+/// <summary>
+/// Command to delete an item from the vault
+/// </summary>
+internal sealed partial class DeleteItemCommand : InvokableCommand
+{
+    private readonly BitwardenItem _item;
+    private readonly System.Action? _onDeleted;
+
+    public DeleteItemCommand(BitwardenItem item, System.Action? onDeleted = null)
+    {
+        _item = item;
+        _onDeleted = onDeleted;
+        Name = ResourceHelper.CommandDeleteItem;
+        Icon = new IconInfo("\uE74D"); // Delete icon
+    }
+
+    public override CommandResult Invoke()
+    {
+        if (string.IsNullOrEmpty(_item.Id))
+        {
+            return CommandResult.ShowToast(ResourceHelper.DeleteItemFailed);
+        }
+
+        var success = BitwardenCliService.DeleteItemAsync(_item.Id).GetAwaiter().GetResult();
+        if (success)
+        {
+            _onDeleted?.Invoke();
+            return CommandResult.ShowToast(ResourceHelper.DeleteItemSuccess);
+        }
+        return CommandResult.ShowToast(ResourceHelper.DeleteItemFailed);
+    }
+}
+
+/// <summary>
+/// Command to restore an item from the trash
+/// </summary>
+internal sealed partial class RestoreItemCommand : InvokableCommand
+{
+    private readonly BitwardenItem _item;
+    private readonly System.Action? _onRestored;
+
+    public RestoreItemCommand(BitwardenItem item, System.Action? onRestored = null)
+    {
+        _item = item;
+        _onRestored = onRestored;
+        Name = ResourceHelper.CommandRestoreItem;
+        Icon = new IconInfo("\uE845"); // Undo icon
+    }
+
+    public override CommandResult Invoke()
+    {
+        if (string.IsNullOrEmpty(_item.Id))
+        {
+            return CommandResult.ShowToast(ResourceHelper.RestoreItemFailed);
+        }
+
+        var success = BitwardenCliService.RestoreItemAsync(_item.Id).GetAwaiter().GetResult();
+        if (success)
+        {
+            _onRestored?.Invoke();
+            return CommandResult.ShowToast(ResourceHelper.RestoreItemSuccess);
+        }
+        return CommandResult.ShowToast(ResourceHelper.RestoreItemFailed);
+    }
+}
+
+/// <summary>
+/// Command to permanently delete an item from the vault
+/// </summary>
+internal sealed partial class PermanentDeleteCommand : InvokableCommand
+{
+    private readonly BitwardenItem _item;
+    private readonly System.Action? _onDeleted;
+
+    public PermanentDeleteCommand(BitwardenItem item, System.Action? onDeleted = null)
+    {
+        _item = item;
+        _onDeleted = onDeleted;
+        Name = ResourceHelper.CommandPermanentDelete;
+        Icon = new IconInfo("\uE74D"); // Delete icon
+    }
+
+    public override CommandResult Invoke()
+    {
+        if (string.IsNullOrEmpty(_item.Id))
+        {
+            return CommandResult.ShowToast(ResourceHelper.PermanentDeleteFailed);
+        }
+
+        var success = BitwardenCliService.DeleteItemAsync(_item.Id, permanent: true).GetAwaiter().GetResult();
+        if (success)
+        {
+            _onDeleted?.Invoke();
+            return CommandResult.ShowToast(ResourceHelper.PermanentDeleteSuccess);
+        }
+        return CommandResult.ShowToast(ResourceHelper.PermanentDeleteFailed);
+    }
+}
+
 #endregion
