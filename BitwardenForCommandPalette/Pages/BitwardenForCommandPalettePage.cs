@@ -340,18 +340,12 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
     private IContextItem[] GetTrashContextCommands(BitwardenItem item)
     {
+        // NOTE: The first item in MoreCommands becomes the "secondary command" (Ctrl+Enter)
+        // Since primaryCommand (Enter) is RestoreItemCommand, we put PermanentDeleteCommand first
+        // so Ctrl+Enter triggers permanent delete (dangerous action requires explicit intent)
         var commands = new List<IContextItem>
         {
-            // Restore command
-            new CommandContextItem(new RestoreItemCommand(item, async () =>
-            {
-                await LoadItemsAsync();
-                await LoadTrashItemsAsync();
-            })),
-
-            new Separator(),
-
-            // Permanent delete command (critical/red)
+            // Permanent delete command first (Ctrl+Enter) - critical/red
             new CommandContextItem(new PermanentDeleteCommand(item, async () =>
             {
                 await LoadTrashItemsAsync();
@@ -359,7 +353,16 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             {
                 IsCritical = true,
                 RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.Delete)
-            }
+            },
+
+            new Separator(),
+
+            // Restore command (also available in menu, but Enter key is primary)
+            new CommandContextItem(new RestoreItemCommand(item, async () =>
+            {
+                await LoadItemsAsync();
+                await LoadTrashItemsAsync();
+            }))
         };
 
         return commands.ToArray();
