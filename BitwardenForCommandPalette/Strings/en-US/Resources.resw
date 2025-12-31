@@ -677,4 +677,62 @@
   <data name="EditItemFailed" xml:space="preserve">
     <value>Failed to save item</value>
   </data>
+  <!-- Create Item Page -->
+  <data name="CommandCreateItem" xml:space="preserve">
+    <value>Create Item</value>
+  </data>
+  <data name="CreateItemPageTitle" xml:space="preserve">
+    <value>Create New Item</value>
+  </data>
+  <data name="CreateItemPagePlaceholder" xml:space="preserve">
+    <value>Select item type to create...</value>
+  </data>
+  <data name="CreateItemPageSubtitle" xml:space="preserve">
+    <value>Add a new item to your vault</value>
+  </data>
+  <data name="CreateItemTypeLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="CreateItemTypeLoginSubtitle" xml:space="preserve">
+    <value>Username, password, and website</value>
+  </data>
+  <data name="CreateItemTypeCard" xml:space="preserve">
+    <value>Card</value>
+  </data>
+  <data name="CreateItemTypeCardSubtitle" xml:space="preserve">
+    <value>Credit or debit card information</value>
+  </data>
+  <data name="CreateItemTypeIdentity" xml:space="preserve">
+    <value>Identity</value>
+  </data>
+  <data name="CreateItemTypeIdentitySubtitle" xml:space="preserve">
+    <value>Personal information and address</value>
+  </data>
+  <data name="CreateItemTypeNote" xml:space="preserve">
+    <value>Secure Note</value>
+  </data>
+  <data name="CreateItemTypeNoteSubtitle" xml:space="preserve">
+    <value>Private notes and text</value>
+  </data>
+  <data name="CreateItemTitleLogin" xml:space="preserve">
+    <value>Create Login</value>
+  </data>
+  <data name="CreateItemTitleCard" xml:space="preserve">
+    <value>Create Card</value>
+  </data>
+  <data name="CreateItemTitleIdentity" xml:space="preserve">
+    <value>Create Identity</value>
+  </data>
+  <data name="CreateItemTitleNote" xml:space="preserve">
+    <value>Create Secure Note</value>
+  </data>
+  <data name="CreateItemButton" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateItemSuccess" xml:space="preserve">
+    <value>Item created successfully</value>
+  </data>
+  <data name="CreateItemFailed" xml:space="preserve">
+    <value>Failed to create item</value>
+  </data>
 </root>

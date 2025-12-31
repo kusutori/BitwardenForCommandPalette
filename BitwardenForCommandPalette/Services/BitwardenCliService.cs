@@ -398,6 +398,42 @@ public partial class BitwardenCliService
     }
 
     /// <summary>
+    /// Creates a new item in the vault
+    /// </summary>
+    /// <param name="newItem">JSON object containing the item data</param>
+    /// <returns>True if creation was successful</returns>
+    public static async Task<bool> CreateItemAsync(System.Text.Json.Nodes.JsonObject newItem)
+    {
+        var instance = Instance;
+        if (string.IsNullOrEmpty(instance.SessionKey))
+            return false;
+
+        try
+        {
+            // Convert to JSON string and encode
+            var itemJson = newItem.ToJsonString();
+            var encodedJson = Convert.ToBase64String(Encoding.UTF8.GetBytes(itemJson));
+
+            // Execute the create command
+            var (output, error, exitCode) = await ExecuteCommandAsync(
+                $"create item \"{encodedJson}\" --session \"{instance.SessionKey}\"");
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw create item failed: {error}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"CreateItemAsync failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Edits an existing item in the vault
     /// </summary>
     /// <param name="itemId">The item ID to edit</param>

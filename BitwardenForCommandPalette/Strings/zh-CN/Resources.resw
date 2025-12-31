@@ -677,4 +677,62 @@
   <data name="EditItemFailed" xml:space="preserve">
     <value>保存项目失败</value>
   </data>
+  <!-- Create Item Page -->
+  <data name="CommandCreateItem" xml:space="preserve">
+    <value>创建项目</value>
+  </data>
+  <data name="CreateItemPageTitle" xml:space="preserve">
+    <value>创建新项目</value>
+  </data>
+  <data name="CreateItemPagePlaceholder" xml:space="preserve">
+    <value>选择要创建的项目类型...</value>
+  </data>
+  <data name="CreateItemPageSubtitle" xml:space="preserve">
+    <value>向您的保险库添加新项目</value>
+  </data>
+  <data name="CreateItemTypeLogin" xml:space="preserve">
+    <value>登录信息</value>
+  </data>
+  <data name="CreateItemTypeLoginSubtitle" xml:space="preserve">
+    <value>用户名、密码和网站</value>
+  </data>
+  <data name="CreateItemTypeCard" xml:space="preserve">
+    <value>支付卡</value>
+  </data>
+  <data name="CreateItemTypeCardSubtitle" xml:space="preserve">
+    <value>信用卡或借记卡信息</value>
+  </data>
+  <data name="CreateItemTypeIdentity" xml:space="preserve">
+    <value>身份信息</value>
+  </data>
+  <data name="CreateItemTypeIdentitySubtitle" xml:space="preserve">
+    <value>个人信息和地址</value>
+  </data>
+  <data name="CreateItemTypeNote" xml:space="preserve">
+    <value>安全笔记</value>
+  </data>
+  <data name="CreateItemTypeNoteSubtitle" xml:space="preserve">
+    <value>私人笔记和文本</value>
+  </data>
+  <data name="CreateItemTitleLogin" xml:space="preserve">
+    <value>创建登录信息</value>
+  </data>
+  <data name="CreateItemTitleCard" xml:space="preserve">
+    <value>创建支付卡</value>
+  </data>
+  <data name="CreateItemTitleIdentity" xml:space="preserve">
+    <value>创建身份信息</value>
+  </data>
+  <data name="CreateItemTitleNote" xml:space="preserve">
+    <value>创建安全笔记</value>
+  </data>
+  <data name="CreateItemButton" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="CreateItemSuccess" xml:space="preserve">
+    <value>项目创建成功</value>
+  </data>
+  <data name="CreateItemFailed" xml:space="preserve">
+    <value>创建项目失败</value>
+  </data>
 </root>

@@ -256,4 +256,25 @@ internal static class ResourceHelper
     public static string EditItemSaveButton => GetString("EditItemSaveButton");
     public static string EditItemSuccess => GetString("EditItemSuccess");
     public static string EditItemFailed => GetString("EditItemFailed");
+
+    // Create Item Page
+    public static string CommandCreateItem => GetString("CommandCreateItem");
+    public static string CreateItemPageTitle => GetString("CreateItemPageTitle");
+    public static string CreateItemPagePlaceholder => GetString("CreateItemPagePlaceholder");
+    public static string CreateItemPageSubtitle => GetString("CreateItemPageSubtitle");
+    public static string CreateItemTypeLogin => GetString("CreateItemTypeLogin");
+    public static string CreateItemTypeLoginSubtitle => GetString("CreateItemTypeLoginSubtitle");
+    public static string CreateItemTypeCard => GetString("CreateItemTypeCard");
+    public static string CreateItemTypeCardSubtitle => GetString("CreateItemTypeCardSubtitle");
+    public static string CreateItemTypeIdentity => GetString("CreateItemTypeIdentity");
+    public static string CreateItemTypeIdentitySubtitle => GetString("CreateItemTypeIdentitySubtitle");
+    public static string CreateItemTypeNote => GetString("CreateItemTypeNote");
+    public static string CreateItemTypeNoteSubtitle => GetString("CreateItemTypeNoteSubtitle");
+    public static string CreateItemTitleLogin => GetString("CreateItemTitleLogin");
+    public static string CreateItemTitleCard => GetString("CreateItemTitleCard");
+    public static string CreateItemTitleIdentity => GetString("CreateItemTitleIdentity");
+    public static string CreateItemTitleNote => GetString("CreateItemTitleNote");
+    public static string CreateItemButton => GetString("CreateItemButton");
+    public static string CreateItemSuccess => GetString("CreateItemSuccess");
+    public static string CreateItemFailed => GetString("CreateItemFailed");
 }

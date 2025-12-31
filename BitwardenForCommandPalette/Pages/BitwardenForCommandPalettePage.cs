@@ -116,6 +116,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             listItems.Add(CreateSyncItem());
             listItems.Add(CreateLockItem());
+            listItems.Add(CreateNewItem());
         }
 
         return listItems.ToArray();
@@ -138,6 +139,21 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             Title = ResourceHelper.MainLockButton,
             Subtitle = ResourceHelper.MainLockSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
+        };
+    }
+
+    private ListItem CreateNewItem()
+    {
+        var createPage = new CreateItemTypeSelectorPage(async () =>
+        {
+            // Refresh the vault after creating a new item
+            await LoadItemsAsync();
+        });
+        return new ListItem(createPage)
+        {
+            Title = ResourceHelper.CommandCreateItem,
+            Subtitle = ResourceHelper.CreateItemPageSubtitle,
+            Icon = new IconInfo("\uE710") // Add icon
         };
     }
 
