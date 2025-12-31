@@ -527,6 +527,45 @@ public partial class BitwardenCliService
     }
 
     /// <summary>
+    /// Creates a new folder in the vault
+    /// </summary>
+    /// <param name="folderName">The name of the folder to create</param>
+    /// <returns>True if creation was successful</returns>
+    public static async Task<bool> CreateFolderAsync(string folderName)
+    {
+        var instance = Instance;
+        if (string.IsNullOrEmpty(instance.SessionKey))
+            return false;
+
+        try
+        {
+            // Build the folder JSON
+            var folderJson = new System.Text.Json.Nodes.JsonObject
+            {
+                ["name"] = folderName
+            }.ToJsonString();
+            var encodedJson = Convert.ToBase64String(Encoding.UTF8.GetBytes(folderJson));
+
+            // Execute the create folder command
+            var (output, error, exitCode) = await ExecuteCommandAsync(
+                $"create folder \"{encodedJson}\" --session \"{instance.SessionKey}\"");
+
+            if (exitCode != 0)
+            {
+                Debug.WriteLine($"bw create folder failed: {error}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"CreateFolderAsync failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Edits an existing item in the vault
     /// </summary>
     /// <param name="itemId">The item ID to edit</param>

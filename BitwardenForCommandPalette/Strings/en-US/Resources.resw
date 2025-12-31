@@ -735,6 +735,31 @@
   <data name="CreateItemFailed" xml:space="preserve">
     <value>Failed to create item</value>
   </data>
+  <data name="CreateItemFolderLabel" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="CreateItemNoFolder" xml:space="preserve">
+    <value>No Folder</value>
+  </data>
+  <!-- Create Folder -->
+  <data name="CreateFolderTitle" xml:space="preserve">
+    <value>Create Folder</value>
+  </data>
+  <data name="CreateFolderSubtitle" xml:space="preserve">
+    <value>Create a new folder in your vault</value>
+  </data>
+  <data name="CreateFolderNameLabel" xml:space="preserve">
+    <value>Folder Name</value>
+  </data>
+  <data name="CreateFolderNameRequired" xml:space="preserve">
+    <value>Folder name is required</value>
+  </data>
+  <data name="CreateFolderSuccess" xml:space="preserve">
+    <value>Folder created successfully</value>
+  </data>
+  <data name="CreateFolderFailed" xml:space="preserve">
+    <value>Failed to create folder</value>
+  </data>
   <!-- Delete Item -->
   <data name="CommandDeleteItem" xml:space="preserve">
     <value>Delete Item</value>

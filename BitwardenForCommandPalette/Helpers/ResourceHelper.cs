@@ -277,6 +277,16 @@ internal static class ResourceHelper
     public static string CreateItemButton => GetString("CreateItemButton");
     public static string CreateItemSuccess => GetString("CreateItemSuccess");
     public static string CreateItemFailed => GetString("CreateItemFailed");
+    public static string CreateItemFolderLabel => GetString("CreateItemFolderLabel");
+    public static string CreateItemNoFolder => GetString("CreateItemNoFolder");
+
+    // Create Folder
+    public static string CreateFolderTitle => GetString("CreateFolderTitle");
+    public static string CreateFolderSubtitle => GetString("CreateFolderSubtitle");
+    public static string CreateFolderNameLabel => GetString("CreateFolderNameLabel");
+    public static string CreateFolderNameRequired => GetString("CreateFolderNameRequired");
+    public static string CreateFolderSuccess => GetString("CreateFolderSuccess");
+    public static string CreateFolderFailed => GetString("CreateFolderFailed");
 
     // Delete Item
     public static string CommandDeleteItem => GetString("CommandDeleteItem");

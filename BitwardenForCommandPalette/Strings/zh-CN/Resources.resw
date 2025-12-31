@@ -735,6 +735,31 @@
   <data name="CreateItemFailed" xml:space="preserve">
     <value>创建项目失败</value>
   </data>
+  <data name="CreateItemFolderLabel" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="CreateItemNoFolder" xml:space="preserve">
+    <value>无文件夹</value>
+  </data>
+  <!-- Create Folder -->
+  <data name="CreateFolderTitle" xml:space="preserve">
+    <value>创建文件夹</value>
+  </data>
+  <data name="CreateFolderSubtitle" xml:space="preserve">
+    <value>在密码库中创建新文件夹</value>
+  </data>
+  <data name="CreateFolderNameLabel" xml:space="preserve">
+    <value>文件夹名称</value>
+  </data>
+  <data name="CreateFolderNameRequired" xml:space="preserve">
+    <value>文件夹名称不能为空</value>
+  </data>
+  <data name="CreateFolderSuccess" xml:space="preserve">
+    <value>文件夹创建成功</value>
+  </data>
+  <data name="CreateFolderFailed" xml:space="preserve">
+    <value>创建文件夹失败</value>
+  </data>
   <!-- Delete Item -->
   <data name="CommandDeleteItem" xml:space="preserve">
     <value>删除项目</value>

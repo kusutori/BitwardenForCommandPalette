@@ -19,6 +19,7 @@ namespace BitwardenForCommandPalette.Pages;
 internal sealed partial class CreateItemTypeSelectorPage : ListPage
 {
     private readonly Action? _onCreated;
+    private BitwardenFolder[]? _folders;
 
     public CreateItemTypeSelectorPage(Action? onCreated = null)
     {
@@ -31,31 +32,41 @@ internal sealed partial class CreateItemTypeSelectorPage : ListPage
 
     public override IListItem[] GetItems()
     {
+        // Load folders for create item pages
+        _folders = BitwardenCliService.Instance.GetFoldersAsync().Result;
+
         return
         [
-            new ListItem(new CreateItemPage(BitwardenItemType.Login, _onCreated))
+            new ListItem(new CreateItemPage(BitwardenItemType.Login, _folders, _onCreated))
             {
                 Title = ResourceHelper.CreateItemTypeLogin,
                 Subtitle = ResourceHelper.CreateItemTypeLoginSubtitle,
                 Icon = new IconInfo("\uE77B") // Contact icon
             },
-            new ListItem(new CreateItemPage(BitwardenItemType.Card, _onCreated))
+            new ListItem(new CreateItemPage(BitwardenItemType.Card, _folders, _onCreated))
             {
                 Title = ResourceHelper.CreateItemTypeCard,
                 Subtitle = ResourceHelper.CreateItemTypeCardSubtitle,
                 Icon = new IconInfo("\uE8C7") // Payment icon
             },
-            new ListItem(new CreateItemPage(BitwardenItemType.Identity, _onCreated))
+            new ListItem(new CreateItemPage(BitwardenItemType.Identity, _folders, _onCreated))
             {
                 Title = ResourceHelper.CreateItemTypeIdentity,
                 Subtitle = ResourceHelper.CreateItemTypeIdentitySubtitle,
                 Icon = new IconInfo("\uE779") // Contact2 icon
             },
-            new ListItem(new CreateItemPage(BitwardenItemType.SecureNote, _onCreated))
+            new ListItem(new CreateItemPage(BitwardenItemType.SecureNote, _folders, _onCreated))
             {
                 Title = ResourceHelper.CreateItemTypeNote,
                 Subtitle = ResourceHelper.CreateItemTypeNoteSubtitle,
                 Icon = new IconInfo("\uE8F1") // Document icon
+            },
+            // Folder creation
+            new ListItem(new CreateFolderPage(_onCreated))
+            {
+                Title = ResourceHelper.CreateFolderTitle,
+                Subtitle = ResourceHelper.CreateFolderSubtitle,
+                Icon = new IconInfo("\uE8B7") // Folder icon
             },
             // Separator for generators
             new ListItem(new PasswordGeneratorPage())
@@ -81,9 +92,9 @@ internal sealed partial class CreateItemPage : ContentPage
 {
     private readonly CreateItemForm _createForm;
 
-    public CreateItemPage(BitwardenItemType itemType, Action? onCreated = null)
+    public CreateItemPage(BitwardenItemType itemType, BitwardenFolder[]? folders, Action? onCreated = null)
     {
-        _createForm = new CreateItemForm(itemType, onCreated);
+        _createForm = new CreateItemForm(itemType, folders, onCreated);
         Icon = new IconInfo("\uE710"); // Add icon
         Name = GetNameForItemType(itemType);
         Title = GetTitleForItemType(itemType);
@@ -122,33 +133,72 @@ internal sealed partial class CreateItemPage : ContentPage
 internal sealed partial class CreateItemForm : FormContent
 {
     private readonly BitwardenItemType _itemType;
+    private readonly BitwardenFolder[]? _folders;
     private readonly Action? _onCreated;
 
-    public CreateItemForm(BitwardenItemType itemType, Action? onCreated = null)
+    public CreateItemForm(BitwardenItemType itemType, BitwardenFolder[]? folders, Action? onCreated = null)
     {
         _itemType = itemType;
+        _folders = folders;
         _onCreated = onCreated;
 
         // Set the template based on item type
-        TemplateJson = GetTemplateForItemType(itemType);
+        TemplateJson = GetTemplateForItemType(itemType, folders);
         DataJson = GetDataForNewItem(itemType);
     }
 
-    private static string GetTemplateForItemType(BitwardenItemType itemType)
+    private static string GetTemplateForItemType(BitwardenItemType itemType, BitwardenFolder[]? folders)
     {
         return itemType switch
         {
-            BitwardenItemType.Login => GetLoginTemplate(),
-            BitwardenItemType.Card => GetCardTemplate(),
-            BitwardenItemType.Identity => GetIdentityTemplate(),
-            BitwardenItemType.SecureNote => GetSecureNoteTemplate(),
-            _ => GetLoginTemplate()
+            BitwardenItemType.Login => GetLoginTemplate(folders),
+            BitwardenItemType.Card => GetCardTemplate(folders),
+            BitwardenItemType.Identity => GetIdentityTemplate(folders),
+            BitwardenItemType.SecureNote => GetSecureNoteTemplate(folders),
+            _ => GetLoginTemplate(folders)
         };
     }
 
-    private static string GetLoginTemplate()
+    private static string GetFolderChoiceSetJson(BitwardenFolder[]? folders)
     {
-        return """
+        // Build the folder Input.ChoiceSet
+        var choices = new JsonArray();
+
+        // Add "No Folder" option first - use JsonNode.Parse to avoid AOT warnings
+        var noFolderTitle = ResourceHelper.CreateItemNoFolder.Replace("\"", "\\\"");
+        choices.Add(JsonNode.Parse($"{{\"title\":\"{noFolderTitle}\",\"value\":\"\"}}"));
+
+        // Add all folders
+        if (folders != null)
+        {
+            foreach (var folder in folders)
+            {
+                if (!string.IsNullOrEmpty(folder.Id) && !string.IsNullOrEmpty(folder.Name))
+                {
+                    // Escape special characters in folder name
+                    var escapedName = folder.Name.Replace("\\", "\\\\").Replace("\"", "\\\"");
+                    choices.Add(JsonNode.Parse($"{{\"title\":\"{escapedName}\",\"value\":\"{folder.Id}\"}}"));
+                }
+            }
+        }
+
+        var choiceSet = new JsonObject
+        {
+            ["type"] = "Input.ChoiceSet",
+            ["id"] = "folderId",
+            ["label"] = "${folderLabel}",
+            ["value"] = "",
+            ["style"] = "compact",
+            ["choices"] = choices
+        };
+
+        return choiceSet.ToJsonString();
+    }
+
+    private static string GetLoginTemplate(BitwardenFolder[]? folders)
+    {
+        var folderChoiceSet = GetFolderChoiceSetJson(folders);
+        return $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "type": "AdaptiveCard",
@@ -169,6 +219,7 @@ internal sealed partial class CreateItemForm : FormContent
             "isRequired": true,
             "errorMessage": "${nameRequired}"
         },
+        {{folderChoiceSet}},
         {
             "type": "Input.Text",
             "id": "username",
@@ -217,9 +268,10 @@ internal sealed partial class CreateItemForm : FormContent
 """;
     }
 
-    private static string GetCardTemplate()
+    private static string GetCardTemplate(BitwardenFolder[]? folders)
     {
-        return """
+        var folderChoiceSet = GetFolderChoiceSetJson(folders);
+        return $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "type": "AdaptiveCard",
@@ -240,6 +292,7 @@ internal sealed partial class CreateItemForm : FormContent
             "isRequired": true,
             "errorMessage": "${nameRequired}"
         },
+        {{folderChoiceSet}},
         {
             "type": "Input.Text",
             "id": "cardholderName",
@@ -312,9 +365,10 @@ internal sealed partial class CreateItemForm : FormContent
 """;
     }
 
-    private static string GetIdentityTemplate()
+    private static string GetIdentityTemplate(BitwardenFolder[]? folders)
     {
-        return """
+        var folderChoiceSet = GetFolderChoiceSetJson(folders);
+        return $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "type": "AdaptiveCard",
@@ -335,6 +389,7 @@ internal sealed partial class CreateItemForm : FormContent
             "isRequired": true,
             "errorMessage": "${nameRequired}"
         },
+        {{folderChoiceSet}},
         {
             "type": "ColumnSet",
             "columns": [
@@ -441,9 +496,10 @@ internal sealed partial class CreateItemForm : FormContent
 """;
     }
 
-    private static string GetSecureNoteTemplate()
+    private static string GetSecureNoteTemplate(BitwardenFolder[]? folders)
     {
-        return """
+        var folderChoiceSet = GetFolderChoiceSetJson(folders);
+        return $$"""
 {
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "type": "AdaptiveCard",
@@ -464,6 +520,7 @@ internal sealed partial class CreateItemForm : FormContent
             "isRequired": true,
             "errorMessage": "${nameRequired}"
         },
+        {{folderChoiceSet}},
         {
             "type": "Input.Text",
             "id": "notes",
@@ -494,6 +551,7 @@ internal sealed partial class CreateItemForm : FormContent
             ["nameLabel"] = ResourceHelper.EditItemNameLabel,
             ["name"] = "",
             ["nameRequired"] = ResourceHelper.EditItemNameRequired,
+            ["folderLabel"] = ResourceHelper.CreateItemFolderLabel,
             ["notesLabel"] = ResourceHelper.EditItemNotesLabel,
             ["notes"] = "",
             ["createButton"] = ResourceHelper.CreateItemButton
@@ -586,13 +644,16 @@ internal sealed partial class CreateItemForm : FormContent
                 return CommandResult.ShowToast(ResourceHelper.EditItemNameRequired);
             }
 
+            // Get the folder ID (optional)
+            var folderId = formData["folderId"]?.GetValue<string>();
+
             // Build the create payload based on item type
             var createResult = _itemType switch
             {
-                BitwardenItemType.Login => CreateLoginItem(formData, name),
-                BitwardenItemType.Card => CreateCardItem(formData, name),
-                BitwardenItemType.Identity => CreateIdentityItem(formData, name),
-                BitwardenItemType.SecureNote => CreateSecureNoteItem(formData, name),
+                BitwardenItemType.Login => CreateLoginItem(formData, name, folderId),
+                BitwardenItemType.Card => CreateCardItem(formData, name, folderId),
+                BitwardenItemType.Identity => CreateIdentityItem(formData, name, folderId),
+                BitwardenItemType.SecureNote => CreateSecureNoteItem(formData, name, folderId),
                 _ => Task.FromResult(false)
             };
 
@@ -612,7 +673,7 @@ internal sealed partial class CreateItemForm : FormContent
         }
     }
 
-    private static Task<bool> CreateLoginItem(JsonObject formData, string name)
+    private static Task<bool> CreateLoginItem(JsonObject formData, string name, string? folderId)
     {
         var username = formData["username"]?.GetValue<string>() ?? "";
         var password = formData["password"]?.GetValue<string>() ?? "";
@@ -631,6 +692,7 @@ internal sealed partial class CreateItemForm : FormContent
         {
             ["type"] = (int)BitwardenItemType.Login,
             ["name"] = name,
+            ["folderId"] = string.IsNullOrEmpty(folderId) ? null : folderId,
             ["notes"] = string.IsNullOrEmpty(notes) ? null : notes,
             ["login"] = new JsonObject
             {
@@ -644,7 +706,7 @@ internal sealed partial class CreateItemForm : FormContent
         return BitwardenCliService.CreateItemAsync(newItem);
     }
 
-    private static Task<bool> CreateCardItem(JsonObject formData, string name)
+    private static Task<bool> CreateCardItem(JsonObject formData, string name, string? folderId)
     {
         var cardholderName = formData["cardholderName"]?.GetValue<string>() ?? "";
         var number = formData["number"]?.GetValue<string>() ?? "";
@@ -657,6 +719,7 @@ internal sealed partial class CreateItemForm : FormContent
         {
             ["type"] = (int)BitwardenItemType.Card,
             ["name"] = name,
+            ["folderId"] = string.IsNullOrEmpty(folderId) ? null : folderId,
             ["notes"] = string.IsNullOrEmpty(notes) ? null : notes,
             ["card"] = new JsonObject
             {
@@ -671,7 +734,7 @@ internal sealed partial class CreateItemForm : FormContent
         return BitwardenCliService.CreateItemAsync(newItem);
     }
 
-    private static Task<bool> CreateIdentityItem(JsonObject formData, string name)
+    private static Task<bool> CreateIdentityItem(JsonObject formData, string name, string? folderId)
     {
         var firstName = formData["firstName"]?.GetValue<string>() ?? "";
         var lastName = formData["lastName"]?.GetValue<string>() ?? "";
@@ -687,6 +750,7 @@ internal sealed partial class CreateItemForm : FormContent
         {
             ["type"] = (int)BitwardenItemType.Identity,
             ["name"] = name,
+            ["folderId"] = string.IsNullOrEmpty(folderId) ? null : folderId,
             ["notes"] = string.IsNullOrEmpty(notes) ? null : notes,
             ["identity"] = new JsonObject
             {
@@ -704,7 +768,7 @@ internal sealed partial class CreateItemForm : FormContent
         return BitwardenCliService.CreateItemAsync(newItem);
     }
 
-    private static Task<bool> CreateSecureNoteItem(JsonObject formData, string name)
+    private static Task<bool> CreateSecureNoteItem(JsonObject formData, string name, string? folderId)
     {
         var notes = formData["notes"]?.GetValue<string>() ?? "";
 
@@ -712,6 +776,7 @@ internal sealed partial class CreateItemForm : FormContent
         {
             ["type"] = (int)BitwardenItemType.SecureNote,
             ["name"] = name,
+            ["folderId"] = string.IsNullOrEmpty(folderId) ? null : folderId,
             ["notes"] = string.IsNullOrEmpty(notes) ? null : notes,
             ["secureNote"] = new JsonObject
             {
@@ -720,5 +785,135 @@ internal sealed partial class CreateItemForm : FormContent
         };
 
         return BitwardenCliService.CreateItemAsync(newItem);
+    }
+}
+
+/// <summary>
+/// Page for creating a new folder using Adaptive Cards
+/// </summary>
+internal sealed partial class CreateFolderPage : ContentPage
+{
+    private readonly CreateFolderForm _createForm;
+
+    public CreateFolderPage(Action? onCreated = null)
+    {
+        _createForm = new CreateFolderForm(onCreated);
+        Icon = new IconInfo("\uE8B7"); // Folder icon
+        Name = ResourceHelper.CreateFolderTitle;
+        Title = ResourceHelper.CreateFolderTitle;
+    }
+
+    public override IContent[] GetContent() => [_createForm];
+}
+
+/// <summary>
+/// Form content for creating a new folder
+/// </summary>
+internal sealed partial class CreateFolderForm : FormContent
+{
+    private readonly Action? _onCreated;
+
+    public CreateFolderForm(Action? onCreated = null)
+    {
+        _onCreated = onCreated;
+
+        TemplateJson = GetFolderTemplate();
+        DataJson = GetFolderData();
+    }
+
+    private static string GetFolderTemplate()
+    {
+        return """
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${title}",
+            "size": "large",
+            "weight": "bolder",
+            "spacing": "medium"
+        },
+        {
+            "type": "Input.Text",
+            "id": "folderName",
+            "label": "${folderNameLabel}",
+            "value": "",
+            "isRequired": true,
+            "errorMessage": "${folderNameRequired}"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "${createButton}",
+            "style": "positive",
+            "data": {
+                "action": "create"
+            }
+        }
+    ]
+}
+""";
+    }
+
+    private static string GetFolderData()
+    {
+        var data = new JsonObject
+        {
+            ["title"] = ResourceHelper.CreateFolderTitle,
+            ["folderNameLabel"] = ResourceHelper.CreateFolderNameLabel,
+            ["folderNameRequired"] = ResourceHelper.CreateFolderNameRequired,
+            ["createButton"] = ResourceHelper.CreateItemButton
+        };
+
+        return data.ToJsonString();
+    }
+
+    public override ICommandResult SubmitForm(string payload, string data)
+    {
+        try
+        {
+            var formData = JsonNode.Parse(payload)?.AsObject();
+            if (formData == null)
+            {
+                return CommandResult.GoBack();
+            }
+
+            // Parse action data
+            var actionData = JsonNode.Parse(data)?.AsObject();
+            var action = actionData?["action"]?.GetValue<string>();
+
+            if (action != "create")
+            {
+                return CommandResult.GoBack();
+            }
+
+            // Get the folder name (required)
+            var folderName = formData["folderName"]?.GetValue<string>();
+            if (string.IsNullOrWhiteSpace(folderName))
+            {
+                return CommandResult.ShowToast(ResourceHelper.CreateFolderNameRequired);
+            }
+
+            // Create the folder
+            var createResult = BitwardenCliService.CreateFolderAsync(folderName).Result;
+
+            if (createResult)
+            {
+                _onCreated?.Invoke();
+                return CommandResult.ShowToast(ResourceHelper.CreateFolderSuccess);
+            }
+            else
+            {
+                return CommandResult.ShowToast(ResourceHelper.CreateFolderFailed);
+            }
+        }
+        catch (Exception ex)
+        {
+            return CommandResult.ShowToast($"{ResourceHelper.CreateFolderFailed}: {ex.Message}");
+        }
     }
 }
