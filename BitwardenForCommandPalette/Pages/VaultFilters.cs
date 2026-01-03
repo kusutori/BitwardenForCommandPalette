@@ -12,6 +12,19 @@ using Microsoft.CommandPalette.Extensions.Toolkit;
 namespace BitwardenForCommandPalette.Pages;
 
 /// <summary>
+/// Filter options for the vault
+/// </summary>
+internal sealed class VaultFilter
+{
+    public bool FavoritesOnly { get; set; }
+    public string? FolderId { get; set; }
+    public string? FolderName { get; set; }
+    public BitwardenItemType? ItemType { get; set; }
+    public bool IsTrash { get; set; }
+}
+
+
+/// <summary>
 /// Vault filters that appear in the search bar dropdown
 /// </summary>
 internal sealed partial class VaultFilters : Filters
