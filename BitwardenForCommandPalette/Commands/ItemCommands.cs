@@ -578,13 +578,30 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
 
     public override CommandResult Invoke()
     {
-        var success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
+        bool success;
+        try
+        {
+            success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            success = false;
+        }
+
         if (success)
         {
-            _onSynced?.Invoke();
-            return CommandResult.ShowToast(ResourceHelper.ToastVaultSynced);
+            try
+            {
+                _onSynced?.Invoke();
+            }
+            catch
+            {
+                // Ignore callback errors
+            }
         }
-        return CommandResult.ShowToast(ResourceHelper.ToastVaultSyncFailed);
+
+        // Keep the page open - the page will refresh on next interaction
+        return CommandResult.KeepOpen();
     }
 }
 
@@ -593,18 +610,50 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
 /// </summary>
 internal sealed partial class LockVaultCommand : InvokableCommand
 {
-    public LockVaultCommand()
+    private readonly System.Action? _onStarted;
+    private readonly System.Action? _onCompleted;
+
+    public LockVaultCommand(System.Action? onStarted = null, System.Action? onCompleted = null)
     {
+        _onStarted = onStarted;
+        _onCompleted = onCompleted;
         Name = ResourceHelper.CommandLockVault;
         Icon = new IconInfo("\uE72E"); // Lock icon
     }
 
     public override CommandResult Invoke()
     {
-        var success = BitwardenCliService.Instance.LockAsync().GetAwaiter().GetResult();
+        try
+        {
+            _onStarted?.Invoke();
+        }
+        catch
+        {
+            // Ignore errors when setting loading state
+        }
+
+        bool success;
+        try
+        {
+            success = BitwardenCliService.Instance.LockAsync().GetAwaiter().GetResult();
+        }
+        catch (System.Exception)
+        {
+            success = false;
+        }
+
+        try
+        {
+            _onCompleted?.Invoke();
+        }
+        catch
+        {
+            // Ignore errors when clearing loading state
+        }
+
         if (success)
         {
-            return CommandResult.ShowToast(ResourceHelper.ToastVaultLocked);
+            return CommandResult.GoHome();
         }
         return CommandResult.ShowToast(ResourceHelper.ToastVaultLockFailed);
     }

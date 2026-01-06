@@ -1066,7 +1066,9 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             Icon = new IconInfo("\uE895"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.R)
         });
-        commands.Add(new CommandContextItem(new LockVaultCommand())
+        commands.Add(new CommandContextItem(new LockVaultCommand(
+            onStarted: () => IsLoading = true,
+            onCompleted: () => IsLoading = false))
         {
             Icon = new IconInfo("\uE72E"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.L)
