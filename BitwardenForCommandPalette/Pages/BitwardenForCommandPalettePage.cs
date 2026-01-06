@@ -1063,11 +1063,13 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             _ = RefreshStatusAndTitleAsync();
         }))
         {
-            Icon = new IconInfo("\uE895")
+            Icon = new IconInfo("\uE895"),
+            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.R)
         });
         commands.Add(new CommandContextItem(new LockVaultCommand())
         {
-            Icon = new IconInfo("\uE72E")
+            Icon = new IconInfo("\uE72E"),
+            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.L)
         });
         commands.Add(new CommandContextItem(new CreateItemTypeSelectorPage(() =>
         {
@@ -1075,7 +1077,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             _ = LoadItemsAsync();
         }))
         {
-            Icon = new IconInfo("\uE710")
+            Icon = new IconInfo("\uE710"),
+            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.A)
         });
 
         return commands.ToArray();
@@ -1139,7 +1142,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             commands.Add(new CommandContextItem(new CopyCardExpirationCommand(item))
             {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.X)
             });
         }
 
@@ -1171,7 +1174,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             commands.Add(new CommandContextItem(new CopyEmailCommand(item))
             {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
+                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.M)
             });
         }
 
