@@ -145,6 +145,7 @@ internal static class ResourceHelper
     // Main Page
     public static string MainPageTitle => GetString("MainPageTitle");
     public static string MainPagePlaceholder => GetString("MainPagePlaceholder");
+    public static string MainPageLastSync => GetString("MainPageLastSync");
     public static string MainFilterButton => GetString("MainFilterButton");
     public static string MainSyncButton => GetString("MainSyncButton");
     public static string MainSyncSubtitle => GetString("MainSyncSubtitle");

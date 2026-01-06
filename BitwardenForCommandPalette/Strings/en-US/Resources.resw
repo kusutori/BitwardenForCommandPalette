@@ -380,6 +380,9 @@
   <data name="MainPagePlaceholder" xml:space="preserve">
     <value>Search vault items...</value>
   </data>
+  <data name="MainPageLastSync" xml:space="preserve">
+    <value>Last Sync</value>
+  </data>
   <data name="MainFilterButton" xml:space="preserve">
     <value>🔍 Filter</value>
   </data>

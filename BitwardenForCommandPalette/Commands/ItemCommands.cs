@@ -567,8 +567,11 @@ internal sealed partial class CopyFieldCommand : InvokableCommand
 /// </summary>
 internal sealed partial class SyncVaultCommand : InvokableCommand
 {
-    public SyncVaultCommand()
+    private readonly System.Action? _onSynced;
+
+    public SyncVaultCommand(System.Action? onSynced = null)
     {
+        _onSynced = onSynced;
         Name = ResourceHelper.CommandSyncVault;
         Icon = new IconInfo("\uE895"); // Sync icon
     }
@@ -578,6 +581,7 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
         var success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
         if (success)
         {
+            _onSynced?.Invoke();
             return CommandResult.ShowToast(ResourceHelper.ToastVaultSynced);
         }
         return CommandResult.ShowToast(ResourceHelper.ToastVaultSyncFailed);

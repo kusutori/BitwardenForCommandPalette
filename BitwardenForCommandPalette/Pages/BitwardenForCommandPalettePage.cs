@@ -43,6 +43,33 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         _ = LoadItemsAsync();
     }
 
+    /// <summary>
+    /// Updates the title to show last sync time
+    /// </summary>
+    private void UpdateTitle()
+    {
+        if (_lastStatus?.LastSync != null)
+        {
+            var lastSync = _lastStatus.LastSync.Value.ToLocalTime();
+            var syncTimeStr = lastSync.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.CurrentCulture);
+            Title = $"{ResourceHelper.MainPageTitle} ({ResourceHelper.MainPageLastSync}: {syncTimeStr})";
+        }
+        else
+        {
+            Title = ResourceHelper.MainPageTitle;
+        }
+    }
+
+    /// <summary>
+    /// Refreshes the status and updates the title after sync
+    /// </summary>
+    private async Task RefreshStatusAndTitleAsync()
+    {
+        _lastStatus = await BitwardenCliService.GetStatusAsync();
+        UpdateTitle();
+        await LoadItemsAsync();
+    }
+
     private void VaultFilters_PropChanged(object sender, IPropChangedEventArgs args)
     {
         // Check if trash filter changed
@@ -165,6 +192,9 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             {
                 await LoadItemsAsync();
             }
+
+            // Update title with last sync time
+            UpdateTitle();
         }
         catch (Exception ex)
         {
@@ -1027,7 +1057,11 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         // Add common utility commands with separator
         commands.Add(new Separator());
-        commands.Add(new CommandContextItem(new SyncVaultCommand())
+        commands.Add(new CommandContextItem(new SyncVaultCommand(() =>
+        {
+            // Refresh status and title after syncing
+            _ = RefreshStatusAndTitleAsync();
+        }))
         {
             Icon = new IconInfo("\uE895")
         });

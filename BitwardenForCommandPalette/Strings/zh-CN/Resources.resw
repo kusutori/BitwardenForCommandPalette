@@ -380,6 +380,9 @@
   <data name="MainPagePlaceholder" xml:space="preserve">
     <value>搜索密码库项目...</value>
   </data>
+  <data name="MainPageLastSync" xml:space="preserve">
+    <value>上次同步</value>
+  </data>
   <data name="MainFilterButton" xml:space="preserve">
     <value>🔍 筛选</value>
   </data>
