@@ -578,30 +578,13 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
 
     public override CommandResult Invoke()
     {
-        bool success;
-        try
-        {
-            success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
-        }
-        catch
-        {
-            success = false;
-        }
-
+        var success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
         if (success)
         {
-            try
-            {
-                _onSynced?.Invoke();
-            }
-            catch
-            {
-                // Ignore callback errors
-            }
+            _onSynced?.Invoke();
+            return CommandResult.ShowToast(ResourceHelper.ToastVaultSynced);
         }
-
-        // Keep the page open - the page will refresh on next interaction
-        return CommandResult.KeepOpen();
+        return CommandResult.ShowToast(ResourceHelper.ToastVaultSyncFailed);
     }
 }
 
