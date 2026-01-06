@@ -1057,11 +1057,13 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         // Add common utility commands with separator
         commands.Add(new Separator());
-        commands.Add(new CommandContextItem(new SyncVaultCommand(() =>
-        {
-            // Refresh status and title after syncing
-            _ = RefreshStatusAndTitleAsync();
-        }))
+        commands.Add(new CommandContextItem(new SyncVaultCommand(
+            onStarted: () => IsLoading = true,
+            onCompleted: () =>
+            {
+                IsLoading = false;
+                _ = RefreshStatusAndTitleAsync();
+            }))
         {
             Icon = new IconInfo("\uE895"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.R)
