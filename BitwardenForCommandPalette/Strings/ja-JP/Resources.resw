@@ -1,0 +1,883 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Application -->
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>コマンドパレット用 Bitwarden</value>
+  </data>
+  
+  <!-- Common Actions -->
+  <data name="ActionOpen" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="ActionUnlock" xml:space="preserve">
+    <value>ロック解除</value>
+  </data>
+  <data name="ActionFilter" xml:space="preserve">
+    <value>フィルター</value>
+  </data>
+  <data name="ActionApplyFilter" xml:space="preserve">
+    <value>フィルターを適用</value>
+  </data>
+  <data name="ActionRefresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="ActionNoAction" xml:space="preserve">
+    <value>操作なし</value>
+  </data>
+  
+  <!-- Copy Commands -->
+  <data name="CommandCopyPassword" xml:space="preserve">
+    <value>パスワードをコピー</value>
+  </data>
+  <data name="CommandCopyUsername" xml:space="preserve">
+    <value>ユーザー名をコピー</value>
+  </data>
+  <data name="CommandCopyUrl" xml:space="preserve">
+    <value>URLをコピー</value>
+  </data>
+  <data name="CommandOpenUrl" xml:space="preserve">
+    <value>URLを開く</value>
+  </data>
+  <data name="CommandCopyTotp" xml:space="preserve">
+    <value>TOTPをコピー</value>
+  </data>
+  <data name="CommandCopyCardNumber" xml:space="preserve">
+    <value>カード番号をコピー</value>
+  </data>
+  <data name="CommandCopyCvv" xml:space="preserve">
+    <value>CVVをコピー</value>
+  </data>
+  <data name="CommandCopyExpiration" xml:space="preserve">
+    <value>有効期限をコピー</value>
+  </data>
+  <data name="CommandCopyCardholderName" xml:space="preserve">
+    <value>名義人名をコピー</value>
+  </data>
+  <data name="CommandCopyFullName" xml:space="preserve">
+    <value>氏名をコピー</value>
+  </data>
+  <data name="CommandCopyEmail" xml:space="preserve">
+    <value>メールアドレスをコピー</value>
+  </data>
+  <data name="CommandCopyPhone" xml:space="preserve">
+    <value>電話番号をコピー</value>
+  </data>
+  <data name="CommandCopyAddress" xml:space="preserve">
+    <value>住所をコピー</value>
+  </data>
+  <data name="CommandCopyCompany" xml:space="preserve">
+    <value>会社名をコピー</value>
+  </data>
+  <data name="CommandCopySsn" xml:space="preserve">
+    <value>SSNをコピー</value>
+  </data>
+  <data name="CommandCopyPassportNumber" xml:space="preserve">
+    <value>パスポート番号をコピー</value>
+  </data>
+  <data name="CommandCopyLicenseNumber" xml:space="preserve">
+    <value>免許番号をコピー</value>
+  </data>
+  <data name="CommandCopyNotes" xml:space="preserve">
+    <value>メモをコピー</value>
+  </data>
+  <data name="CommandCopyField" xml:space="preserve">
+    <value>{0} をコピー</value>
+  </data>
+  <data name="CommandSyncVault" xml:space="preserve">
+    <value>ボルトを同期</value>
+  </data>
+  <data name="CommandLockVault" xml:space="preserve">
+    <value>ボルトをロック</value>
+  </data>
+  
+  <!-- Toast Messages -->
+  <data name="ToastTotpCopied" xml:space="preserve">
+    <value>TOTPをコピーしました: {0}</value>
+  </data>
+  <data name="ToastTotpFailed" xml:space="preserve">
+    <value>❌ TOTPの生成に失敗しました</value>
+  </data>
+  <data name="ToastCardNumberCopied" xml:space="preserve">
+    <value>カード番号をコピーしました (****{0})</value>
+  </data>
+  <data name="ToastCvvCopied" xml:space="preserve">
+    <value>CVVをコピーしました</value>
+  </data>
+  <data name="ToastExpirationCopied" xml:space="preserve">
+    <value>有効期限をコピーしました: {0}</value>
+  </data>
+  <data name="ToastCardholderNameCopied" xml:space="preserve">
+    <value>名義人名をコピーしました</value>
+  </data>
+  <data name="ToastNameCopied" xml:space="preserve">
+    <value>名前をコピーしました</value>
+  </data>
+  <data name="ToastEmailCopied" xml:space="preserve">
+    <value>メールアドレスをコピーしました</value>
+  </data>
+  <data name="ToastPhoneCopied" xml:space="preserve">
+    <value>電話番号をコピーしました</value>
+  </data>
+  <data name="ToastAddressCopied" xml:space="preserve">
+    <value>住所をコピーしました</value>
+  </data>
+  <data name="ToastCompanyCopied" xml:space="preserve">
+    <value>会社名をコピーしました</value>
+  </data>
+  <data name="ToastSsnCopied" xml:space="preserve">
+    <value>SSNをコピーしました</value>
+  </data>
+  <data name="ToastPassportCopied" xml:space="preserve">
+    <value>パスポート番号をコピーしました</value>
+  </data>
+  <data name="ToastLicenseCopied" xml:space="preserve">
+    <value>免許番号をコピーしました</value>
+  </data>
+  <data name="ToastNotesCopied" xml:space="preserve">
+    <value>メモをコピーしました</value>
+  </data>
+  <data name="ToastFieldCopied" xml:space="preserve">
+    <value>{0} をコピーしました</value>
+  </data>
+  <data name="ToastVaultSynced" xml:space="preserve">
+    <value>ボルトを同期しました</value>
+  </data>
+  <data name="ToastVaultSyncFailed" xml:space="preserve">
+    <value>❌ ボルトの同期に失敗しました</value>
+  </data>
+  <data name="ToastVaultLocked" xml:space="preserve">
+    <value>ボルトをロックしました</value>
+  </data>
+  <data name="ToastVaultLockFailed" xml:space="preserve">
+    <value>❌ ボルトのロックに失敗しました</value>
+  </data>
+  <data name="ToastUsernameCopied" xml:space="preserve">
+    <value>ユーザー名をコピーしました</value>
+  </data>
+  
+  <!-- Unlock Page -->
+  <data name="UnlockPageTitle" xml:space="preserve">
+    <value>Bitwardenボルトをロック解除</value>
+  </data>
+  <data name="UnlockCardTitle" xml:space="preserve">
+    <value>🔐 Bitwardenボルトをロック解除</value>
+  </data>
+  <data name="UnlockCardDescription" xml:space="preserve">
+    <value>マスターパスワードを入力してボルトをロック解除してください。</value>
+  </data>
+  <data name="UnlockMasterPasswordLabel" xml:space="preserve">
+    <value>マスターパスワード</value>
+  </data>
+  <data name="UnlockMasterPasswordPlaceholder" xml:space="preserve">
+    <value>マスターパスワードを入力</value>
+  </data>
+  <data name="UnlockMasterPasswordRequired" xml:space="preserve">
+    <value>マスターパスワードは必須です</value>
+  </data>
+  <data name="UnlockButtonText" xml:space="preserve">
+    <value>ロック解除</value>
+  </data>
+  <data name="UnlockButtonTooltip" xml:space="preserve">
+    <value>クリックしてボルトをロック解除（またはEnter）</value>
+  </data>
+  <data name="UnlockHint" xml:space="preserve">
+    <value>Enterで素早くロック解除</value>
+  </data>
+  <data name="UnlockSuccess" xml:space="preserve">
+    <value>ボルトのロック解除に成功しました</value>
+  </data>
+  <data name="UnlockFailed" xml:space="preserve">
+    <value>ボルトのロック解除に失敗しました。パスワードを確認してください。</value>
+  </data>
+  
+  <!-- Filter Page -->
+  <data name="FilterPageTitle" xml:space="preserve">
+    <value>ボルトをフィルター</value>
+  </data>
+  <data name="FilterPagePlaceholder" xml:space="preserve">
+    <value>フィルターオプションを選択...</value>
+  </data>
+  <data name="FilterLoadingFolders" xml:space="preserve">
+    <value>フォルダーを読み込み中...</value>
+  </data>
+  <data name="FilterAllItems" xml:space="preserve">
+    <value>すべての項目</value>
+  </data>
+  <data name="FilterAllItemsSubtitle" xml:space="preserve">
+    <value>ボルト内の全項目を表示</value>
+  </data>
+  <data name="FilterFavoritesOnly" xml:space="preserve">
+    <value>お気に入りのみ</value>
+  </data>
+  <data name="FilterFavoritesSubtitle" xml:space="preserve">
+    <value>お気に入り項目のみ表示</value>
+  </data>
+  <data name="FilterLoginsOnly" xml:space="preserve">
+    <value>ログインのみ</value>
+  </data>
+  <data name="FilterLoginsSubtitle" xml:space="preserve">
+    <value>ログイン項目のみ表示</value>
+  </data>
+  <data name="FilterCardsOnly" xml:space="preserve">
+    <value>カードのみ</value>
+  </data>
+  <data name="FilterCardsSubtitle" xml:space="preserve">
+    <value>カード項目のみ表示</value>
+  </data>
+  <data name="FilterIdentitiesOnly" xml:space="preserve">
+    <value>身元情報のみ</value>
+  </data>
+  <data name="FilterIdentitiesSubtitle" xml:space="preserve">
+    <value>身元情報項目のみ表示</value>
+  </data>
+  <data name="FilterNotesOnly" xml:space="preserve">
+    <value>セキュアメモのみ</value>
+  </data>
+  <data name="FilterNotesSubtitle" xml:space="preserve">
+    <value>セキュアメモのみ表示</value>
+  </data>
+  <data name="FilterByFolder" xml:space="preserve">
+    <value>フォルダー別</value>
+  </data>
+  <data name="FilterNoFolder" xml:space="preserve">
+    <value>フォルダーなし</value>
+  </data>
+  <data name="FilterNoFolderSubtitle" xml:space="preserve">
+    <value>フォルダー未設定の項目</value>
+  </data>
+  <data name="FilterFolderItem" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="FilterFolderSubtitle" xml:space="preserve">
+    <value>フォルダーでフィルター</value>
+  </data>
+  <data name="FilterTagActive" xml:space="preserve">
+    <value>✓ 有効</value>
+  </data>
+  
+  <!-- Main Page -->
+  <data name="MainPageTitle" xml:space="preserve">
+    <value>コマンドパレット用 Bitwarden</value>
+  </data>
+  <data name="MainPagePlaceholder" xml:space="preserve">
+    <value>ボルト内を検索...</value>
+  </data>
+  <data name="MainPageLastSync" xml:space="preserve">
+    <value>最終同期</value>
+  </data>
+  <data name="MainFilterButton" xml:space="preserve">
+    <value>🔍 フィルター</value>
+  </data>
+  <data name="MainSyncButton" xml:space="preserve">
+    <value>🔄 ボルトを同期</value>
+  </data>
+  <data name="MainSyncSubtitle" xml:space="preserve">
+    <value>Bitwardenサーバーとボルトを同期</value>
+  </data>
+  <data name="MainLockButton" xml:space="preserve">
+    <value>🔒 ボルトをロック</value>
+  </data>
+  <data name="MainLockSubtitle" xml:space="preserve">
+    <value>ボルトをロックしてセッションをクリア</value>
+  </data>
+  <data name="MainUnlockButton" xml:space="preserve">
+    <value>🔐 ボルトをロック解除</value>
+  </data>
+  <data name="MainUnlockSubtitle" xml:space="preserve">
+    <value>マスターパスワードを入力してロック解除</value>
+  </data>
+  
+  <!-- Status Messages -->
+  <data name="StatusLoading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="StatusLoadingSubtitle" xml:space="preserve">
+    <value>ボルトデータを読み込んでいます。しばらくお待ちください</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="StatusNotLoggedIn" xml:space="preserve">
+    <value>未ログイン</value>
+  </data>
+  <data name="StatusNotLoggedInSubtitle" xml:space="preserve">
+    <value>先に 'bw login' コマンドでログインしてください</value>
+  </data>
+  <data name="StatusNoItems" xml:space="preserve">
+    <value>項目がありません</value>
+  </data>
+  <data name="StatusNoItemsSubtitle" xml:space="preserve">
+    <value>ボルトが空か、検索に一致する項目がありません</value>
+  </data>
+  <data name="StatusCliNotInstalled" xml:space="preserve">
+    <value>Bitwardenの状態取得に失敗しました。CLIはインストールされていますか？</value>
+  </data>
+  <data name="StatusLoadItemsFailed" xml:space="preserve">
+    <value>項目の読み込みに失敗しました: {0}</value>
+  </data>
+  
+  <!-- Filter Descriptions -->
+  <data name="FilterDescFavorites" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="FilterDescLogins" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="FilterDescCards" xml:space="preserve">
+    <value>カード</value>
+  </data>
+  <data name="FilterDescIdentities" xml:space="preserve">
+    <value>身元情報</value>
+  </data>
+  <data name="FilterDescNotes" xml:space="preserve">
+    <value>メモ</value>
+  </data>
+  <data name="FilterDescAllTypes" xml:space="preserve">
+    <value>すべての種類</value>
+  </data>
+  <data name="FilterDescFolder" xml:space="preserve">
+    <value>フォルダー: {0}</value>
+  </data>
+  <data name="FilterDescNoFilter" xml:space="preserve">
+    <value>フィルター未適用</value>
+  </data>
+  
+  <!-- Item Subtitles -->
+  <data name="ItemSubtitleSecureNote" xml:space="preserve">
+    <value>セキュアメモ</value>
+  </data>
+  <data name="ItemSubtitleUnnamed" xml:space="preserve">
+    <value>無題の項目</value>
+  </data>
+  <data name="ItemTagFavorite" xml:space="preserve">
+    <value>⭐</value>
+  </data>
+
+  <!-- Settings -->
+  <data name="SettingsBwPathLabel" xml:space="preserve">
+    <value>Bitwarden CLI のパス</value>
+  </data>
+  <data name="SettingsBwPathDescription" xml:space="preserve">
+    <value>Bitwarden CLI 実行ファイル（bw.exe）のパス。既定値は "bw" で、bw がシステム PATH にあることを前提とします。</value>
+  </data>
+  <data name="SettingsCustomEnvLabel" xml:space="preserve">
+    <value>カスタム環境変数</value>
+  </data>
+  <data name="SettingsCustomEnvDescription" xml:space="preserve">
+    <value>Bitwarden CLI 用のカスタム環境変数（形式: KEY1=VALUE1;KEY2=VALUE2。例: BW_SERVER=https://vault.example.com;NODE_EXTRA_CA_CERTS=cert.pem）</value>
+  </data>
+  <data name="SettingsBwClientIdLabel" xml:space="preserve">
+    <value>Bitwarden API クライアント ID</value>
+  </data>
+  <data name="SettingsBwClientIdDescription" xml:space="preserve">
+    <value>API キー認証用のクライアント ID（bw login --apikey）。パスワード認証を使う場合は空欄にしてください。</value>
+  </data>
+  <data name="SettingsBwClientSecretLabel" xml:space="preserve">
+    <value>Bitwarden API クライアント シークレット</value>
+  </data>
+  <data name="SettingsBwClientSecretDescription" xml:space="preserve">
+    <value>API キー認証用のクライアント シークレット。クライアント ID 設定時に必須。BW_CLIENTSECRET 環境変数として設定されます。</value>
+  </data>
+
+  <!-- Details Panel - Common -->
+  <data name="DetailsUsername" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="DetailsPassword" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="DetailsTotp" xml:space="preserve">
+    <value>TOTP</value>
+  </data>
+  <data name="DetailsEnabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="DetailsUrls" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="DetailsWebsite" xml:space="preserve">
+    <value>ウェブサイト</value>
+  </data>
+  <data name="DetailsNotes" xml:space="preserve">
+    <value>メモ</value>
+  </data>
+  <data name="DetailsCustomFields" xml:space="preserve">
+    <value>カスタムフィールド</value>
+  </data>
+
+  <!-- Details Panel - Card -->
+  <data name="DetailsBrand" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="DetailsCardNumber" xml:space="preserve">
+    <value>カード番号</value>
+  </data>
+  <data name="DetailsExpiration" xml:space="preserve">
+    <value>有効期限</value>
+  </data>
+  <data name="DetailsCvv" xml:space="preserve">
+    <value>CVV</value>
+  </data>
+  <data name="DetailsCardholderName" xml:space="preserve">
+    <value>名義人名</value>
+  </data>
+
+  <!-- Details Panel - Identity -->
+  <data name="DetailsPersonalInfo" xml:space="preserve">
+    <value>個人情報</value>
+  </data>
+  <data name="DetailsFullName" xml:space="preserve">
+    <value>氏名</value>
+  </data>
+  <data name="DetailsEmail" xml:space="preserve">
+    <value>メールアドレス</value>
+  </data>
+  <data name="DetailsPhone" xml:space="preserve">
+    <value>電話番号</value>
+  </data>
+  <data name="DetailsCompany" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="DetailsAddress" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="DetailsIdentification" xml:space="preserve">
+    <value>身分証明</value>
+  </data>
+  <data name="DetailsSsn" xml:space="preserve">
+    <value>SSN</value>
+  </data>
+  <data name="DetailsPassport" xml:space="preserve">
+    <value>パスポート</value>
+  </data>
+  <data name="DetailsLicense" xml:space="preserve">
+    <value>免許</value>
+  </data>
+  
+  <!-- TOTP Page -->
+  <data name="TotpPageTitle" xml:space="preserve">
+    <value>TOTP 認証</value>
+  </data>
+  <data name="TotpPagePlaceholder" xml:space="preserve">
+    <value>TOTP項目を検索...</value>
+  </data>
+  <data name="TotpLoading" xml:space="preserve">
+    <value>TOTPコードを読み込み中...</value>
+  </data>
+  <data name="TotpLoadingSubtitle" xml:space="preserve">
+    <value>検証コードを生成しています。しばらくお待ちください</value>
+  </data>
+  <data name="TotpNoItems" xml:space="preserve">
+    <value>TOTP項目がありません</value>
+  </data>
+  <data name="TotpNoItemsSubtitle" xml:space="preserve">
+    <value>ボルト内にTOTPが設定された項目がありません</value>
+  </data>
+  <data name="TotpNoMatch" xml:space="preserve">
+    <value>一致する項目がありません</value>
+  </data>
+  <data name="TotpNoMatchSubtitle" xml:space="preserve">
+    <value>別の検索語を試してください</value>
+  </data>
+  <data name="TotpCodeLoading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="TotpItemCount" xml:space="preserve">
+    <value>{0} 件のTOTP項目</value>
+  </data>
+  
+  <!-- Edit Item Page -->
+  <data name="CommandEditItem" xml:space="preserve">
+    <value>項目を編集</value>
+  </data>
+  <data name="EditItemPageTitle" xml:space="preserve">
+    <value>編集: {0}</value>
+  </data>
+  <data name="EditItemNameLabel" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="EditItemNameRequired" xml:space="preserve">
+    <value>名前は必須です</value>
+  </data>
+  <data name="EditItemUsernameLabel" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="EditItemPasswordLabel" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="EditItemUrlLabel" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="EditItemTotpLabel" xml:space="preserve">
+    <value>TOTP シークレット</value>
+  </data>
+  <data name="EditItemNotesLabel" xml:space="preserve">
+    <value>メモ</value>
+  </data>
+  <data name="EditItemCardholderNameLabel" xml:space="preserve">
+    <value>名義人名</value>
+  </data>
+  <data name="EditItemCardNumberLabel" xml:space="preserve">
+    <value>カード番号</value>
+  </data>
+  <data name="EditItemExpMonthLabel" xml:space="preserve">
+    <value>有効期限（月）</value>
+  </data>
+  <data name="EditItemExpYearLabel" xml:space="preserve">
+    <value>有効期限（年）</value>
+  </data>
+  <data name="EditItemCvvLabel" xml:space="preserve">
+    <value>CVV</value>
+  </data>
+  <data name="EditItemFirstNameLabel" xml:space="preserve">
+    <value>名</value>
+  </data>
+  <data name="EditItemLastNameLabel" xml:space="preserve">
+    <value>姓</value>
+  </data>
+  <data name="EditItemEmailLabel" xml:space="preserve">
+    <value>メールアドレス</value>
+  </data>
+  <data name="EditItemPhoneLabel" xml:space="preserve">
+    <value>電話番号</value>
+  </data>
+  <data name="EditItemCompanyLabel" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="EditItemAddressLabel" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="EditItemCityLabel" xml:space="preserve">
+    <value>市区町村</value>
+  </data>
+  <data name="EditItemPostalCodeLabel" xml:space="preserve">
+    <value>郵便番号</value>
+  </data>
+  <data name="EditItemSaveButton" xml:space="preserve">
+    <value>変更を保存</value>
+  </data>
+  <data name="EditItemSuccess" xml:space="preserve">
+    <value>項目を保存しました</value>
+  </data>
+  <data name="EditItemFailed" xml:space="preserve">
+    <value>項目の保存に失敗しました</value>
+  </data>
+  <!-- Create Item Page -->
+  <data name="CommandCreateItem" xml:space="preserve">
+    <value>項目を作成</value>
+  </data>
+  <data name="CreateItemPageTitle" xml:space="preserve">
+    <value>新しい項目を作成</value>
+  </data>
+  <data name="CreateItemPagePlaceholder" xml:space="preserve">
+    <value>作成する項目の種類を選択...</value>
+  </data>
+  <data name="CreateItemPageSubtitle" xml:space="preserve">
+    <value>ボルトに新しい項目を追加</value>
+  </data>
+  <data name="CreateItemTypeLogin" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="CreateItemTypeLoginSubtitle" xml:space="preserve">
+    <value>ユーザー名、パスワード、ウェブサイト</value>
+  </data>
+  <data name="CreateItemTypeCard" xml:space="preserve">
+    <value>カード</value>
+  </data>
+  <data name="CreateItemTypeCardSubtitle" xml:space="preserve">
+    <value>クレジット/デビットカード情報</value>
+  </data>
+  <data name="CreateItemTypeIdentity" xml:space="preserve">
+    <value>身元情報</value>
+  </data>
+  <data name="CreateItemTypeIdentitySubtitle" xml:space="preserve">
+    <value>個人情報と住所</value>
+  </data>
+  <data name="CreateItemTypeNote" xml:space="preserve">
+    <value>セキュアメモ</value>
+  </data>
+  <data name="CreateItemTypeNoteSubtitle" xml:space="preserve">
+    <value>個人用メモやテキスト</value>
+  </data>
+  <data name="CreateItemTitleLogin" xml:space="preserve">
+    <value>ログインを作成</value>
+  </data>
+  <data name="CreateItemTitleCard" xml:space="preserve">
+    <value>カードを作成</value>
+  </data>
+  <data name="CreateItemTitleIdentity" xml:space="preserve">
+    <value>身元情報を作成</value>
+  </data>
+  <data name="CreateItemTitleNote" xml:space="preserve">
+    <value>セキュアメモを作成</value>
+  </data>
+  <data name="CreateItemButton" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="CreateItemSuccess" xml:space="preserve">
+    <value>項目を作成しました</value>
+  </data>
+  <data name="CreateItemFailed" xml:space="preserve">
+    <value>項目の作成に失敗しました</value>
+  </data>
+  <data name="CreateItemFolderLabel" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="CreateItemNoFolder" xml:space="preserve">
+    <value>フォルダーなし</value>
+  </data>
+  <!-- Create Folder -->
+  <data name="CreateFolderTitle" xml:space="preserve">
+    <value>フォルダーを作成</value>
+  </data>
+  <data name="CreateFolderSubtitle" xml:space="preserve">
+    <value>ボルトに新しいフォルダーを作成</value>
+  </data>
+  <data name="CreateFolderNameLabel" xml:space="preserve">
+    <value>フォルダー名</value>
+  </data>
+  <data name="CreateFolderNameRequired" xml:space="preserve">
+    <value>フォルダー名は必須です</value>
+  </data>
+  <data name="CreateFolderSuccess" xml:space="preserve">
+    <value>フォルダーを作成しました</value>
+  </data>
+  <data name="CreateFolderFailed" xml:space="preserve">
+    <value>フォルダーの作成に失敗しました</value>
+  </data>
+  <!-- Delete Item -->
+  <data name="CommandDeleteItem" xml:space="preserve">
+    <value>項目を削除</value>
+  </data>
+  <data name="DeleteItemSuccess" xml:space="preserve">
+    <value>項目を削除しました</value>
+  </data>
+  <data name="DeleteItemFailed" xml:space="preserve">
+    <value>項目の削除に失敗しました</value>
+  </data>
+  <!-- Trash / Recycle Bin -->
+  <data name="FilterTrash" xml:space="preserve">
+    <value>ゴミ箱</value>
+  </data>
+  <data name="FilterTrashSubtitle" xml:space="preserve">
+    <value>削除済み項目</value>
+  </data>
+  <data name="TrashEmpty" xml:space="preserve">
+    <value>ゴミ箱は空です</value>
+  </data>
+  <data name="TrashEmptySubtitle" xml:space="preserve">
+    <value>削除した項目はここに表示されます</value>
+  </data>
+  <data name="CommandRestoreItem" xml:space="preserve">
+    <value>項目を復元</value>
+  </data>
+  <data name="RestoreItemSuccess" xml:space="preserve">
+    <value>項目を復元しました</value>
+  </data>
+  <data name="RestoreItemFailed" xml:space="preserve">
+    <value>項目の復元に失敗しました</value>
+  </data>
+  <data name="CommandPermanentDelete" xml:space="preserve">
+    <value>完全に削除</value>
+  </data>
+  <data name="PermanentDeleteSuccess" xml:space="preserve">
+    <value>項目を完全に削除しました</value>
+  </data>
+  <data name="PermanentDeleteFailed" xml:space="preserve">
+    <value>項目の完全削除に失敗しました</value>
+  </data>
+  <!-- Password/Passphrase Generator -->
+  <data name="GeneratorPassword" xml:space="preserve">
+    <value>パスワード生成</value>
+  </data>
+  <data name="GeneratorPasswordTitle" xml:space="preserve">
+    <value>パスワードを生成</value>
+  </data>
+  <data name="GeneratorPasswordSubtitle" xml:space="preserve">
+    <value>安全なランダムパスワードを生成</value>
+  </data>
+  <data name="GeneratorPasswordDescription" xml:space="preserve">
+    <value>以下のオプションを設定し、生成をクリックして安全なランダムパスワードを作成します。</value>
+  </data>
+  <data name="GeneratorPassphrase" xml:space="preserve">
+    <value>パスフレーズ生成</value>
+  </data>
+  <data name="GeneratorPassphraseTitle" xml:space="preserve">
+    <value>パスフレーズを生成</value>
+  </data>
+  <data name="GeneratorPassphraseSubtitle" xml:space="preserve">
+    <value>覚えやすいランダムパスフレーズを生成</value>
+  </data>
+  <data name="GeneratorPassphraseDescription" xml:space="preserve">
+    <value>以下のオプションを設定し、生成をクリックして覚えやすいパスフレーズを作成します。</value>
+  </data>
+  <data name="GeneratorLengthLabel" xml:space="preserve">
+    <value>長さ</value>
+  </data>
+  <data name="GeneratorUppercaseLabel" xml:space="preserve">
+    <value>大文字 (A-Z) を含める</value>
+  </data>
+  <data name="GeneratorLowercaseLabel" xml:space="preserve">
+    <value>小文字 (a-z) を含める</value>
+  </data>
+  <data name="GeneratorNumbersLabel" xml:space="preserve">
+    <value>数字 (0-9) を含める</value>
+  </data>
+  <data name="GeneratorSpecialLabel" xml:space="preserve">
+    <value>特殊文字 (!@#$%^&amp;*) を含める</value>
+  </data>
+  <data name="GeneratorWordsLabel" xml:space="preserve">
+    <value>単語数</value>
+  </data>
+  <data name="GeneratorSeparatorLabel" xml:space="preserve">
+    <value>単語区切り</value>
+  </data>
+  <data name="GeneratorCapitalizeLabel" xml:space="preserve">
+    <value>単語の先頭を大文字にする</value>
+  </data>
+  <data name="GeneratorIncludeNumberLabel" xml:space="preserve">
+    <value>数字を含める</value>
+  </data>
+  <data name="GeneratorGenerateButton" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="GeneratorCopyButton" xml:space="preserve">
+    <value>クリップボードにコピー</value>
+  </data>
+  <data name="GeneratorClickGenerate" xml:space="preserve">
+    <value>生成をクリックして作成</value>
+  </data>
+  <data name="GeneratorGenerateFailed" xml:space="preserve">
+    <value>生成に失敗しました</value>
+  </data>
+  <data name="GeneratorNoPassword" xml:space="preserve">
+    <value>まだパスワードが生成されていません</value>
+  </data>
+  <data name="GeneratorNoPassphrase" xml:space="preserve">
+    <value>まだパスフレーズが生成されていません</value>
+  </data>
+  <data name="GeneratorPasswordCopied" xml:space="preserve">
+    <value>パスワードをクリップボードにコピーしました</value>
+  </data>
+  <data name="GeneratorPassphraseCopied" xml:space="preserve">
+    <value>パスフレーズをクリップボードにコピーしました</value>
+  </data>
+</root>
