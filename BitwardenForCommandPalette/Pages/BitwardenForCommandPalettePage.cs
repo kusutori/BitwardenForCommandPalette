@@ -129,50 +129,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         listItems.AddRange(filteredItems.Select(CreateListItem));
 
-        // Add utility commands if no search text
-        if (string.IsNullOrWhiteSpace(SearchText))
-        {
-            listItems.Add(CreateSyncItem());
-            listItems.Add(CreateLockItem());
-            listItems.Add(CreateNewItem());
-        }
-
         return listItems.ToArray();
-    }
-
-    private static ListItem CreateSyncItem()
-    {
-        return new ListItem(new SyncVaultCommand())
-        {
-            Title = ResourceHelper.MainSyncButton,
-            Subtitle = ResourceHelper.MainSyncSubtitle,
-            Icon = new IconInfo("\uE895") // Sync icon
-        };
-    }
-
-    private static ListItem CreateLockItem()
-    {
-        return new ListItem(new LockVaultCommand())
-        {
-            Title = ResourceHelper.MainLockButton,
-            Subtitle = ResourceHelper.MainLockSubtitle,
-            Icon = new IconInfo("\uE72E") // Lock icon
-        };
-    }
-
-    private ListItem CreateNewItem()
-    {
-        var createPage = new CreateItemTypeSelectorPage(async () =>
-        {
-            // Refresh the vault after creating a new item
-            await LoadItemsAsync();
-        });
-        return new ListItem(createPage)
-        {
-            Title = ResourceHelper.CommandCreateItem,
-            Subtitle = ResourceHelper.CreateItemPageSubtitle,
-            Icon = new IconInfo("\uE710") // Add icon
-        };
     }
 
     private ListItem CreateTotpItem()
@@ -1066,6 +1023,25 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             IsCritical = true,
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.Delete)
+        });
+
+        // Add common utility commands with separator
+        commands.Add(new Separator());
+        commands.Add(new CommandContextItem(new SyncVaultCommand())
+        {
+            Icon = new IconInfo("\uE895")
+        });
+        commands.Add(new CommandContextItem(new LockVaultCommand())
+        {
+            Icon = new IconInfo("\uE72E")
+        });
+        commands.Add(new CommandContextItem(new CreateItemTypeSelectorPage(() =>
+        {
+            // Refresh the vault after creating a new item
+            _ = LoadItemsAsync();
+        }))
+        {
+            Icon = new IconInfo("\uE710")
         });
 
         return commands.ToArray();
