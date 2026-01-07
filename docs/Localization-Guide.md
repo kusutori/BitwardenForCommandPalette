@@ -9,8 +9,16 @@ BitwardenForCommandPalette/
 ├── Strings/
 │   ├── en-US/
 │   │   └── Resources.resw    # 英文资源
-│   └── zh-CN/
-│       └── Resources.resw    # 中文资源
+│   ├── zh-CN/
+│   │   └── Resources.resw    # 中文资源
+│   ├── ja-JP/
+│   │   └── Resources.resw    # 日文资源
+│   ├── ko-KR/
+│   │   └── Resources.resw    # 韩文资源
+│   ├── fr-FR/
+│   │   └── Resources.resw    # 法文资源
+│   └── es-ES/
+│       └── Resources.resw    # 西班牙文资源
 └── Helpers/
     └── ResourceHelper.cs      # 资源访问辅助类
 ```
@@ -20,6 +28,10 @@ BitwardenForCommandPalette/
 目前支持的语言：
 - **en-US**: 英语（美国）- 默认语言
 - **zh-CN**: 简体中文
+- **ja-JP**: 日语
+- **ko-KR**: 韩语
+- **fr-FR**: 法语
+- **es-ES**: 西班牙语
 
 ## 添加新语言
 
@@ -39,7 +51,7 @@ BitwardenForCommandPalette/
 Copy-Item "Strings/en-US/Resources.resw" "Strings/ja-JP/Resources.resw"
 ```
 
-### 3. 翻译资源字符串
+### 3. 翻译资源字符串（基于模板替换）
 
 打开新的 `Resources.resw` 文件，翻译 `<value>` 标签中的内容：
 
@@ -59,10 +71,32 @@ Copy-Item "Strings/en-US/Resources.resw" "Strings/ja-JP/Resources.resw"
 
 **重要**: 
 - 不要修改 `name` 属性
-- 不要修改包含 `{0}`, `{1}` 等占位符的位置
-- 保持 XML 结构不变
+- 不要修改包含 `{0}`, `{1}` 等占位符的位置或顺序
+- 仅替换 `<value>` 内容，保持 XML 结构、注释、空白行与属性顺序完全一致
+- 对 `&`, `<`, `>` 等字符进行 XML 转义，避免破坏文件结构
 
-### 4. 测试新语言
+### 4. 静态校验
+
+在提交前确保所有语言的键集合一致，并抽样确认翻译是否正确写入：
+
+```bash
+python - <<'PY'
+from __future__ import annotations
+import re
+from pathlib import Path
+
+def keys(path: Path) -> list[str]:
+    return re.findall(r'<data name="([^"]+)"', path.read_text(encoding="utf-8"))
+
+root = Path("Strings")
+en_keys = keys(root / "en-US" / "Resources.resw")
+for lang_dir in sorted(p for p in root.iterdir() if p.is_dir() and p.name != "en-US"):
+    lang_keys = keys(lang_dir / "Resources.resw")
+    print(lang_dir.name, "keys match:", en_keys == lang_keys)
+PY
+```
+
+### 5. 测试新语言
 
 1. 在 Windows 设置中将系统语言更改为目标语言
 2. 重新部署扩展
