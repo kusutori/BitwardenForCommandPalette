@@ -216,16 +216,23 @@ BitwardenForCommandPalette/
 │   └── ResourceHelper.cs              # 多语言资源助手
 ├── Models/
 │   ├── BitwardenItem.cs               # 密码项数据模型
-│   └── BitwardenStatus.cs             # 状态数据模型
-├── Pages/
+│   ├── BitwardenStatus.cs             # 状态数据模型
+│   └── BitwardenFolder.cs             # 文件夹数据模型
+├── Pages/                             # UI 页面层（仅包含页面类）
 │   ├── BitwardenForCommandPalettePage.cs  # 主列表页面
 │   ├── CreateItemPage.cs              # 创建项目页面（含创建文件夹）
 │   ├── EditItemPage.cs                # 编辑项目页面
-│   ├── FilterPage.cs                  # 筛选页面
 │   ├── GeneratorPage.cs               # 密码/口令生成器页面
 │   ├── TotpPage.cs                    # TOTP 验证码页面
 │   ├── UnlockPage.cs                  # 解锁表单页面
 │   └── VaultFilters.cs                # 筛选状态管理
+├── Vault/                             # 密码库逻辑层（UI 无关的业务逻辑）
+│   ├── VaultItemsLoader.cs            # 异步数据加载操作
+│   ├── VaultListBuilder.cs            # 列表项创建和过滤
+│   ├── ItemDetailsGenerator.cs        # Details 面板生成
+│   ├── VaultContextCommands.cs        # 上下文菜单命令构建
+│   ├── VaultPageCommands.cs           # 页面嵌套命令类
+│   └── VaultPageHelpers.cs            # 共享辅助方法
 ├── Services/
 │   ├── BitwardenCliService.cs         # Bitwarden CLI 封装服务
 │   ├── IconService.cs                 # 网站图标服务（带缓存）
@@ -245,6 +252,14 @@ BitwardenForCommandPalette/
     ├── CommandPalette-Extensions-Guide.md  # 扩展开发指南
     └── Localization-Guide.md          # 本地化指南
 ```
+
+### 架构分层
+
+- **Pages/** - UI 页面层：仅包含继承自 `ContentPage`、`ListPage`、`DynamicListPage` 等的页面类
+- **Vault/** - 业务逻辑层：包含与密码库操作相关的业务逻辑，与 UI 解耦
+- **Services/** - 服务层：外部服务封装（Bitwarden CLI、图标、设置）
+- **Commands/** - 命令层：复制、编辑等操作命令
+- **Models/** - 数据模型层：数据结构定义
 
 ## 技术栈
 

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BitwardenForCommandPalette.Commands;
 using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 using BitwardenForCommandPalette.Pages;
@@ -12,7 +13,7 @@ using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
-namespace BitwardenForCommandPalette;
+namespace BitwardenForCommandPalette.Vault;
 
 /// <summary>
 /// Handles list item creation and filtering for the vault page.

@@ -8,7 +8,7 @@ using System.Linq;
 using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 
-namespace BitwardenForCommandPalette;
+namespace BitwardenForCommandPalette.Vault;
 
 /// <summary>
 /// Shared helper methods for the vault page.

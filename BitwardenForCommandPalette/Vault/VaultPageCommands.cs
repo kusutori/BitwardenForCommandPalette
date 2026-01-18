@@ -6,7 +6,7 @@ using System;
 using BitwardenForCommandPalette.Helpers;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
-namespace BitwardenForCommandPalette;
+namespace BitwardenForCommandPalette.Vault;
 
 /// <summary>
 /// Command that does nothing (for display-only items).

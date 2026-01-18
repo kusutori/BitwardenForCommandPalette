@@ -11,6 +11,7 @@ using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 using BitwardenForCommandPalette.Pages;
 using BitwardenForCommandPalette.Services;
+using BitwardenForCommandPalette.Vault;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 using Windows.System;

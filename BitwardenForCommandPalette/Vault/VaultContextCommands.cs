@@ -13,7 +13,7 @@ using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 using Windows.System;
 
-namespace BitwardenForCommandPalette;
+namespace BitwardenForCommandPalette.Vault;
 
 /// <summary>
 /// Builds context menu commands for vault items.

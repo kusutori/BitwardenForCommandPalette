@@ -10,7 +10,7 @@ using BitwardenForCommandPalette.Pages;
 using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
-namespace BitwardenForCommandPalette;
+namespace BitwardenForCommandPalette.Vault;
 
 /// <summary>
 /// Handles asynchronous data loading operations for the vault page.
