@@ -29,7 +29,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     public BitwardenForCommandPalettePage()
     {
         Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
-        Title = ResourceHelper.MainPageTitle;
+        VaultPageHelpers.UpdateTitle(_lastStatus, out var title);
+        Title = title;
         Name = ResourceHelper.ActionOpen;
         PlaceholderText = ResourceHelper.MainPagePlaceholder;
         ShowDetails = true; // Enable dual-column layout with details panel
@@ -40,50 +41,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         Filters = _vaultFilters;
 
         // Initial load
-        _ = LoadItemsAsync();
-    }
-
-    /// <summary>
-    /// Updates the title to show last sync time
-    /// </summary>
-    private void UpdateTitle()
-    {
-        if (_lastStatus?.LastSync != null)
-        {
-            var lastSync = _lastStatus.LastSync.Value.ToLocalTime();
-            var syncTimeStr = lastSync.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.CurrentCulture);
-            Title = $"{ResourceHelper.MainPageTitle} ({ResourceHelper.MainPageLastSync}: {syncTimeStr})";
-        }
-        else
-        {
-            Title = ResourceHelper.MainPageTitle;
-        }
-    }
-
-    /// <summary>
-    /// Refreshes the status and updates the title after sync
-    /// </summary>
-    private async Task RefreshStatusAndTitleAsync()
-    {
-        _lastStatus = await BitwardenCliService.GetStatusAsync();
-        UpdateTitle();
-        await LoadItemsAsync();
-    }
-
-    private void VaultFilters_PropChanged(object sender, IPropChangedEventArgs args)
-    {
-        // Check if trash filter changed
-        var currentFilter = _vaultFilters.ToVaultFilter();
-        if (currentFilter.IsTrash && _trashItems == null)
-        {
-            // Load trash items when switching to trash view
-            _ = LoadTrashItemsAsync();
-        }
-        else
-        {
-            // Refresh items when filter changes
-            RaiseItemsChanged();
-        }
+        _ = CheckStatusAndLoadAsync();
     }
 
     public override void UpdateSearchText(string oldSearch, string newSearch)
@@ -99,19 +57,20 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         if (_lastStatus == null && !_isLoading)
         {
             _ = CheckStatusAndLoadAsync();
-            return [CreateLoadingItem()];
+            return [VaultListBuilder.CreateLoadingItem()];
         }
 
         // Show loading state
         if (_isLoading)
         {
-            return [CreateLoadingItem()];
+            return [VaultListBuilder.CreateLoadingItem()];
         }
 
         // Show error if any
         if (!string.IsNullOrEmpty(_errorMessage))
         {
-            return [CreateErrorItem(_errorMessage)];
+            var refreshCommand = new RefreshCommand(Refresh);
+            return [VaultListBuilder.CreateErrorItem(_errorMessage, refreshCommand)];
         }
 
         // Check vault status
@@ -119,12 +78,12 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         {
             if (_lastStatus.IsLoggedOut)
             {
-                return [CreateNotLoggedInItem()];
+                return [VaultListBuilder.CreateNotLoggedInItem()];
             }
 
             if (_lastStatus.IsLocked || !service.IsUnlocked)
             {
-                return [CreateUnlockItem()];
+                return [VaultListBuilder.CreateUnlockItem(_lastStatus, OnUnlocked)];
             }
         }
 
@@ -139,11 +98,12 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         if (_items == null || _items.Length == 0)
         {
-            return [CreateEmptyItem()];
+            var refreshCommand = new RefreshCommand(Refresh);
+            return [VaultListBuilder.CreateEmptyItem(refreshCommand)];
         }
 
         // Filter items based on search text and dropdown filter
-        var filteredItems = FilterItems(_items, SearchText, currentFilter);
+        var filteredItems = VaultListBuilder.FilterItems(_items, SearchText, currentFilter);
 
         // Create list with utility commands at the end
         var listItems = new List<IListItem>();
@@ -151,268 +111,41 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         // Add TOTP entry at the top if no search text
         if (string.IsNullOrWhiteSpace(SearchText))
         {
-            listItems.Add(CreateTotpItem());
+            listItems.Add(VaultListBuilder.CreateTotpItem(_items));
         }
 
-        listItems.AddRange(filteredItems.Select(CreateListItem));
+        listItems.AddRange(filteredItems.Select(item => VaultListBuilder.CreateListItem(
+            item,
+            GetPrimaryCommand,
+            GetContextCommands,
+            ItemDetailsGenerator.CreateItemDetails)));
 
         return listItems.ToArray();
-    }
-
-    private ListItem CreateTotpItem()
-    {
-        // Count items with TOTP configured
-        var totpCount = _items?.Count(i => !string.IsNullOrEmpty(i.Login?.Totp)) ?? 0;
-        var totpPage = new TotpPage(_items ?? []);
-        return new ListItem(totpPage)
-        {
-            Title = ResourceHelper.TotpPageTitle,
-            Subtitle = totpCount > 0
-                ? ResourceHelper.GetString("TotpItemCount", totpCount)
-                : ResourceHelper.TotpNoItems,
-            Icon = new IconInfo("\uE8D7") // Stopwatch/Timer icon
-        };
-    }
-
-    private async Task CheckStatusAndLoadAsync()
-    {
-        _isLoading = true;
-        RaiseItemsChanged();
-
-        try
-        {
-            var service = BitwardenCliService.Instance;
-            _lastStatus = await BitwardenCliService.GetStatusAsync();
-
-            if (_lastStatus == null)
-            {
-                _errorMessage = ResourceHelper.StatusCliNotInstalled;
-            }
-            else if (_lastStatus.IsUnlocked || service.IsUnlocked)
-            {
-                await LoadItemsAsync();
-            }
-
-            // Update title with last sync time
-            UpdateTitle();
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = $"Error: {ex.Message}";
-        }
-        finally
-        {
-            _isLoading = false;
-            RaiseItemsChanged();
-        }
-    }
-
-    private async Task LoadItemsAsync()
-    {
-        var service = BitwardenCliService.Instance;
-
-        if (!service.IsUnlocked)
-            return;
-
-        _isLoading = true;
-        RaiseItemsChanged();
-
-        try
-        {
-            // Load items and folders in parallel
-            var itemsTask = service.GetItemsAsync();
-            var foldersTask = service.GetFoldersAsync();
-
-            await Task.WhenAll(itemsTask, foldersTask);
-
-            _items = await itemsTask;
-            _errorMessage = null;
-
-            // Update filters with folder information
-            var folders = await foldersTask;
-            _vaultFilters.UpdateFolders(folders);
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = ResourceHelper.StatusLoadItemsFailed(ex.Message);
-        }
-        finally
-        {
-            _isLoading = false;
-            RaiseItemsChanged();
-        }
-    }
-
-    private async Task LoadTrashItemsAsync()
-    {
-        var service = BitwardenCliService.Instance;
-
-        if (!service.IsUnlocked)
-            return;
-
-        _isLoading = true;
-        RaiseItemsChanged();
-
-        try
-        {
-            _trashItems = await service.GetTrashItemsAsync();
-            _errorMessage = null;
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = ResourceHelper.StatusLoadItemsFailed(ex.Message);
-        }
-        finally
-        {
-            _isLoading = false;
-            RaiseItemsChanged();
-        }
     }
 
     private IListItem[] GetTrashViewItems(VaultFilter currentFilter)
     {
         if (_trashItems == null || _trashItems.Length == 0)
         {
-            return [CreateTrashEmptyItem()];
+            return [VaultListBuilder.CreateTrashEmptyItem()];
         }
 
         // Filter trash items based on search text
-        var filteredItems = FilterTrashItems(_trashItems, SearchText);
+        var filteredItems = VaultListBuilder.FilterTrashItems(_trashItems, SearchText);
 
         var listItems = new List<IListItem>();
-        listItems.AddRange(filteredItems.Select(CreateTrashListItem));
+        listItems.AddRange(filteredItems.Select(item => VaultListBuilder.CreateTrashListItem(
+            item,
+            GetTrashPrimaryCommand,
+            GetTrashContextCommands,
+            ItemDetailsGenerator.CreateItemDetails)));
 
         return listItems.ToArray();
     }
 
-    private static IEnumerable<BitwardenItem> FilterTrashItems(BitwardenItem[] items, string? searchText)
+    private ICommand GetPrimaryCommand(BitwardenItem item)
     {
-        IEnumerable<BitwardenItem> result = items;
-
-        // Apply search text filter
-        if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            result = result.Where(item =>
-                (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
-            );
-        }
-
-        // Sort by name
-        result = result.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase);
-
-        return result;
-    }
-
-    private ListItem CreateTrashListItem(BitwardenItem item)
-    {
-        // Primary command for trash items is restore
-        ICommand primaryCommand = new RestoreItemCommand(item, async () =>
-        {
-            await LoadItemsAsync();
-            await LoadTrashItemsAsync();
-        });
-
-        var listItem = new ListItem(primaryCommand)
-        {
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Subtitle = GetItemSubtitle(item),
-            Icon = IconService.GetItemIcon(item),
-            MoreCommands = GetTrashContextCommands(item),
-            Details = CreateItemDetails(item)
-        };
-
-        return listItem;
-    }
-
-    private IContextItem[] GetTrashContextCommands(BitwardenItem item)
-    {
-        // NOTE: The first item in MoreCommands becomes the "secondary command" (Ctrl+Enter)
-        // Since primaryCommand (Enter) is RestoreItemCommand, we put PermanentDeleteCommand first
-        // so Ctrl+Enter triggers permanent delete (dangerous action requires explicit intent)
-        var commands = new List<IContextItem>
-        {
-            // Permanent delete command first (Ctrl+Enter) - critical/red
-            new CommandContextItem(new PermanentDeleteCommand(item, async () =>
-            {
-                await LoadTrashItemsAsync();
-            }))
-            {
-                IsCritical = true,
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.Delete)
-            },
-
-            new Separator(),
-
-            // Restore command (also available in menu, but Enter key is primary)
-            new CommandContextItem(new RestoreItemCommand(item, async () =>
-            {
-                await LoadItemsAsync();
-                await LoadTrashItemsAsync();
-            }))
-        };
-
-        return commands.ToArray();
-    }
-
-    private static ListItem CreateTrashEmptyItem()
-    {
-        return new ListItem(new NoOpCommand())
-        {
-            Title = ResourceHelper.TrashEmpty,
-            Subtitle = ResourceHelper.TrashEmptySubtitle,
-            Icon = new IconInfo("\uE74D") // Delete/Trash icon
-        };
-    }
-
-    private static IEnumerable<BitwardenItem> FilterItems(BitwardenItem[] items, string? searchText, VaultFilter filter)
-    {
-        IEnumerable<BitwardenItem> result = items;
-
-        // Apply filter options
-        if (filter.FavoritesOnly)
-        {
-            result = result.Where(item => item.Favorite);
-        }
-
-        if (filter.ItemType.HasValue)
-        {
-            result = result.Where(item => item.ItemType == filter.ItemType.Value);
-        }
-
-        if (filter.FolderId != null)
-        {
-            if (filter.FolderId == "null")
-            {
-                result = result.Where(item => item.FolderId == null);
-            }
-            else
-            {
-                result = result.Where(item => item.FolderId == filter.FolderId);
-            }
-        }
-
-        // Apply search text filter
-        if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            result = result.Where(item =>
-                (item.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (item.Login?.Username?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (item.Login?.Uris?.Any(u => u.Uri?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
-            );
-        }
-
-        // Sort: favorites first, then by name
-        result = result.OrderByDescending(item => item.Favorite)
-                       .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase);
-
-        return result;
-    }
-
-    private ListItem CreateListItem(BitwardenItem item)
-    {
-        // Determine the primary command based on item type
-        ICommand primaryCommand = item.ItemType switch
+        return item.ItemType switch
         {
             BitwardenItemType.Login => new CopyPasswordCommand(item),
             BitwardenItemType.Card => new CopyCardNumberCommand(item),
@@ -420,891 +153,74 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             BitwardenItemType.SecureNote => new CopyNotesCommand(item),
             _ => new CopyPasswordCommand(item)
         };
-
-        var listItem = new ListItem(primaryCommand)
-        {
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Subtitle = GetItemSubtitle(item),
-            Icon = IconService.GetItemIcon(item),
-            MoreCommands = GetContextCommands(item),
-            Tags = item.Favorite ? [new Tag { Text = ResourceHelper.ItemTagFavorite }] : [],
-            Details = CreateItemDetails(item)
-        };
-
-        return listItem;
     }
 
-    /// <summary>
-    /// Creates details panel for a vault item
-    /// </summary>
-    private static Details CreateItemDetails(BitwardenItem item)
+    private ICommand GetTrashPrimaryCommand(BitwardenItem item)
     {
-        return item.ItemType switch
+        return new RestoreItemCommand(item, async () =>
         {
-            BitwardenItemType.Login => CreateLoginDetails(item),
-            BitwardenItemType.Card => CreateCardDetails(item),
-            BitwardenItemType.Identity => CreateIdentityDetails(item),
-            BitwardenItemType.SecureNote => CreateSecureNoteDetails(item),
-            _ => CreateDefaultDetails(item)
-        };
-    }
-
-    /// <summary>
-    /// Creates details for Login type items
-    /// </summary>
-    private static Details CreateLoginDetails(BitwardenItem item)
-    {
-        var login = item.Login;
-        var metadata = new List<IDetailsElement>();
-
-        // Username
-        if (!string.IsNullOrEmpty(login?.Username))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsUsername,
-                Data = new DetailsLink { Text = login.Username }
-            });
-        }
-
-        // Password (masked)
-        if (!string.IsNullOrEmpty(login?.Password))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsPassword,
-                Data = new DetailsLink { Text = "••••••••••••" }
-            });
-        }
-
-        // TOTP indicator
-        if (!string.IsNullOrEmpty(login?.Totp))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsTotp,
-                Data = new DetailsTags { Tags = [new Tag(ResourceHelper.DetailsEnabled) { Icon = new IconInfo("\uE73E") }] }
-            });
-        }
-
-        // Separator before URLs
-        if (login?.Uris?.Length > 0)
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsUrls,
-                Data = new DetailsSeparator()
-            });
-
-            foreach (var uri in login.Uris.Where(u => !string.IsNullOrEmpty(u.Uri)))
-            {
-                Uri.TryCreate(uri.Uri, UriKind.Absolute, out var parsedUri);
-                metadata.Add(new DetailsElement
-                {
-                    Key = string.Empty,
-                    Data = new DetailsLink { Text = uri.Uri ?? string.Empty, Link = parsedUri }
-                });
-            }
-        }
-
-        // Custom fields
-        AddCustomFieldsToMetadata(item, metadata);
-
-        // Notes indicator
-        if (!string.IsNullOrEmpty(item.Notes))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsNotes,
-                Data = new DetailsSeparator()
-            });
-            metadata.Add(new DetailsElement
-            {
-                Key = string.Empty,
-                Data = new DetailsLink { Text = GetTruncatedNotes(item.Notes) }
-            });
-        }
-
-        return new Details
-        {
-            HeroImage = IconService.GetItemIcon(item),
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Body = FormatLoginBody(item),
-            Metadata = metadata.ToArray()
-        };
-    }
-
-    /// <summary>
-    /// Creates details for Card type items
-    /// </summary>
-    private static Details CreateCardDetails(BitwardenItem item)
-    {
-        var card = item.Card;
-        var metadata = new List<IDetailsElement>();
-
-        // Card brand and type
-        if (!string.IsNullOrEmpty(card?.Brand))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsBrand,
-                Data = new DetailsLink { Text = card.Brand }
-            });
-        }
-
-        // Card number (masked)
-        if (!string.IsNullOrEmpty(card?.Number))
-        {
-            var maskedNumber = card.Number.Length > 4
-                ? $"•••• •••• •••• {card.Number[^4..]}"
-                : "•••• •••• •••• ••••";
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsCardNumber,
-                Data = new DetailsLink { Text = maskedNumber }
-            });
-        }
-
-        // Expiration
-        if (!string.IsNullOrEmpty(card?.ExpMonth) && !string.IsNullOrEmpty(card?.ExpYear))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsExpiration,
-                Data = new DetailsLink { Text = $"{card.ExpMonth}/{card.ExpYear}" }
-            });
-        }
-
-        // CVV (masked)
-        if (!string.IsNullOrEmpty(card?.Code))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsCvv,
-                Data = new DetailsLink { Text = "•••" }
-            });
-        }
-
-        // Cardholder name
-        if (!string.IsNullOrEmpty(card?.CardholderName))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsCardholderName,
-                Data = new DetailsLink { Text = card.CardholderName }
-            });
-        }
-
-        // Custom fields
-        AddCustomFieldsToMetadata(item, metadata);
-
-        // Notes
-        if (!string.IsNullOrEmpty(item.Notes))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsNotes,
-                Data = new DetailsSeparator()
-            });
-            metadata.Add(new DetailsElement
-            {
-                Key = string.Empty,
-                Data = new DetailsLink { Text = GetTruncatedNotes(item.Notes) }
-            });
-        }
-
-        return new Details
-        {
-            HeroImage = IconService.GetItemIcon(item),
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Body = FormatCardBody(item),
-            Metadata = metadata.ToArray()
-        };
-    }
-
-    /// <summary>
-    /// Creates details for Identity type items
-    /// </summary>
-    private static Details CreateIdentityDetails(BitwardenItem item)
-    {
-        var identity = item.Identity;
-        var metadata = new List<IDetailsElement>();
-
-        // Personal info section
-        metadata.Add(new DetailsElement
-        {
-            Key = ResourceHelper.DetailsPersonalInfo,
-            Data = new DetailsSeparator()
+            await LoadItemsAsync();
+            await LoadTrashItemsAsync();
         });
-
-        // Full name
-        var fullName = GetFullName(identity);
-        if (!string.IsNullOrEmpty(fullName))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsFullName,
-                Data = new DetailsLink { Text = fullName }
-            });
-        }
-
-        // Email
-        if (!string.IsNullOrEmpty(identity?.Email))
-        {
-            Uri.TryCreate($"mailto:{identity.Email}", UriKind.Absolute, out var mailtoUri);
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsEmail,
-                Data = new DetailsLink { Text = identity.Email, Link = mailtoUri }
-            });
-        }
-
-        // Phone
-        if (!string.IsNullOrEmpty(identity?.Phone))
-        {
-            Uri.TryCreate($"tel:{identity.Phone}", UriKind.Absolute, out var telUri);
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsPhone,
-                Data = new DetailsLink { Text = identity.Phone, Link = telUri }
-            });
-        }
-
-        // Company
-        if (!string.IsNullOrEmpty(identity?.Company))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsCompany,
-                Data = new DetailsLink { Text = identity.Company }
-            });
-        }
-
-        // Address section
-        var address = GetFormattedAddress(identity);
-        if (!string.IsNullOrEmpty(address))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsAddress,
-                Data = new DetailsSeparator()
-            });
-            metadata.Add(new DetailsElement
-            {
-                Key = string.Empty,
-                Data = new DetailsLink { Text = address }
-            });
-        }
-
-        // ID section (if any IDs exist)
-        if (HasIdentificationInfo(identity))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsIdentification,
-                Data = new DetailsSeparator()
-            });
-
-            if (!string.IsNullOrEmpty(identity?.Ssn))
-            {
-                metadata.Add(new DetailsElement
-                {
-                    Key = ResourceHelper.DetailsSsn,
-                    Data = new DetailsLink { Text = "•••-••-" + (identity.Ssn.Length >= 4 ? identity.Ssn[^4..] : "••••") }
-                });
-            }
-
-            if (!string.IsNullOrEmpty(identity?.PassportNumber))
-            {
-                metadata.Add(new DetailsElement
-                {
-                    Key = ResourceHelper.DetailsPassport,
-                    Data = new DetailsLink { Text = identity.PassportNumber }
-                });
-            }
-
-            if (!string.IsNullOrEmpty(identity?.LicenseNumber))
-            {
-                metadata.Add(new DetailsElement
-                {
-                    Key = ResourceHelper.DetailsLicense,
-                    Data = new DetailsLink { Text = identity.LicenseNumber }
-                });
-            }
-        }
-
-        // Custom fields
-        AddCustomFieldsToMetadata(item, metadata);
-
-        // Notes
-        if (!string.IsNullOrEmpty(item.Notes))
-        {
-            metadata.Add(new DetailsElement
-            {
-                Key = ResourceHelper.DetailsNotes,
-                Data = new DetailsSeparator()
-            });
-            metadata.Add(new DetailsElement
-            {
-                Key = string.Empty,
-                Data = new DetailsLink { Text = GetTruncatedNotes(item.Notes) }
-            });
-        }
-
-        return new Details
-        {
-            HeroImage = IconService.GetItemIcon(item),
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Body = FormatIdentityBody(item),
-            Metadata = metadata.ToArray()
-        };
-    }
-
-    /// <summary>
-    /// Creates details for SecureNote type items
-    /// </summary>
-    private static Details CreateSecureNoteDetails(BitwardenItem item)
-    {
-        var metadata = new List<IDetailsElement>();
-
-        // Custom fields
-        AddCustomFieldsToMetadata(item, metadata);
-
-        // For secure notes, show the full note content in the body with Markdown
-        var body = string.Empty;
-        if (!string.IsNullOrEmpty(item.Notes))
-        {
-            body = $"```\n{item.Notes}\n```";
-        }
-
-        return new Details
-        {
-            HeroImage = IconService.GetItemIcon(item),
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Body = body,
-            Metadata = metadata.ToArray()
-        };
-    }
-
-    /// <summary>
-    /// Creates default details for unknown item types
-    /// </summary>
-    private static Details CreateDefaultDetails(BitwardenItem item)
-    {
-        var metadata = new List<IDetailsElement>();
-        AddCustomFieldsToMetadata(item, metadata);
-
-        return new Details
-        {
-            HeroImage = IconService.GetItemIcon(item),
-            Title = item.Name ?? ResourceHelper.ItemSubtitleUnnamed,
-            Metadata = metadata.ToArray()
-        };
-    }
-
-    /// <summary>
-    /// Adds custom fields to metadata
-    /// </summary>
-    private static void AddCustomFieldsToMetadata(BitwardenItem item, List<IDetailsElement> metadata)
-    {
-        if (item.Fields == null || item.Fields.Length == 0)
-            return;
-
-        metadata.Add(new DetailsElement
-        {
-            Key = ResourceHelper.DetailsCustomFields,
-            Data = new DetailsSeparator()
-        });
-
-        foreach (var field in item.Fields)
-        {
-            if (string.IsNullOrEmpty(field.Name))
-                continue;
-
-            var displayValue = field.Type == (int)BitwardenFieldType.Hidden
-                ? "••••••••"
-                : field.Value ?? string.Empty;
-
-            metadata.Add(new DetailsElement
-            {
-                Key = field.Name,
-                Data = new DetailsLink { Text = displayValue }
-            });
-        }
-    }
-
-    /// <summary>
-    /// Formats the body text for login items
-    /// </summary>
-    private static string FormatLoginBody(BitwardenItem item)
-    {
-        var parts = new List<string>();
-
-        if (!string.IsNullOrEmpty(item.Login?.Username))
-        {
-            parts.Add($"**{ResourceHelper.DetailsUsername}:** {item.Login.Username}");
-        }
-
-        var primaryUri = item.Login?.Uris?.FirstOrDefault(u => !string.IsNullOrEmpty(u.Uri))?.Uri;
-        if (!string.IsNullOrEmpty(primaryUri))
-        {
-            parts.Add($"**{ResourceHelper.DetailsWebsite}:** {primaryUri}");
-        }
-
-        return string.Join("\n\n", parts);
-    }
-
-    /// <summary>
-    /// Formats the body text for card items
-    /// </summary>
-    private static string FormatCardBody(BitwardenItem item)
-    {
-        var parts = new List<string>();
-
-        if (!string.IsNullOrEmpty(item.Card?.Brand))
-        {
-            parts.Add($"**{ResourceHelper.DetailsBrand}:** {item.Card.Brand}");
-        }
-
-        if (!string.IsNullOrEmpty(item.Card?.CardholderName))
-        {
-            parts.Add($"**{ResourceHelper.DetailsCardholderName}:** {item.Card.CardholderName}");
-        }
-
-        return string.Join("\n\n", parts);
-    }
-
-    /// <summary>
-    /// Formats the body text for identity items
-    /// </summary>
-    private static string FormatIdentityBody(BitwardenItem item)
-    {
-        var parts = new List<string>();
-
-        var fullName = GetFullName(item.Identity);
-        if (!string.IsNullOrEmpty(fullName))
-        {
-            parts.Add($"**{ResourceHelper.DetailsFullName}:** {fullName}");
-        }
-
-        if (!string.IsNullOrEmpty(item.Identity?.Email))
-        {
-            parts.Add($"**{ResourceHelper.DetailsEmail}:** {item.Identity.Email}");
-        }
-
-        if (!string.IsNullOrEmpty(item.Identity?.Company))
-        {
-            parts.Add($"**{ResourceHelper.DetailsCompany}:** {item.Identity.Company}");
-        }
-
-        return string.Join("\n\n", parts);
-    }
-
-    /// <summary>
-    /// Gets the full name from identity
-    /// </summary>
-    private static string GetFullName(BitwardenIdentity? identity)
-    {
-        if (identity == null) return string.Empty;
-        var parts = new[] { identity.Title, identity.FirstName, identity.MiddleName, identity.LastName }
-            .Where(p => !string.IsNullOrWhiteSpace(p));
-        return string.Join(" ", parts);
-    }
-
-    /// <summary>
-    /// Gets formatted address from identity
-    /// </summary>
-    private static string GetFormattedAddress(BitwardenIdentity? identity)
-    {
-        if (identity == null) return string.Empty;
-
-        var lines = new List<string>();
-
-        if (!string.IsNullOrWhiteSpace(identity.Address1))
-            lines.Add(identity.Address1);
-        if (!string.IsNullOrWhiteSpace(identity.Address2))
-            lines.Add(identity.Address2);
-        if (!string.IsNullOrWhiteSpace(identity.Address3))
-            lines.Add(identity.Address3);
-
-        var cityStateParts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(identity.City))
-            cityStateParts.Add(identity.City);
-        if (!string.IsNullOrWhiteSpace(identity.State))
-            cityStateParts.Add(identity.State);
-        if (!string.IsNullOrWhiteSpace(identity.PostalCode))
-            cityStateParts.Add(identity.PostalCode);
-        if (cityStateParts.Count > 0)
-            lines.Add(string.Join(", ", cityStateParts));
-
-        if (!string.IsNullOrWhiteSpace(identity.Country))
-            lines.Add(identity.Country);
-
-        return string.Join("\n", lines);
-    }
-
-    /// <summary>
-    /// Checks if identity has any identification info
-    /// </summary>
-    private static bool HasIdentificationInfo(BitwardenIdentity? identity)
-    {
-        if (identity == null) return false;
-        return !string.IsNullOrEmpty(identity.Ssn) ||
-               !string.IsNullOrEmpty(identity.PassportNumber) ||
-               !string.IsNullOrEmpty(identity.LicenseNumber);
-    }
-
-    /// <summary>
-    /// Truncates notes for display
-    /// </summary>
-    private static string GetTruncatedNotes(string notes)
-    {
-        const int maxLength = 200;
-        if (notes.Length <= maxLength)
-            return notes;
-        return notes[..maxLength] + "...";
-    }
-
-    private static string GetItemSubtitle(BitwardenItem item)
-    {
-        return item.ItemType switch
-        {
-            BitwardenItemType.Login => item.Login?.Username ?? string.Empty,
-            BitwardenItemType.Card => GetCardSubtitle(item.Card),
-            BitwardenItemType.Identity => GetIdentitySubtitle(item.Identity),
-            BitwardenItemType.SecureNote => ResourceHelper.ItemSubtitleSecureNote,
-            _ => string.Empty
-        };
-    }
-
-    private static string GetCardSubtitle(BitwardenCard? card)
-    {
-        if (card == null) return string.Empty;
-        var parts = new List<string>();
-        if (!string.IsNullOrEmpty(card.Brand)) parts.Add(card.Brand);
-        if (!string.IsNullOrEmpty(card.Number) && card.Number.Length >= 4)
-        {
-            parts.Add($"****{card.Number[^4..]}");
-        }
-        return string.Join(" ", parts);
-    }
-
-    private static string GetIdentitySubtitle(BitwardenIdentity? identity)
-    {
-        if (identity == null) return string.Empty;
-        var nameParts = new[] { identity.FirstName, identity.LastName }
-            .Where(p => !string.IsNullOrWhiteSpace(p));
-        return string.Join(" ", nameParts);
     }
 
     private IContextItem[] GetContextCommands(BitwardenItem item)
     {
-        var commands = new List<IContextItem>();
-
-        switch (item.ItemType)
-        {
-            case BitwardenItemType.Login:
-                AddLoginCommands(commands, item);
-                break;
-            case BitwardenItemType.Card:
-                AddCardCommands(commands, item);
-                break;
-            case BitwardenItemType.Identity:
-                AddIdentityCommands(commands, item);
-                break;
-            case BitwardenItemType.SecureNote:
-                AddSecureNoteCommands(commands, item);
-                break;
-        }
-
-        // Add notes command for all item types if notes exist
-        if (!string.IsNullOrEmpty(item.Notes) && item.ItemType != BitwardenItemType.SecureNote)
-        {
-            commands.Add(new CommandContextItem(new CopyNotesCommand(item)));
-        }
-
-        // Add custom field commands
-        if (item.Fields != null && item.Fields.Length > 0)
-        {
-            foreach (var field in item.Fields)
-            {
-                if (!string.IsNullOrEmpty(field.Value))
-                {
-                    commands.Add(new CommandContextItem(new CopyFieldCommand(field)));
-                }
-            }
-        }
-
-        // Add separator, edit command, and delete command at the bottom
-        commands.Add(new Separator());
-        commands.Add(new CommandContextItem(new EditItemPage(item, () =>
-        {
-            // Refresh the page after editing
-            _ = LoadItemsAsync();
-        }))
-        {
-            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.E)
-        });
-        commands.Add(new CommandContextItem(new DeleteItemCommand(item, () =>
-        {
-            // Refresh the page after deleting
-            _ = LoadItemsAsync();
-        }))
-        {
-            IsCritical = true,
-            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.Delete)
-        });
-
-        // Add common utility commands with separator
-        commands.Add(new Separator());
-        commands.Add(new CommandContextItem(new SyncVaultCommand(
-            onStarted: () => IsLoading = true,
-            onCompleted: () =>
-            {
-                IsLoading = false;
-                _ = RefreshStatusAndTitleAsync();
-            }))
-        {
-            Icon = new IconInfo("\uE895"),
-            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.R)
-        });
-        commands.Add(new CommandContextItem(new LockVaultCommand(
-            onStarted: () => IsLoading = true,
-            onCompleted: () => IsLoading = false))
-        {
-            Icon = new IconInfo("\uE72E"),
-            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.L)
-        });
-        commands.Add(new CommandContextItem(new CreateItemTypeSelectorPage(() =>
-        {
-            // Refresh the vault after creating a new item
-            _ = LoadItemsAsync();
-        }))
-        {
-            Icon = new IconInfo("\uE710"),
-            RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.A)
-        });
-
-        return commands.ToArray();
+        return VaultContextCommands.GetContextCommands(
+            item,
+            onRefresh => new EditItemPage(item, onRefresh),
+            (itemToDelete, onRefresh) => new DeleteItemCommand(itemToDelete, onRefresh),
+            Refresh);
     }
 
-    private static void AddLoginCommands(List<IContextItem> commands, BitwardenItem item)
+    private IContextItem[] GetTrashContextCommands(BitwardenItem item)
     {
-        // NOTE: The first item in MoreCommands becomes the "secondary command" (Ctrl+Enter)
-        // Since primaryCommand (Enter) is CopyPassword, we put CopyUsername first here for Ctrl+Enter
-
-        if (!string.IsNullOrEmpty(item.Login?.Username))
-        {
-            commands.Add(new CommandContextItem(new CopyUsernameCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.U)
-            });
-        }
-
-        if (item.Login?.Uris?.Length > 0 && !string.IsNullOrEmpty(item.Login.Uris[0].Uri))
-        {
-            commands.Add(new CommandContextItem(new CopyUrlCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.C)
-            });
-            commands.Add(new CommandContextItem(new Commands.OpenUrlCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.O)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(item.Login?.Totp))
-        {
-            commands.Add(new CommandContextItem(new CopyTotpCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.T)
-            });
-        }
-
-        // Password is already the primary command (Enter key), but add it to More menu with shortcut
-        if (!string.IsNullOrEmpty(item.Login?.Password))
-        {
-            commands.Add(new CommandContextItem(new CopyPasswordCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.P)
-            });
-        }
+        return VaultContextCommands.GetTrashContextCommands(
+            item,
+            onComplete => new RestoreItemCommand(item, onComplete),
+            onComplete => new PermanentDeleteCommand(item, onComplete),
+            () => _ = LoadTrashItemsAsync(),
+            () => _ = LoadItemsAsync());
     }
 
-    private static void AddCardCommands(List<IContextItem> commands, BitwardenItem item)
+    private async Task CheckStatusAndLoadAsync()
     {
-        // CVV first for Ctrl+Enter (card number is primary command)
-        if (!string.IsNullOrEmpty(item.Card?.Code))
-        {
-            commands.Add(new CommandContextItem(new CopyCardCvvCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.V)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(item.Card?.ExpMonth) && !string.IsNullOrEmpty(item.Card?.ExpYear))
-        {
-            commands.Add(new CommandContextItem(new CopyCardExpirationCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.X)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(item.Card?.CardholderName))
-        {
-            commands.Add(new CommandContextItem(new CopyCardholderNameCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.N)
-            });
-        }
-
-        // Card number is already primary command, but add to More menu
-        if (!string.IsNullOrEmpty(item.Card?.Number))
-        {
-            commands.Add(new CommandContextItem(new CopyCardNumberCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.N)
-            });
-        }
+        await VaultItemsLoader.CheckStatusAndLoadAsync(
+            status => _lastStatus = status,
+            loading => _isLoading = loading,
+            error => _errorMessage = error,
+            () => RaiseItemsChanged(),
+            () => { VaultPageHelpers.UpdateTitle(_lastStatus, out var title); Title = title; });
     }
 
-    private static void AddIdentityCommands(List<IContextItem> commands, BitwardenItem item)
+    private async Task LoadItemsAsync()
     {
-        var identity = item.Identity;
-        if (identity == null) return;
-
-        // Email first for Ctrl+Enter (full name is primary command)
-        if (!string.IsNullOrEmpty(identity.Email))
-        {
-            commands.Add(new CommandContextItem(new CopyEmailCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.M)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(identity.Phone))
-        {
-            commands.Add(new CommandContextItem(new CopyPhoneCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.P)
-            });
-        }
-
-        // Check if has any address parts
-        if (!string.IsNullOrWhiteSpace(identity.Address1) || !string.IsNullOrWhiteSpace(identity.City))
-        {
-            commands.Add(new CommandContextItem(new CopyAddressCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.A)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(identity.Company))
-        {
-            commands.Add(new CommandContextItem(new CopyCompanyCommand(item)));
-        }
-
-        if (!string.IsNullOrEmpty(identity.Ssn))
-        {
-            commands.Add(new CommandContextItem(new CopySsnCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.S)
-            });
-        }
-
-        if (!string.IsNullOrEmpty(identity.PassportNumber))
-        {
-            commands.Add(new CommandContextItem(new CopyPassportCommand(item)));
-        }
-
-        if (!string.IsNullOrEmpty(identity.LicenseNumber))
-        {
-            commands.Add(new CommandContextItem(new CopyLicenseCommand(item)));
-        }
-
-        // Full name is already primary command, but add to More menu
-        if (!string.IsNullOrWhiteSpace(identity.FirstName) || !string.IsNullOrWhiteSpace(identity.LastName))
-        {
-            commands.Add(new CommandContextItem(new CopyFullNameCommand(item))
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.N)
-            });
-        }
-
-        // Add username if different from name
-        if (!string.IsNullOrEmpty(identity.Username))
-        {
-            commands.Add(new CommandContextItem(new InlineCommand(() =>
-            {
-                ClipboardHelper.SetText(identity.Username);
-                return CommandResult.ShowToast(new ToastArgs { Message = ResourceHelper.ToastUsernameCopied });
-            })
-            { Name = ResourceHelper.CommandCopyUsername, Icon = new IconInfo("\uE77B") })
-            {
-                RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.U)
-            });
-        }
+        await VaultItemsLoader.LoadItemsAsync(
+            () => BitwardenCliService.Instance.IsUnlocked,
+            loading => _isLoading = loading,
+            error => _errorMessage = error,
+            items => _items = items,
+            folders => _vaultFilters.UpdateFolders(folders),
+            () => RaiseItemsChanged());
     }
 
-    private static void AddSecureNoteCommands(List<IContextItem> commands, BitwardenItem item)
+    private async Task LoadTrashItemsAsync()
     {
-        if (!string.IsNullOrEmpty(item.Notes))
-        {
-            commands.Add(new CommandContextItem(new CopyNotesCommand(item)));
-        }
+        await VaultItemsLoader.LoadTrashItemsAsync(
+            () => BitwardenCliService.Instance.IsUnlocked,
+            loading => _isLoading = loading,
+            error => _errorMessage = error,
+            items => _trashItems = items,
+            () => RaiseItemsChanged());
     }
 
-    private static ListItem CreateLoadingItem()
+    private void VaultFilters_PropChanged(object sender, IPropChangedEventArgs args)
     {
-        return new ListItem(new NoOpCommand())
-        {
-            Title = ResourceHelper.StatusLoading,
-            Subtitle = ResourceHelper.StatusLoadingSubtitle,
-            Icon = new IconInfo("\uE895") // Sync icon
-        };
-    }
-
-    private ListItem CreateErrorItem(string message)
-    {
-        return new ListItem(new RefreshCommand(this))
-        {
-            Title = ResourceHelper.StatusError,
-            Subtitle = message,
-            Icon = new IconInfo("\uE783") // Error icon
-        };
-    }
-
-    private static ListItem CreateNotLoggedInItem()
-    {
-        return new ListItem(new NoOpCommand())
-        {
-            Title = ResourceHelper.StatusNotLoggedIn,
-            Subtitle = ResourceHelper.StatusNotLoggedInSubtitle,
-            Icon = new IconInfo("\uE72E") // Lock icon
-        };
-    }
-
-    private ListItem CreateUnlockItem()
-    {
-        // Use UnlockPage directly as the command - it inherits from ContentPage which implements ICommand
-        // When user presses Enter, Command Palette will navigate to this page
-        var unlockPage = new UnlockPage(() => OnUnlocked());
-        return new ListItem(unlockPage)
-        {
-            Title = ResourceHelper.MainUnlockButton,
-            Subtitle = _lastStatus?.UserEmail ?? ResourceHelper.MainUnlockSubtitle,
-            Icon = new IconInfo("\uE72E") // Lock icon
-        };
-    }
-
-    private ListItem CreateEmptyItem()
-    {
-        return new ListItem(new RefreshCommand(this))
-        {
-            Title = ResourceHelper.StatusNoItems,
-            Subtitle = ResourceHelper.StatusNoItemsSubtitle,
-            Icon = new IconInfo("\uE7C3") // Empty icon
-        };
+        VaultItemsLoader.OnVaultFiltersPropChanged(
+            _vaultFilters.ToVaultFilter(),
+            _trashItems,
+            LoadTrashItemsAsync,
+            () => RaiseItemsChanged());
     }
 
     /// <summary>
@@ -1326,56 +242,4 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         _lastStatus = new BitwardenStatus { Status = "unlocked" };
         _ = LoadItemsAsync();
     }
-}
-
-/// <summary>
-/// Command that does nothing (for display-only items)
-/// </summary>
-internal sealed partial class NoOpCommand : InvokableCommand
-{
-    public NoOpCommand()
-    {
-        Name = ResourceHelper.ActionNoAction;
-    }
-
-    public override CommandResult Invoke()
-    {
-        return CommandResult.KeepOpen();
-    }
-}
-
-/// <summary>
-/// Command to refresh the vault
-/// </summary>
-internal sealed partial class RefreshCommand : InvokableCommand
-{
-    private readonly BitwardenForCommandPalettePage _page;
-
-    public RefreshCommand(BitwardenForCommandPalettePage page)
-    {
-        _page = page;
-        Name = ResourceHelper.ActionRefresh;
-        Icon = new IconInfo("\uE72C"); // Refresh icon
-    }
-
-    public override CommandResult Invoke()
-    {
-        _page.Refresh();
-        return CommandResult.KeepOpen();
-    }
-}
-
-/// <summary>
-/// Inline command helper for simple operations
-/// </summary>
-internal sealed partial class InlineCommand : InvokableCommand
-{
-    private readonly Func<CommandResult> _action;
-
-    public InlineCommand(Func<CommandResult> action)
-    {
-        _action = action;
-    }
-
-    public override CommandResult Invoke() => _action();
 }

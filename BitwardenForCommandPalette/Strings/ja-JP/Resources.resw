@@ -307,7 +307,10 @@
   <data name="UnlockFailed" xml:space="preserve">
     <value>ボルトのロック解除に失敗しました。パスワードを確認してください。</value>
   </data>
-  
+  <data name="UnlockNetworkWarning" xml:space="preserve">
+    <value>ボルトのロック解除済み（ネットワーク利用不可、ローカルデータのみ）</value>
+  </data>
+
   <!-- Filter Page -->
   <data name="FilterPageTitle" xml:space="preserve">
     <value>ボルトをフィルター</value>

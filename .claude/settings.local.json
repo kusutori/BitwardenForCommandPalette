@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__tavily__tavily_search",
+      "mcp__tavily__tavily_crawl",
+      "mcp__tavily__tavily_extract",
+      "Bash(python:*)",
+      "Bash(magick:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(dotnet build)"
     ]
   }
 }

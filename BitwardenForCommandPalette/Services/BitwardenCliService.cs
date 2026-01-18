@@ -146,25 +146,67 @@ public partial class BitwardenCliService
         var escapedPassword = masterPassword.Replace("\"", "\\\"");
         var (output, error, exitCode) = await ExecuteCommandAsync($"unlock \"{escapedPassword}\" --raw");
 
-        if (exitCode == 0 && !string.IsNullOrWhiteSpace(output))
+        // Check if we got a valid session key (the primary indicator of successful unlock)
+        string? sessionKey = null;
+
+        // Try --raw output first (returns just the session key)
+        if (!string.IsNullOrWhiteSpace(output) && !output.Contains("Your vault is now unlocked", StringComparison.OrdinalIgnoreCase))
         {
-            // The --raw flag returns just the session key
-            SessionKey = output.Trim();
-            return (true, "Vault unlocked successfully");
+            sessionKey = output.Trim();
         }
 
         // Try to extract session key from regular output if --raw didn't work
-        if (!string.IsNullOrWhiteSpace(output))
+        if (sessionKey == null)
         {
             var sessionMatch = Regex.Match(output, @"BW_SESSION=""([^""]+)""");
             if (sessionMatch.Success)
             {
-                SessionKey = sessionMatch.Groups[1].Value;
-                return (true, "Vault unlocked successfully");
+                sessionKey = sessionMatch.Groups[1].Value;
             }
         }
 
+        // If we got a session key, the unlock was successful (network errors are separate)
+        if (!string.IsNullOrWhiteSpace(sessionKey))
+        {
+            SessionKey = sessionKey;
+
+            // Check for network errors that occurred after successful unlock
+            if (exitCode != 0 && IsNetworkError(error))
+            {
+                return (true, "Vault unlocked successfully (network unavailable, local data only)");
+            }
+
+            return (true, "Vault unlocked successfully");
+        }
+
+        // No session key - likely wrong password or other error
+        if (error.Contains("invalid", StringComparison.OrdinalIgnoreCase) ||
+            error.Contains("wrong", StringComparison.OrdinalIgnoreCase) ||
+            error.Contains("incorrect", StringComparison.OrdinalIgnoreCase) ||
+            error.Contains("password", StringComparison.OrdinalIgnoreCase))
+        {
+            return (false, "Invalid master password");
+        }
+
         return (false, string.IsNullOrWhiteSpace(error) ? "Failed to unlock vault" : error);
+    }
+
+    /// <summary>
+    /// Checks if the error message indicates a network problem (not an authentication error)
+    /// </summary>
+    private static bool IsNetworkError(string error)
+    {
+        var lowerError = error.ToLowerInvariant();
+        return lowerError.Contains("network") ||
+               lowerError.Contains("socket") ||
+               lowerError.Contains("tls") ||
+               lowerError.Contains("ssl") ||
+               lowerError.Contains("ECONNRESET") ||
+               lowerError.Contains("econnrefused") ||
+               lowerError.Contains("timeout") ||
+               lowerError.Contains("fetch") ||
+               lowerError.Contains("api.bitwarden.com") ||
+               lowerError.Contains("identity.bitwarden.com");
     }
 
     /// <summary>

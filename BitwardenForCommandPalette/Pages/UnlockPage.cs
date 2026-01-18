@@ -151,12 +151,19 @@ internal sealed partial class UnlockForm : FormContent
         if (success)
         {
             _onUnlocked?.Invoke();
+
+            // If there was a network error but unlock succeeded, show a subtle toast
+            if (message.Contains("network", StringComparison.OrdinalIgnoreCase))
+            {
+                return CommandResult.ShowToast(ResourceHelper.GetString("UnlockNetworkWarning"));
+            }
+
             return CommandResult.GoBack();
         }
         else
         {
-            // Show error toast and keep form open for retry
-            return CommandResult.ShowToast(ResourceHelper.UnlockFailed);
+            // Show error toast with the actual error message and keep form open for retry
+            return CommandResult.ShowToast(message);
         }
     }
 }

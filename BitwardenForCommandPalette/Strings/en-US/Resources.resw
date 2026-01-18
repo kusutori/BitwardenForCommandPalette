@@ -307,7 +307,10 @@
   <data name="UnlockFailed" xml:space="preserve">
     <value>Failed to unlock vault. Please check your password.</value>
   </data>
-  
+  <data name="UnlockNetworkWarning" xml:space="preserve">
+    <value>Vault unlocked (network unavailable, local data only)</value>
+  </data>
+
   <!-- Filter Page -->
   <data name="FilterPageTitle" xml:space="preserve">
     <value>Filter Vault</value>
