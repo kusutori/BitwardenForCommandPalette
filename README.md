@@ -207,6 +207,9 @@
 
 ```
 BitwardenForCommandPalette/
+├── LICENSE                              # 项目自身的MIT许可证
+├── THIRD-PARTY-NOTICES.md              # 第三方许可证声明
+├── README.md                           # 项目说明文档
 ├── BitwardenForCommandPalette.cs      # 扩展入口点
 ├── BitwardenForCommandPaletteCommandsProvider.cs  # 命令提供者
 ├── Program.cs                          # 程序入口
@@ -330,3 +333,5 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 - [Microsoft PowerToys](https://github.com/microsoft/PowerToys) - Command Palette 扩展框架
 - [Bitwarden](https://bitwarden.com/) - 开源密码管理器
 - [bitwarden-cli-bio](https://github.com/jeanregisser/bitwarden-cli-bio) - Bitwarden CLI with biometric unlock
+
+**许可证信息**: 本项目引用了上述第三方项目，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) 文件。
