@@ -84,12 +84,13 @@ internal static class VaultItemsLoader
 
             await Task.WhenAll(itemsTask, foldersTask);
 
-            setItems(await itemsTask!);
+            var items = await itemsTask;
+            setItems(items ?? Array.Empty<BitwardenItem>());
             setErrorMessage(null);
 
             // Update filters with folder information
             var folders = await foldersTask;
-            updateFolders(folders!);
+            updateFolders(folders ?? Array.Empty<BitwardenFolder>());
         }
         catch (Exception ex)
         {
@@ -121,7 +122,8 @@ internal static class VaultItemsLoader
         try
         {
             var service = BitwardenCliService.Instance;
-            setTrashItems(await service.GetTrashItemsAsync()!);
+            var trashItems = await service.GetTrashItemsAsync();
+            setTrashItems(trashItems ?? Array.Empty<BitwardenItem>());
             setErrorMessage(null);
         }
         catch (Exception ex)
