@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace BitwardenForCommandPalette.Services;
 
@@ -20,6 +21,20 @@ public sealed class SettingsManager
     /// Default is "bw" (assumes bw is in PATH)
     /// </summary>
     public string BwPath { get; set; } = "bw";
+
+    /// <summary>
+    /// Gets whether the configured CLI is bitwarden-cli-bio (bwbio),
+    /// which supports Windows Hello biometric unlock.
+    /// Detected automatically from the CLI path.
+    /// </summary>
+    public bool IsBiometricCli
+    {
+        get
+        {
+            var fileName = Path.GetFileNameWithoutExtension(BwPath);
+            return fileName.Contains("bwbio", StringComparison.OrdinalIgnoreCase);
+        }
+    }
 
     /// <summary>
     /// Gets or sets custom environment variables for Bitwarden CLI

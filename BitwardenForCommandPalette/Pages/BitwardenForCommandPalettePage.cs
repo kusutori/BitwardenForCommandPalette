@@ -84,7 +84,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
             if (_lastStatus.IsLocked || !service.IsUnlocked)
             {
-                return [VaultListBuilder.CreateUnlockItem(_lastStatus, OnUnlocked)];
+                return VaultListBuilder.CreateUnlockItems(_lastStatus, OnUnlocked);
             }
         }
 

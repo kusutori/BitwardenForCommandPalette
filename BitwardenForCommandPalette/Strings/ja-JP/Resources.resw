@@ -307,6 +307,15 @@
   <data name="UnlockFailed" xml:space="preserve">
     <value>ボルトのロック解除に失敗しました。パスワードを確認してください。</value>
   </data>
+  <data name="UnlockBiometricButton" xml:space="preserve">
+    <value>Windows Hello でロック解除</value>
+  </data>
+  <data name="UnlockBiometricCanceled" xml:space="preserve">
+    <value>生体認証がキャンセルされました</value>
+  </data>
+  <data name="UnlockBiometricFailed" xml:space="preserve">
+    <value>生体認証によるボルトのロック解除に失敗しました</value>
+  </data>
   <data name="UnlockNetworkWarning" xml:space="preserve">
     <value>ボルトのロック解除済み（ネットワーク利用不可、ローカルデータのみ）</value>
   </data>
@@ -407,6 +416,15 @@
   <data name="MainUnlockSubtitle" xml:space="preserve">
     <value>マスターパスワードを入力してロック解除</value>
   </data>
+  <data name="MainUnlockBiometricButton" xml:space="preserve">
+    <value>🔓 Windows Hello でロック解除</value>
+  </data>
+  <data name="MainUnlockBiometricSubtitle" xml:space="preserve">
+    <value>生体認証でロック解除</value>
+  </data>
+  <data name="MainUnlockPasswordFallback" xml:space="preserve">
+    <value>代わりにマスターパスワードを使用</value>
+  </data>
   
   <!-- Status Messages -->
   <data name="StatusLoading" xml:space="preserve">
@@ -479,7 +497,7 @@
     <value>Bitwarden CLI のパス</value>
   </data>
   <data name="SettingsBwPathDescription" xml:space="preserve">
-    <value>Bitwarden CLI 実行ファイル（bw.exe）のパス。既定値は "bw" で、bw がシステム PATH にあることを前提とします。</value>
+    <value>Bitwarden CLI 実行ファイル（bw.exe または bwbio.exe）のパス。既定値は “bw”。“bwbio” に設定すると bitwarden-cli-bio 経由で Windows Hello 生体認証ロック解除が有効になります。</value>
   </data>
   <data name="SettingsCustomEnvLabel" xml:space="preserve">
     <value>カスタム環境変数</value>

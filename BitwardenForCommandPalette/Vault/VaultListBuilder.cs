@@ -112,17 +112,41 @@ internal static class VaultListBuilder
     }
 
     /// <summary>
-    /// Creates an unlock list item.
+    /// Creates unlock list item(s). When bwbio is configured, returns a biometric
+    /// unlock option (primary) plus a master password fallback. Otherwise returns
+    /// the standard password unlock item.
     /// </summary>
-    public static ListItem CreateUnlockItem(BitwardenStatus? lastStatus, Action onUnlocked)
+    public static ListItem[] CreateUnlockItems(BitwardenStatus? lastStatus, Action onUnlocked)
     {
+        var settings = SettingsManager.Instance;
+
+        if (settings.IsBiometricCli)
+        {
+            var biometricCommand = new BiometricUnlockCommand(onUnlocked);
+            var biometricItem = new ListItem(biometricCommand)
+            {
+                Title = ResourceHelper.MainUnlockBiometricButton,
+                Subtitle = lastStatus?.UserEmail ?? ResourceHelper.MainUnlockBiometricSubtitle,
+                Icon = new IconInfo("\uE8D7") // Shield icon for biometric
+            };
+
+            var passwordItem = new ListItem(new UnlockPage(onUnlocked))
+            {
+                Title = ResourceHelper.MainUnlockButton,
+                Subtitle = ResourceHelper.MainUnlockPasswordFallback,
+                Icon = new IconInfo("\uE72E") // Lock icon
+            };
+
+            return [biometricItem, passwordItem];
+        }
+
         var unlockPage = new UnlockPage(onUnlocked);
-        return new ListItem(unlockPage)
+        return [new ListItem(unlockPage)
         {
             Title = ResourceHelper.MainUnlockButton,
             Subtitle = lastStatus?.UserEmail ?? ResourceHelper.MainUnlockSubtitle,
             Icon = new IconInfo("\uE72E") // Lock icon
-        };
+        }];
     }
 
     /// <summary>

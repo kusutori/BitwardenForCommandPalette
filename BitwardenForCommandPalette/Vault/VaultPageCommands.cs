@@ -4,6 +4,7 @@
 
 using System;
 using BitwardenForCommandPalette.Helpers;
+using BitwardenForCommandPalette.Services;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
 namespace BitwardenForCommandPalette.Vault;
@@ -42,6 +43,43 @@ internal sealed partial class RefreshCommand : InvokableCommand
     {
         _refresh();
         return CommandResult.KeepOpen();
+    }
+}
+
+/// <summary>
+/// Command to unlock the vault using Windows Hello biometric authentication via bwbio CLI.
+/// </summary>
+internal sealed partial class BiometricUnlockCommand : InvokableCommand
+{
+    private readonly Action _onUnlocked;
+
+    public BiometricUnlockCommand(Action onUnlocked)
+    {
+        _onUnlocked = onUnlocked;
+        Name = ResourceHelper.UnlockBiometricButton;
+        Icon = new IconInfo("\uE8D7"); // Shield icon for biometric security
+    }
+
+    public override CommandResult Invoke()
+    {
+        var service = BitwardenCliService.Instance;
+        var (success, message) = service.UnlockWithBiometricAsync().GetAwaiter().GetResult();
+
+        if (success)
+        {
+            _onUnlocked();
+
+            if (message.Contains("network", StringComparison.OrdinalIgnoreCase))
+            {
+                return CommandResult.ShowToast(ResourceHelper.GetString("UnlockNetworkWarning"));
+            }
+
+            return CommandResult.KeepOpen();
+        }
+        else
+        {
+            return CommandResult.ShowToast(message);
+        }
     }
 }
 

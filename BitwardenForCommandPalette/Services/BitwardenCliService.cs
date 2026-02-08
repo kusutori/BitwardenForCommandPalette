@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BitwardenForCommandPalette.Helpers;
 using BitwardenForCommandPalette.Models;
 
 namespace BitwardenForCommandPalette.Services;
@@ -85,6 +86,15 @@ public partial class BitwardenCliService
             processInfo.Environment[kvp.Key] = kvp.Value;
         }
 
+        // When using bwbio, set BW_SESSION as an environment variable so that
+        // bwbio detects the existing session and skips biometric prompts for
+        // non-unlock commands (list, get, sync, etc.).
+        var sessionKey = Instance.SessionKey;
+        if (!string.IsNullOrEmpty(sessionKey) && settings.IsBiometricCli)
+        {
+            processInfo.Environment["BW_SESSION"] = sessionKey;
+        }
+
         using var process = new Process { StartInfo = processInfo };
 
         var outputBuilder = new StringBuilder();
@@ -136,6 +146,17 @@ public partial class BitwardenCliService
     }
 
     /// <summary>
+    /// Unlocks the vault using biometric authentication (Windows Hello) via bwbio CLI.
+    /// Calls "unlock --raw" without a password, which triggers the biometric prompt.
+    /// </summary>
+    /// <returns>True if unlock was successful</returns>
+    public async Task<(bool success, string message)> UnlockWithBiometricAsync()
+    {
+        var (output, error, exitCode) = await ExecuteCommandAsync("unlock --raw");
+        return ProcessUnlockResult(output, error, exitCode, isBiometric: true);
+    }
+
+    /// <summary>
     /// Unlocks the vault with the master password
     /// </summary>
     /// <param name="masterPassword">The master password</param>
@@ -146,6 +167,14 @@ public partial class BitwardenCliService
         var escapedPassword = masterPassword.Replace("\"", "\\\"");
         var (output, error, exitCode) = await ExecuteCommandAsync($"unlock \"{escapedPassword}\" --raw");
 
+        return ProcessUnlockResult(output, error, exitCode, isBiometric: false);
+    }
+
+    /// <summary>
+    /// Processes the result of an unlock command (shared between password and biometric unlock)
+    /// </summary>
+    private (bool success, string message) ProcessUnlockResult(string output, string error, int exitCode, bool isBiometric)
+    {
         // Check if we got a valid session key (the primary indicator of successful unlock)
         string? sessionKey = null;
 
@@ -177,6 +206,21 @@ public partial class BitwardenCliService
             }
 
             return (true, "Vault unlocked successfully");
+        }
+
+        // Biometric-specific error handling
+        if (isBiometric)
+        {
+            if (error.Contains("canceled", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("cancelled", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("dismissed", StringComparison.OrdinalIgnoreCase))
+            {
+                return (false, ResourceHelper.GetString("UnlockBiometricCanceled"));
+            }
+
+            return (false, string.IsNullOrWhiteSpace(error)
+                ? ResourceHelper.GetString("UnlockBiometricFailed")
+                : error);
         }
 
         // No session key - likely wrong password or other error
@@ -406,6 +450,14 @@ public partial class BitwardenCliService
         foreach (var kvp in customEnvVars)
         {
             processInfo.Environment[kvp.Key] = kvp.Value;
+        }
+
+        // When using bwbio, set BW_SESSION as an environment variable so that
+        // bwbio detects the existing session and skips biometric prompts.
+        var sessionKey = Instance.SessionKey;
+        if (!string.IsNullOrEmpty(sessionKey) && settings.IsBiometricCli)
+        {
+            processInfo.Environment["BW_SESSION"] = sessionKey;
         }
 
         using var process = new Process { StartInfo = processInfo };

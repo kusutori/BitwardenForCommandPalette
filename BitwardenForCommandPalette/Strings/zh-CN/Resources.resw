@@ -307,6 +307,15 @@
   <data name="UnlockFailed" xml:space="preserve">
     <value>解锁密码库失败，请检查密码。</value>
   </data>
+  <data name="UnlockBiometricButton" xml:space="preserve">
+    <value>使用 Windows Hello 解锁</value>
+  </data>
+  <data name="UnlockBiometricCanceled" xml:space="preserve">
+    <value>生物识别认证已取消</value>
+  </data>
+  <data name="UnlockBiometricFailed" xml:space="preserve">
+    <value>通过生物识别认证解锁密码库失败</value>
+  </data>
   <data name="UnlockNetworkWarning" xml:space="preserve">
     <value>密码库已解锁（网络不可用，仅本地数据）</value>
   </data>
@@ -407,6 +416,15 @@
   <data name="MainUnlockSubtitle" xml:space="preserve">
     <value>输入主密码来解锁</value>
   </data>
+  <data name="MainUnlockBiometricButton" xml:space="preserve">
+    <value>🔓 使用 Windows Hello 解锁</value>
+  </data>
+  <data name="MainUnlockBiometricSubtitle" xml:space="preserve">
+    <value>使用生物识别认证解锁</value>
+  </data>
+  <data name="MainUnlockPasswordFallback" xml:space="preserve">
+    <value>改用主密码解锁</value>
+  </data>
   
   <!-- Status Messages -->
   <data name="StatusLoading" xml:space="preserve">
@@ -479,7 +497,7 @@
     <value>Bitwarden CLI 路径</value>
   </data>
   <data name="SettingsBwPathDescription" xml:space="preserve">
-    <value>Bitwarden CLI 可执行文件 (bw.exe) 的路径。默认是 "bw"，假设 bw 在系统 PATH 中。</value>
+    <value>Bitwarden CLI 可执行文件（bw.exe 或 bwbio.exe）的路径。默认是 “bw”。设置为 “bwbio” 可通过 bitwarden-cli-bio 启用 Windows Hello 生物识别解锁。</value>
   </data>
   <data name="SettingsCustomEnvLabel" xml:space="preserve">
     <value>自定义环境变量</value>

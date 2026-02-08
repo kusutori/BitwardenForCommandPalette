@@ -118,6 +118,9 @@ internal static class ResourceHelper
     public static string UnlockHint => GetString("UnlockHint");
     public static string UnlockSuccess => GetString("UnlockSuccess");
     public static string UnlockFailed => GetString("UnlockFailed");
+    public static string UnlockBiometricButton => GetString("UnlockBiometricButton");
+    public static string UnlockBiometricCanceled => GetString("UnlockBiometricCanceled");
+    public static string UnlockBiometricFailed => GetString("UnlockBiometricFailed");
 
     // Filter Page
     public static string FilterPageTitle => GetString("FilterPageTitle");
@@ -153,6 +156,9 @@ internal static class ResourceHelper
     public static string MainLockSubtitle => GetString("MainLockSubtitle");
     public static string MainUnlockButton => GetString("MainUnlockButton");
     public static string MainUnlockSubtitle => GetString("MainUnlockSubtitle");
+    public static string MainUnlockBiometricButton => GetString("MainUnlockBiometricButton");
+    public static string MainUnlockBiometricSubtitle => GetString("MainUnlockBiometricSubtitle");
+    public static string MainUnlockPasswordFallback => GetString("MainUnlockPasswordFallback");
 
     // Status Messages
     public static string StatusLoading => GetString("StatusLoading");

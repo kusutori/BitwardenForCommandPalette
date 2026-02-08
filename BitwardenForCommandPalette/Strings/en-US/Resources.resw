@@ -307,6 +307,15 @@
   <data name="UnlockFailed" xml:space="preserve">
     <value>Failed to unlock vault. Please check your password.</value>
   </data>
+  <data name="UnlockBiometricButton" xml:space="preserve">
+    <value>Unlock with Windows Hello</value>
+  </data>
+  <data name="UnlockBiometricCanceled" xml:space="preserve">
+    <value>Biometric authentication was canceled</value>
+  </data>
+  <data name="UnlockBiometricFailed" xml:space="preserve">
+    <value>Failed to unlock vault with biometric authentication</value>
+  </data>
   <data name="UnlockNetworkWarning" xml:space="preserve">
     <value>Vault unlocked (network unavailable, local data only)</value>
   </data>
@@ -407,6 +416,15 @@
   <data name="MainUnlockSubtitle" xml:space="preserve">
     <value>Enter your master password to unlock</value>
   </data>
+  <data name="MainUnlockBiometricButton" xml:space="preserve">
+    <value>🔓 Unlock with Windows Hello</value>
+  </data>
+  <data name="MainUnlockBiometricSubtitle" xml:space="preserve">
+    <value>Use biometric authentication to unlock</value>
+  </data>
+  <data name="MainUnlockPasswordFallback" xml:space="preserve">
+    <value>Use master password instead</value>
+  </data>
   
   <!-- Status Messages -->
   <data name="StatusLoading" xml:space="preserve">
@@ -479,7 +497,7 @@
     <value>Bitwarden CLI Path</value>
   </data>
   <data name="SettingsBwPathDescription" xml:space="preserve">
-    <value>Path to the Bitwarden CLI executable (bw.exe). Default is "bw" which assumes bw is in your system PATH.</value>
+    <value>Path to the Bitwarden CLI executable (bw.exe or bwbio.exe). Default is "bw". Set to "bwbio" to enable Windows Hello biometric unlock via bitwarden-cli-bio.</value>
   </data>
   <data name="SettingsCustomEnvLabel" xml:space="preserve">
     <value>Custom Environment Variables</value>
