@@ -329,3 +329,4 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 - [Microsoft PowerToys](https://github.com/microsoft/PowerToys) - Command Palette 扩展框架
 - [Bitwarden](https://bitwarden.com/) - 开源密码管理器
+- [bitwarden-cli-bio](https://github.com/jeanregisser/bitwarden-cli-bio) - Bitwarden CLI with biometric unlock
