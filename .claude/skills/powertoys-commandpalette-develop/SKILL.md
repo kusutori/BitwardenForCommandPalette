@@ -283,6 +283,210 @@ Right-click project → Deploy
 3. Attach to `MyExtension.exe` process
 ```
 
+## IExtensionHost and Status Messages
+
+The `IExtensionHost` interface provides access to host-level functionality like showing status messages and progress indicators. To use it, you need to store the host instance when your provider is initialized.
+
+### ExtensionHost Singleton Pattern
+
+Create a static helper to store the `IExtensionHost` instance:
+
+```csharp
+// Helpers/ExtensionHostHelper.cs
+internal static class ExtensionHostHelper
+{
+    public static IExtensionHost? Instance { get; set; }
+}
+```
+
+Register the host in your `CommandProvider`:
+
+```csharp
+public partial class MyCommandsProvider : CommandProvider
+{
+    public override void InitializeWithHost(IExtensionHost host)
+    {
+        ExtensionHostHelper.Instance = host;
+        base.InitializeWithHost(host);
+    }
+}
+```
+
+### StatusMessage for Progress Indication
+
+Use `StatusMessage` to show progress bars and status banners without affecting the extension's `IsLoading` state:
+
+```csharp
+internal sealed partial class SyncCommand : InvokableCommand
+{
+    public override CommandResult Invoke()
+    {
+        // Create status message with progress bar
+        var statusMessage = new StatusMessage
+        {
+            Message = "Syncing data...",
+            State = MessageState.Info,
+            Progress = new ProgressState { IsIndeterminate = true }
+        };
+
+        // Show status banner
+        var host = ExtensionHostHelper.Instance;
+        host?.ShowStatus(statusMessage, StatusContext.Extension);
+
+        // Perform operation
+        bool success = PerformSync();
+
+        // Update status based on result
+        if (success)
+        {
+            statusMessage.Message = "Sync completed";
+            statusMessage.State = MessageState.Success;
+            statusMessage.Progress = null;
+        }
+        else
+        {
+            statusMessage.Message = "Sync failed";
+            statusMessage.State = MessageState.Error;
+            statusMessage.Progress = null;
+        }
+
+        // Auto-hide after 3 seconds
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(3000);
+            host?.HideStatus(statusMessage);
+        });
+
+        return CommandResult.KeepOpen();
+    }
+}
+```
+
+### StatusMessage Extension Methods
+
+Create extension methods to simplify status message usage:
+
+```csharp
+// Helpers/StatusMessageExtensions.cs
+internal static class StatusMessageExtensions
+{
+    public static void ShowStatus(this StatusMessage message)
+    {
+        ExtensionHostHelper.Instance?.ShowStatus(message, StatusContext.Extension);
+    }
+
+    public static void Hide(this StatusMessage message)
+    {
+        ExtensionHostHelper.Instance?.HideStatus(message);
+    }
+
+    public static void Clear(this StatusMessage message)
+    {
+        message.Message = string.Empty;
+        message.State = new MessageState();
+        message.Progress = null;
+    }
+}
+```
+
+Usage with extension methods:
+
+```csharp
+var statusMessage = new StatusMessage
+{
+    Message = "Processing...",
+    State = MessageState.Info,
+    Progress = new ProgressState { IsIndeterminate = true }
+};
+
+statusMessage.ShowStatus();  // Show banner
+// ... perform work ...
+statusMessage.Hide();  // Hide banner
+```
+
+### MessageState Types
+
+| State | Description | Color |
+|-------|-------------|-------|
+| `MessageState.Info` | Informational message | Blue |
+| `MessageState.Success` | Success message | Green |
+| `MessageState.Warning` | Warning message | Yellow |
+| `MessageState.Error` | Error message | Red |
+
+### ProgressState Options
+
+```csharp
+// Indeterminate progress (spinning animation)
+new ProgressState { IsIndeterminate = true }
+
+// Determinate progress (percentage bar)
+new ProgressState
+{
+    IsIndeterminate = false,
+    ProgressPercent = 75  // 0-100
+}
+```
+
+### Dynamic Title Updates with Events
+
+To update page titles dynamically without triggering `IsLoading` state (which can cause extension lockup), use an event-driven approach:
+
+**1. Add events to your service:**
+
+```csharp
+public class MyService
+{
+    public event Action<string>? TitleUpdated;
+    public event Action? StatusChanged;
+
+    public async Task<bool> SyncAsync()
+    {
+        TitleUpdated?.Invoke("Syncing...");
+        var success = await PerformSyncAsync();
+
+        if (success)
+        {
+            StatusChanged?.Invoke();
+        }
+
+        return success;
+    }
+}
+```
+
+**2. Subscribe to events in your page:**
+
+```csharp
+internal sealed partial class MainPage : DynamicListPage
+{
+    public MainPage()
+    {
+        Title = "My Extension";
+
+        // Subscribe to service events
+        var service = MyService.Instance;
+        service.TitleUpdated += OnTitleUpdated;
+        service.StatusChanged += OnStatusChanged;
+    }
+
+    private void OnTitleUpdated(string title)
+    {
+        Title = title;  // Directly update title without IsLoading
+    }
+
+    private void OnStatusChanged()
+    {
+        _ = RefreshDataAsync();
+    }
+}
+```
+
+**Key Benefits:**
+- Title updates don't trigger `IsLoading` state
+- Avoids extension auto-lock issues
+- Decouples UI updates from business logic
+- Allows multiple subscribers to react to changes
+
 ## Settings Panel
 
 Command Palette extensions can provide a settings panel that appears in PowerToys Settings → Command Palette → Extensions.
@@ -371,6 +575,168 @@ var value = _settings.GetSetting<string>("SettingKey") ?? "default";
 // Check if setting exists
 var exists = _settings.Contains("SettingKey");
 ```
+
+### Adding Settings Page to Extension UI
+
+You can add a settings page entry to your extension's UI in multiple locations:
+
+#### 1. In TopLevelCommands MoreCommands (Extension Entry Point)
+
+Add settings to the main extension entry in Command Palette:
+
+```csharp
+public partial class MyCommandsProvider : CommandProvider
+{
+    private readonly Settings _settings = new();
+
+    public MyCommandsProvider()
+    {
+        DisplayName = "My Extension";
+        InitializeSettings();
+
+        _commands = [
+            new CommandItem(new MainPage(_settings))
+            {
+                Title = DisplayName,
+                Icon = Icon,
+                MoreCommands =
+                [
+                    new CommandContextItem(_settings.SettingsPage)
+                    {
+                        Title = "Settings",
+                        Subtitle = "Configure extension settings",
+                        Icon = new IconInfo("\uE713") // Settings icon
+                    }
+                ]
+            },
+        ];
+    }
+}
+```
+
+**Note**: This approach shows settings in the more menu at the extension entry level, but may not be visible in all contexts (e.g., when the extension is locked or showing specific pages).
+
+#### 2. In ListItem MoreCommands (Context Menu)
+
+Add settings to individual list items' context menus:
+
+```csharp
+internal sealed partial class MainPage : DynamicListPage
+{
+    private readonly Settings _settings;
+
+    public MainPage(Settings settings)
+    {
+        _settings = settings;
+        // ...
+    }
+
+    private IContextItem[] GetContextCommands(MyItem item)
+    {
+        var commands = new List<IContextItem>();
+
+        // Add item-specific commands
+        commands.Add(new CommandContextItem(new CopyCommand(item)));
+        commands.Add(new CommandContextItem(new DeleteCommand(item)));
+
+        // Add separator and settings entry
+        commands.Add(new Separator());
+        commands.Add(new CommandContextItem(_settings.SettingsPage)
+        {
+            Title = "Settings",
+            Subtitle = "Configure extension settings",
+            Icon = new IconInfo("\uE713")
+        });
+
+        return commands.ToArray();
+    }
+
+    public override IListItem[] GetItems()
+    {
+        return _items.Select(item => new ListItem(new ItemCommand(item))
+        {
+            Title = item.Name,
+            MoreCommands = GetContextCommands(item)
+        }).ToArray();
+    }
+}
+```
+
+**Benefits**: Settings are accessible from any item's context menu (right-click or more menu), making them always available when the extension is unlocked.
+
+#### 3. In Static List Items (e.g., Unlock Screen)
+
+Add settings to static items like unlock screens:
+
+```csharp
+public static ListItem[] CreateUnlockItems(Action onUnlocked, Settings settings)
+{
+    var unlockMoreCommands = new IContextItem[]
+    {
+        new CommandContextItem(settings.SettingsPage)
+        {
+            Title = "Settings",
+            Subtitle = "Configure extension settings",
+            Icon = new IconInfo("\uE713")
+        }
+    };
+
+    var unlockPage = new UnlockPage(onUnlocked);
+    return [new ListItem(unlockPage)
+    {
+        Title = "Unlock",
+        Subtitle = "Enter password to unlock",
+        Icon = new IconInfo("\uE72E"),
+        MoreCommands = unlockMoreCommands
+    }];
+}
+```
+
+**Benefits**: Settings are accessible even when the extension is locked, allowing users to configure settings before unlocking.
+
+#### Best Practice: Multiple Entry Points
+
+For best user experience, provide settings access in multiple locations:
+
+```csharp
+// 1. Pass Settings to all pages that need it
+public MainPage(Settings settings)
+{
+    _settings = settings;
+}
+
+// 2. Add to context menus of vault items
+private IContextItem[] GetVaultItemCommands(Item item)
+{
+    return [
+        // ... item commands ...
+        new Separator(),
+        new CommandContextItem(_settings.SettingsPage)
+        {
+            Title = "Settings",
+            Icon = new IconInfo("\uE713")
+        }
+    ];
+}
+
+// 3. Add to unlock/locked state items
+private ListItem CreateUnlockItem()
+{
+    return new ListItem(new UnlockPage())
+    {
+        Title = "Unlock",
+        MoreCommands = [
+            new CommandContextItem(_settings.SettingsPage)
+            {
+                Title = "Settings",
+                Icon = new IconInfo("\uE713")
+            }
+        ]
+    };
+}
+```
+
+This ensures settings are accessible in all extension states (locked, unlocked, empty, with items).
 
 ## Filters
 
