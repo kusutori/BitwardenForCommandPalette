@@ -149,6 +149,7 @@ internal static class ResourceHelper
     public static string MainPageTitle => GetString("MainPageTitle");
     public static string MainPagePlaceholder => GetString("MainPagePlaceholder");
     public static string MainPageLastSync => GetString("MainPageLastSync");
+    public static string EmptyContentSubtitle => GetString("EmptyContentSubtitle");
     public static string MainFilterButton => GetString("MainFilterButton");
     public static string MainSyncButton => GetString("MainSyncButton");
     public static string MainSyncSubtitle => GetString("MainSyncSubtitle");
@@ -187,6 +188,8 @@ internal static class ResourceHelper
     public static string ItemTagFavorite => GetString("ItemTagFavorite");
 
     // Settings
+    public static string SettingsTitle => GetString("SettingsTitle");
+    public static string SettingsSubtitle => GetString("SettingsSubtitle");
     public static string SettingsBwPathLabel => GetString("SettingsBwPathLabel");
     public static string SettingsBwPathDescription => GetString("SettingsBwPathDescription");
     public static string SettingsBwClientIdLabel => GetString("SettingsBwClientIdLabel");

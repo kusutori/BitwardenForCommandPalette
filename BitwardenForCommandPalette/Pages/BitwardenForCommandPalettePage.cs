@@ -26,9 +26,12 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
     private string? _errorMessage;
     private BitwardenStatus? _lastStatus;
     private readonly VaultFilters _vaultFilters;
+    private readonly Settings _settings;
 
-    public BitwardenForCommandPalettePage()
+    public BitwardenForCommandPalettePage(Settings settings)
     {
+        _settings = settings;
+
         Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png");
         VaultPageHelpers.UpdateTitle(_lastStatus, out var title);
         Title = title;
@@ -41,6 +44,11 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         _vaultFilters.PropChanged += VaultFilters_PropChanged;
         Filters = _vaultFilters;
 
+        // TODO: Setup empty content - This is currently not used because the extension
+        // always shows unlock items when locked, so the page is never truly empty.
+        // Keeping this for potential future use.
+        SetupEmptyContent();
+
         // Subscribe to service events for dynamic title updates
         var service = BitwardenCliService.Instance;
         service.TitleUpdated += OnTitleUpdated;
@@ -48,6 +56,37 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
         // Initial load
         _ = CheckStatusAndLoadAsync();
+    }
+
+    private void SetupEmptyContent()
+    {
+        var emptyContentCommands = new List<IContextItem>
+        {
+            new Separator(),
+            new CommandContextItem(_settings.SettingsPage)
+            {
+                Title = ResourceHelper.SettingsTitle,
+                Subtitle = ResourceHelper.SettingsSubtitle,
+                Icon = new IconInfo("\uE713") // Settings icon
+            },
+            new Separator(),
+            new CommandContextItem(new SyncVaultCommand())
+            {
+                Icon = new IconInfo("\uE895") // Sync icon
+            },
+            new CommandContextItem(new CreateItemTypeSelectorPage(null))
+            {
+                Icon = new IconInfo("\uE710") // Add icon
+            }
+        };
+
+        EmptyContent = new CommandItem(new Microsoft.CommandPalette.Extensions.Toolkit.NoOpCommand())
+        {
+            Icon = IconHelpers.FromRelativePath("Assets\\Square44x44Logo.targetsize-24_altform-unplated.png"),
+            Title = ResourceHelper.AppDisplayName,
+            Subtitle = ResourceHelper.EmptyContentSubtitle,
+            MoreCommands = emptyContentCommands.ToArray()
+        };
     }
 
     private void OnTitleUpdated(string title)

@@ -901,4 +901,13 @@
   <data name="GeneratorPassphraseCopied" xml:space="preserve">
     <value>パスフレーズをクリップボードにコピーしました</value>
   </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Bitwarden 拡張機能の設定を構成</value>
+  </data>
+  <data name="EmptyContentSubtitle" xml:space="preserve">
+    <value>コマンドパレットのパスワードマネージャー</value>
+  </data>
 </root>

@@ -901,4 +901,13 @@
   <data name="GeneratorPassphraseCopied" xml:space="preserve">
     <value>Passphrase copied to clipboard</value>
   </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Configure Bitwarden extension settings</value>
+  </data>
+  <data name="EmptyContentSubtitle" xml:space="preserve">
+    <value>Your password manager in Command Palette</value>
+  </data>
 </root>

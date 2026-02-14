@@ -22,7 +22,20 @@ public partial class BitwardenForCommandPaletteCommandsProvider : CommandProvide
         InitializeSettings();
 
         _commands = [
-            new CommandItem(new BitwardenForCommandPalettePage()) { Title = DisplayName, Icon = Icon },
+            new CommandItem(new BitwardenForCommandPalettePage(_settings))
+            {
+                Title = DisplayName,
+                Icon = Icon,
+                MoreCommands =
+                [
+                    new CommandContextItem(_settings.SettingsPage)
+                    {
+                        Title = ResourceHelper.SettingsTitle,
+                        Subtitle = ResourceHelper.SettingsSubtitle,
+                        Icon = new IconInfo("\uE713") // Settings icon
+                    }
+                ]
+            },
         ];
     }
 

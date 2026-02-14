@@ -901,4 +901,13 @@
   <data name="GeneratorPassphraseCopied" xml:space="preserve">
     <value>密码短语已复制到剪贴板</value>
   </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>配置 Bitwarden 扩展设置</value>
+  </data>
+  <data name="EmptyContentSubtitle" xml:space="preserve">
+    <value>命令面板中的密码管理器</value>
+  </data>
 </root>
