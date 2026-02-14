@@ -79,16 +79,12 @@ internal static class VaultContextCommands
 
         // Add common utility commands with separator
         commands.Add(new Separator());
-        commands.Add(new CommandContextItem(new SyncVaultCommand(
-            onStarted: null,
-            onCompleted: null))
+        commands.Add(new CommandContextItem(new SyncVaultCommand())
         {
             Icon = new IconInfo("\uE895"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.R)
         });
-        commands.Add(new CommandContextItem(new LockVaultCommand(
-            onStarted: null,
-            onCompleted: null))
+        commands.Add(new CommandContextItem(new LockVaultCommand())
         {
             Icon = new IconInfo("\uE72E"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, vkey: VirtualKey.L)

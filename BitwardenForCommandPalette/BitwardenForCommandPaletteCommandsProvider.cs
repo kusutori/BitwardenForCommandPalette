@@ -26,6 +26,11 @@ public partial class BitwardenForCommandPaletteCommandsProvider : CommandProvide
         ];
     }
 
+    public override void InitializeWithHost(IExtensionHost host)
+    {
+        ExtensionHostHelper.Instance = host;
+    }
+
     public override ICommandItem[] TopLevelCommands()
     {
         return _commands;

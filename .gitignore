@@ -427,3 +427,9 @@ FodyWeavers.xsd
 
 #jetbrains
 .idea/
+
+#claude
+.claude/
+.claude/settings.local.json
+!.claude/skills
+!.claude/skills/**

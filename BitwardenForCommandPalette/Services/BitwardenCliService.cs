@@ -40,6 +40,16 @@ public partial class BitwardenCliService
     public string? SessionKey { get; private set; }
 
     /// <summary>
+    /// Event triggered when the title should be updated
+    /// </summary>
+    public event Action<string>? TitleUpdated;
+
+    /// <summary>
+    /// Event triggered when the status changes (for refreshing the page)
+    /// </summary>
+    public event Action? StatusChanged;
+
+    /// <summary>
     /// Singleton instance of the BitwardenCliService
     /// </summary>
     public static BitwardenCliService Instance
@@ -258,10 +268,12 @@ public partial class BitwardenCliService
     /// </summary>
     public async Task<bool> LockAsync()
     {
+        TitleUpdated?.Invoke("Locking vault...");
         var (_, _, exitCode) = await ExecuteCommandAsync("lock");
         if (exitCode == 0)
         {
             SessionKey = null;
+            StatusChanged?.Invoke();
             return true;
         }
         return false;
@@ -275,8 +287,16 @@ public partial class BitwardenCliService
         if (string.IsNullOrEmpty(SessionKey))
             return false;
 
+        TitleUpdated?.Invoke("Syncing vault...");
         var (_, _, exitCode) = await ExecuteCommandAsync($"sync --session \"{SessionKey}\"");
-        return exitCode == 0;
+        var success = exitCode == 0;
+
+        if (success)
+        {
+            StatusChanged?.Invoke();
+        }
+
+        return success;
     }
 
     /// <summary>

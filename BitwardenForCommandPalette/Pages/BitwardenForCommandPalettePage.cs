@@ -41,7 +41,22 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
         _vaultFilters.PropChanged += VaultFilters_PropChanged;
         Filters = _vaultFilters;
 
+        // Subscribe to service events for dynamic title updates
+        var service = BitwardenCliService.Instance;
+        service.TitleUpdated += OnTitleUpdated;
+        service.StatusChanged += OnStatusChanged;
+
         // Initial load
+        _ = CheckStatusAndLoadAsync();
+    }
+
+    private void OnTitleUpdated(string title)
+    {
+        Title = title;
+    }
+
+    private void OnStatusChanged()
+    {
         _ = CheckStatusAndLoadAsync();
     }
 

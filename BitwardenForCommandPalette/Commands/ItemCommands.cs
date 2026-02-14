@@ -582,16 +582,57 @@ internal sealed partial class SyncVaultCommand : InvokableCommand
     {
         _onStarted?.Invoke();
 
+        // Create status message for progress indication
+        var statusMessage = new StatusMessage
+        {
+            Message = ResourceHelper.CommandSyncVault,
+            State = MessageState.Info,
+            Progress = new ProgressState { IsIndeterminate = true }
+        };
+
+        // Show status banner
+        var host = Helpers.ExtensionHostHelper.Instance;
+        host?.ShowStatus(statusMessage, StatusContext.Extension);
+
+        bool success;
         try
         {
-            BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
+            success = BitwardenCliService.Instance.SyncAsync().GetAwaiter().GetResult();
         }
         catch
         {
-            // Ignore sync errors
+            success = false;
         }
 
-        _onCompleted?.Invoke();
+        // Update status message based on result
+        if (success)
+        {
+            statusMessage.Message = ResourceHelper.ToastVaultSynced;
+            statusMessage.State = MessageState.Success;
+            statusMessage.Progress = null;
+
+            try
+            {
+                _onCompleted?.Invoke();
+            }
+            catch
+            {
+                // Ignore callback errors
+            }
+        }
+        else
+        {
+            statusMessage.Message = ResourceHelper.ToastVaultSyncFailed;
+            statusMessage.State = MessageState.Error;
+            statusMessage.Progress = null;
+        }
+
+        // Auto-hide after 3 seconds
+        _ = System.Threading.Tasks.Task.Run(async () =>
+        {
+            await System.Threading.Tasks.Task.Delay(3000);
+            statusMessage.Hide();
+        });
 
         return CommandResult.KeepOpen();
     }
@@ -615,14 +656,19 @@ internal sealed partial class LockVaultCommand : InvokableCommand
 
     public override CommandResult Invoke()
     {
-        try
+        _onStarted?.Invoke();
+
+        // Create status message for progress indication
+        var statusMessage = new StatusMessage
         {
-            _onStarted?.Invoke();
-        }
-        catch
-        {
-            // Ignore errors when setting loading state
-        }
+            Message = ResourceHelper.CommandLockVault,
+            State = MessageState.Info,
+            Progress = new ProgressState { IsIndeterminate = true }
+        };
+
+        // Show status banner
+        var host = Helpers.ExtensionHostHelper.Instance;
+        host?.ShowStatus(statusMessage, StatusContext.Extension);
 
         bool success;
         try
@@ -645,8 +691,31 @@ internal sealed partial class LockVaultCommand : InvokableCommand
 
         if (success)
         {
+            statusMessage.Message = ResourceHelper.ToastVaultLocked;
+            statusMessage.State = MessageState.Success;
+            statusMessage.Progress = null;
+
+            // Auto-hide after 2 seconds
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                await System.Threading.Tasks.Task.Delay(2000);
+                statusMessage.Hide();
+            });
+
             return CommandResult.GoHome();
         }
+
+        statusMessage.Message = ResourceHelper.ToastVaultLockFailed;
+        statusMessage.State = MessageState.Error;
+        statusMessage.Progress = null;
+
+        // Auto-hide after 3 seconds
+        _ = System.Threading.Tasks.Task.Run(async () =>
+        {
+            await System.Threading.Tasks.Task.Delay(3000);
+            statusMessage.Hide();
+        });
+
         return CommandResult.ShowToast(ResourceHelper.ToastVaultLockFailed);
     }
 }
