@@ -29,7 +29,7 @@ Command Palette 是 PowerToys 提供的一个快速启动器，类似于 macOS �
 
 ### 技术要求
 
-- **.NET 9.0** 或更高版本
+- **.NET 10.0** 或更高版本
 - **Windows 10.0.19041.0** 或更高版本
 - **MSIX 打包** - 扩展必须打包为 MSIX
 - **COM 服务器** - 扩展通过 COM 与 Command Palette 通信
@@ -318,7 +318,7 @@ new IconInfo {
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <EnableMsixTooling>true</EnableMsixTooling>

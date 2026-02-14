@@ -16,8 +16,8 @@ You are an expert in developing PowerToys Command Palette extensions. Use this s
 - `Microsoft.Windows.SDK.BuildTools.MSIX` - MSIX packaging
 
 ### Target Framework
-- .NET 9.0 or higher
-- `net9.0-windows10.0.26100.0`
+- .NET 10.0 or higher
+- `net10.0-windows10.0.26100.0`
 - Windows 10.0.19041.0 (MinVersion)
 
 ### Project Structure

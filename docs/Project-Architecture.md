@@ -24,7 +24,7 @@ BitwardenForCommandPalette 是一个 PowerToys Command Palette 扩展，通过�
 
 | 组件 | 技术 |
 |------|------|
-| 框架 | .NET 9.0 |
+| 框架 | .NET 10.0 |
 | 平台 | Windows 10.0.26100.0 |
 | 打包 | MSIX |
 | 扩展 SDK | Microsoft.CommandPalette.Extensions.Toolkit |

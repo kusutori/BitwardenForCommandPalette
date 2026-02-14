@@ -71,4 +71,4 @@ Test project uses xUnit. Run with `dotnet test`. Tests cover:
 
 - `Directory.Packages.props` - Centralized NuGet package versions
 - `Directory.Build.props` - Platform configuration
-- `BitwardenForCommandPalette.csproj` - Project SDK, target framework (net9.0-windows10.0.26100.0)
+- `BitwardenForCommandPalette.csproj` - Project SDK, target framework (net10.0-windows10.0.26100.0)

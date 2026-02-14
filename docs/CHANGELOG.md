@@ -429,7 +429,7 @@ Strings/
 
 #### 项目基础结构
 - **解决方案文件**：BitwardenForCommandPalette.sln / .slnx
-- **项目配置**：.NET 9.0, Windows 10.0.26100.0
+- **项目配置**：.NET 10.0, Windows 10.0.26100.0
 - **MSIX 打包**：Package.appxmanifest
 
 #### 核心组件

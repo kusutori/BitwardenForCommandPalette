@@ -869,8 +869,8 @@ Debug.WriteLine($"错误: {error}");
 
 | 组件 | 技术 | 说明 |
 |------|------|------|
-| 语言 | C# 12 | .NET 9.0 |
-| 框架 | .NET 9.0 | Windows 10.0.26100.0 |
+| 语言 | C# 12 | .NET 10.0 |
+| 框架 | .NET 10.0 | Windows 10.0.26100.0 |
 | UI | Microsoft.CommandPalette.Extensions.Toolkit | PowerToys 扩展 SDK |
 | 认证 | Bitwarden CLI Session | 会话密钥机制 |
 | JSON | System.Text.Json | AOT 兼容 |

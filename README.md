@@ -266,7 +266,7 @@ BitwardenForCommandPalette/
 
 ## 技术栈
 
-- **.NET 9.0** - Windows 10.0.26100.0
+- **.NET 10.0** - Windows 10.0.26100.0
 - **Microsoft.CommandPalette.Extensions** - PowerToys Command Palette 扩展 SDK
 - **Bitwarden CLI** - 本地密码库交互
 - **WinRT ResourceLoader** - 多语言本地化支持
