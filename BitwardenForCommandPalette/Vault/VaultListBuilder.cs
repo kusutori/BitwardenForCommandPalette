@@ -116,25 +116,38 @@ internal static class VaultListBuilder
     /// unlock option (primary) plus a master password fallback. Otherwise returns
     /// the standard password unlock item.
     /// </summary>
-    public static ListItem[] CreateUnlockItems(BitwardenStatus? lastStatus, Action onUnlocked)
+    public static ListItem[] CreateUnlockItems(BitwardenStatus? lastStatus, Action onUnlocked, Settings settings)
     {
-        var settings = SettingsManager.Instance;
+        var settingsManager = SettingsManager.Instance;
 
-        if (settings.IsBiometricCli)
+        // Create settings menu for unlock items
+        var unlockMoreCommands = new IContextItem[]
+        {
+            new CommandContextItem(settings.SettingsPage)
+            {
+                Title = ResourceHelper.SettingsTitle,
+                Subtitle = ResourceHelper.SettingsSubtitle,
+                Icon = new IconInfo("\uE713") // Settings icon
+            }
+        };
+
+        if (settingsManager.IsBiometricCli)
         {
             var biometricCommand = new BiometricUnlockCommand(onUnlocked);
             var biometricItem = new ListItem(biometricCommand)
             {
                 Title = ResourceHelper.MainUnlockBiometricButton,
                 Subtitle = lastStatus?.UserEmail ?? ResourceHelper.MainUnlockBiometricSubtitle,
-                Icon = new IconInfo("\uE8D7") // Shield icon for biometric
+                Icon = new IconInfo("\uE8D7"), // Shield icon for biometric
+                MoreCommands = unlockMoreCommands
             };
 
             var passwordItem = new ListItem(new UnlockPage(onUnlocked))
             {
                 Title = ResourceHelper.MainUnlockButton,
                 Subtitle = ResourceHelper.MainUnlockPasswordFallback,
-                Icon = new IconInfo("\uE72E") // Lock icon
+                Icon = new IconInfo("\uE72E"), // Lock icon
+                MoreCommands = unlockMoreCommands
             };
 
             return [biometricItem, passwordItem];
@@ -145,7 +158,8 @@ internal static class VaultListBuilder
         {
             Title = ResourceHelper.MainUnlockButton,
             Subtitle = lastStatus?.UserEmail ?? ResourceHelper.MainUnlockSubtitle,
-            Icon = new IconInfo("\uE72E") // Lock icon
+            Icon = new IconInfo("\uE72E"), // Lock icon
+            MoreCommands = unlockMoreCommands
         }];
     }
 

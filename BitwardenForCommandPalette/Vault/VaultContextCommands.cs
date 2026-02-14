@@ -27,7 +27,8 @@ internal static class VaultContextCommands
         BitwardenItem item,
         Func<Action, EditItemPage> createEditPage,
         Func<BitwardenItem, Action, Commands.DeleteItemCommand> createDeleteCommand,
-        Action refreshItems)
+        Action refreshItems,
+        Settings settings)
     {
         var commands = new List<IContextItem>();
 
@@ -93,6 +94,15 @@ internal static class VaultContextCommands
         {
             Icon = new IconInfo("\uE710"),
             RequestedShortcut = KeyChordHelpers.FromModifiers(ctrl: true, shift: true, vkey: VirtualKey.A)
+        });
+
+        // Add settings page entry
+        commands.Add(new Separator());
+        commands.Add(new CommandContextItem(settings.SettingsPage)
+        {
+            Title = ResourceHelper.SettingsTitle,
+            Subtitle = ResourceHelper.SettingsSubtitle,
+            Icon = new IconInfo("\uE713") // Settings icon
         });
 
         return commands.ToArray();

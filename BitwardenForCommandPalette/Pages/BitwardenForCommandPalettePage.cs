@@ -138,7 +138,7 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
 
             if (_lastStatus.IsLocked || !service.IsUnlocked)
             {
-                return VaultListBuilder.CreateUnlockItems(_lastStatus, OnUnlocked);
+                return VaultListBuilder.CreateUnlockItems(_lastStatus, OnUnlocked, _settings);
             }
         }
 
@@ -225,7 +225,8 @@ internal sealed partial class BitwardenForCommandPalettePage : DynamicListPage
             item,
             onRefresh => new EditItemPage(item, onRefresh),
             (itemToDelete, onRefresh) => new DeleteItemCommand(itemToDelete, onRefresh),
-            Refresh);
+            Refresh,
+            _settings);
     }
 
     private IContextItem[] GetTrashContextCommands(BitwardenItem item)
