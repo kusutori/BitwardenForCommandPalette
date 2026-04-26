@@ -1,0 +1,337 @@
+# Bitwarden For Command Palette
+
+一个用于 Windows PowerToys Command Palette 的 Bitwarden 密码管理器扩展。通过本地 Bitwarden CLI (`bw`) 与您的密码库进行交互。
+
+[📖 更新日志](docs/CHANGELOG.md) · [🏗️ 架构文档](docs/ARCHITECTURE.md) · [📘 开发指南](docs/Project-Architecture.md) · [🔧 问题解决](docs/Troubleshooting.md)
+
+## 功能特性
+
+### 已实现 ✅
+
+#### 密码库管理
+- [x] **密码库状态检测** - 自动检测 Bitwarden CLI 是否已安装和登录状态
+- [x] **密码库解锁** - 支持通过主密码解锁密码库
+- [x] **密码库同步** - 手动同步密码库与服务器
+- [x] **锁定密码库** - 手动锁定密码库
+
+#### 项目浏览与搜索
+- [x] **列出所有项目** - 显示密码库中的所有项目（登录、银行卡、身份、安全笔记）
+- [x] **网站图标** - 自动获取并显示登录项的网站图标（使用 Bitwarden 官方图标服务）
+- [x] **搜索功能** - 支持按名称、用户名、URL 搜索项目
+- [x] **收藏夹筛选** - 只显示收藏的项目
+- [x] **收藏置顶** - 收藏的项目会自动排在列表最前面
+- [x] **文件夹筛选** - 按文件夹筛选项目
+- [x] **类型筛选** - 按项目类型（登录、银行卡、身份、安全笔记）筛选
+- [x] **回收站** - 查看和管理已删除的项目
+
+#### 项目类型支持
+- [x] **登录项支持**
+  - 复制密码、用户名、URL
+  - 打开 URL
+  - **TOTP 支持** - 生成并复制 TOTP 验证码（独立页面显示实时倒计时）
+- [x] **银行卡支持** - 复制卡号、CVV、有效期、持卡人姓名
+- [x] **身份信息支持** - 复制姓名、邮箱、电话、地址、公司、SSN、护照号、驾照号
+- [x] **安全笔记支持** - 复制笔记内容
+- [x] **自定义字段支持** - 显示和复制自定义字段
+
+#### 项目管理 (CRUD)
+- [x] **创建项目** - 创建新的登录、银行卡、身份、安全笔记
+- [x] **创建文件夹** - 创建新的文件夹来组织项目
+- [x] **编辑项目** - 编辑现有项目的所有字段
+- [x] **删除项目** - 将项目移动到回收站
+- [x] **恢复项目** - 从回收站恢复已删除的项目
+- [x] **永久删除** - 从回收站永久删除项目
+- [x] **文件夹选择** - 创建项目时可选择目标文件夹
+
+#### 密码生成器
+- [x] **密码生成器** - 生成随机密码
+  - 可配置长度（5-128字符）
+  - 可选大写字母、小写字母、数字、特殊字符
+- [x] **口令生成器** - 生成易记的口令短语
+  - 可配置单词数量（3-20个）
+  - 可配置分隔符
+  - 可选首字母大写、包含数字
+
+#### 界面与体验
+- [x] **双栏详情面板** - 选中项目时右侧显示详细信息
+  - 显示项目图标、名称
+  - 登录项：用户名、密码（掩码）、TOTP 状态、网址列表
+  - 银行卡：品牌、卡号（掩码）、有效期、CVV（掩码）、持卡人
+  - 身份：全名、邮箱、电话、公司、地址、身份证明
+  - 安全笔记：以 Markdown 格式显示笔记内容
+  - 自定义字段和备注
+- [x] **收藏标记** - 收藏的项目会显示 ⭐ 标记
+- [x] **解锁后自动返回** - 解锁成功后自动返回密码库列表
+- [x] **错误提示** - 操作失败时显示错误消息
+- [x] **多语言支持** - 支持英文和简体中文
+
+#### 设置页面
+- [x] **设置页面** - 在 Command Palette 设置中配置扩展
+  - 自定义 Bitwarden CLI 路径
+  - 配置 API Key 认证（Client ID / Secret）
+  - 配置自定义环境变量（支持自建服务器等场景）
+
+### 待开发 📋
+
+- [ ] **自动锁定** - 一段时间后自动锁定密码库
+- [ ] **键盘快捷键** - 支持自定义快捷键操作
+- [ ] **深色/浅色主题图标** - 根据系统主题显示不同图标
+- [ ] **密码健康报告** - 检测弱密码、重复密码等
+- [ ] **附件支持** - 查看和下载项目附件
+
+## 前置要求
+
+1. **Windows 11** 或支持 PowerToys Command Palette 的 Windows 版本
+2. **PowerToys** 已安装并启用 Command Palette
+3. **Bitwarden CLI** (`bw`) 已安装并在 PATH 中可用
+   ```bash
+   # 使用 winget 安装
+   winget install Bitwarden.CLI
+   
+   # 或使用 npm 安装
+   npm install -g @bitwarden/cli
+   ```
+4. **已登录 Bitwarden** - 首次使用前需要在终端中登录
+   ```bash
+   bw login
+   ```
+
+## 安装
+
+1. 克隆或下载本项目
+2. 使用 Visual Studio 2022 打开 `BitwardenForCommandPalette.sln`
+3. 确保选择正确的平台（x64 或 ARM64）
+4. 右键项目 → 部署（Deploy）
+5. 在 Command Palette 中运行 `Reload` 命令
+
+## 使用方法
+
+### 基本使用
+
+1. 打开 PowerToys Command Palette（默认快捷键：`Alt + Space`）
+2. 找到 "Bitwarden For Command Palette" 并按 Enter
+3. 如果密码库已锁定，按 Enter 进入解锁页面，输入主密码
+4. 解锁后即可浏览所有密码项
+5. 输入文字可搜索项目
+6. 按 Enter 复制密码，或使用右键菜单查看更多操作
+
+### 配置设置
+
+1. 打开 PowerToys 设置 → Command Palette
+2. 在扩展列表中找到 "Bitwarden For Command Palette"
+3. 点击设置图标可配置：
+   - **Bitwarden CLI 路径**：自定义 `bw.exe` 的路径（默认使用 PATH 中的 `bw`）
+   - **Bitwarden API Client ID**：配置 API Key 认证的 Client ID（可选）
+   - **Bitwarden API Client Secret**：配置 API Key 认证的 Client Secret（可选）
+   - **自定义环境变量**：配置 Bitwarden CLI 的其他环境变量
+     - `BW_SERVER`：自建 Bitwarden 服务器地址（如 `https://vault.example.com`）
+     - `NODE_EXTRA_CA_CERTS`：自签名证书路径
+     - 其他 Bitwarden CLI 支持的环境变量
+   - 格式：`KEY1=VALUE1;KEY2=VALUE2`
+
+### API Key 认证（推荐）
+
+为了避免每次重启后重新登录，建议使用 API Key 认证：
+
+1. 登录 Bitwarden Web 控制台
+2. 进入 **设置** → **安全** → **密钥** (Settings → Security → Keys)
+3. 在 "API 密钥" 部分查看或创建新的 API Key
+4. 复制 **client_id** 和 **client_secret**
+5. 在扩展设置中填入这两项：
+   - 将 **client_id** 粘贴到 "Bitwarden API Client ID"
+   - 将 **client_secret** 粘贴到 "Bitwarden API Client Secret"
+6. 保存设置后，扩展会自动将这些凭据设置为环境变量 `BW_CLIENTID` 和 `BW_CLIENTSECRET`
+7. Bitwarden CLI 会自动使用这些环境变量进行认证，无需手动 `bw login`
+
+**注意**：
+- 如果同时设置了 API Key 和使用 `bw login`，API Key 优先级更高
+- API Key 仅用于认证（登录），解锁密码库仍需要主密码
+- 首次使用 API Key 时，CLI 会自动执行类似 `bw login --apikey` 的操作
+
+## 快捷键
+
+以下是所有支持的键盘快捷键列表：
+
+### 通用命令（所有项目类型）
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Enter` | 执行主命令（复制密码/卡号/姓名/笔记） |
+| `Ctrl+Enter` | 执行次命令（复制用户名/CVV/邮箱） |
+| `Ctrl+E` | 编辑项目 |
+| `Ctrl+Delete` | 删除项目（移至回收站） |
+| `Ctrl+R` | 同步密码库 |
+| `Ctrl+L` | 锁定密码库 |
+| `Ctrl+Shift+A` | 创建新项目 |
+
+### 登录项 (Login)
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Enter` | 复制密码 |
+| `Ctrl+U` | 复制用户名 |
+| `Ctrl+P` | 复制密码 |
+| `Ctrl+T` | 复制 TOTP 验证码 |
+| `Ctrl+O` | 打开 URL |
+| `Ctrl+Shift+C` | 复制 URL |
+
+### 银行卡 (Card)
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Enter` | 复制卡号 |
+| `Ctrl+V` | 复制 CVV |
+| `Ctrl+X` | 复制有效期 |
+| `Ctrl+N` | 复制持卡人姓名 |
+| `Ctrl+Shift+N` | 复制卡号 |
+
+### 身份信息 (Identity)
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Enter` | 复制全名 |
+| `Ctrl+M` | 复制邮箱 |
+| `Ctrl+P` | 复制电话 |
+| `Ctrl+A` | 复制地址 |
+| `Ctrl+N` | 复制全名 |
+| `Ctrl+U` | 复制用户名 |
+| `Ctrl+S` | 复制 SSN |
+
+### 回收站
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Ctrl+Shift+Delete` | 永久删除 |
+
+## 项目结构
+
+```
+BitwardenForCommandPalette/
+├── LICENSE                              # 项目自身的MIT许可证
+├── THIRD-PARTY-NOTICES.md              # 第三方许可证声明
+├── README.md                           # 项目说明文档
+├── BitwardenForCommandPalette.cs      # 扩展入口点
+├── BitwardenForCommandPaletteCommandsProvider.cs  # 命令提供者
+├── Program.cs                          # 程序入口
+├── Commands/
+│   └── ItemCommands.cs                # 复制密码、用户名等命令
+├── Helpers/
+│   └── ResourceHelper.cs              # 多语言资源助手
+├── Models/
+│   ├── BitwardenItem.cs               # 密码项数据模型
+│   ├── BitwardenStatus.cs             # 状态数据模型
+│   └── BitwardenFolder.cs             # 文件夹数据模型
+├── Pages/                             # UI 页面层（仅包含页面类）
+│   ├── BitwardenForCommandPalettePage.cs  # 主列表页面
+│   ├── CreateItemPage.cs              # 创建项目页面（含创建文件夹）
+│   ├── EditItemPage.cs                # 编辑项目页面
+│   ├── GeneratorPage.cs               # 密码/口令生成器页面
+│   ├── TotpPage.cs                    # TOTP 验证码页面
+│   ├── UnlockPage.cs                  # 解锁表单页面
+│   └── VaultFilters.cs                # 筛选状态管理
+├── Vault/                             # 密码库逻辑层（UI 无关的业务逻辑）
+│   ├── VaultItemsLoader.cs            # 异步数据加载操作
+│   ├── VaultListBuilder.cs            # 列表项创建和过滤
+│   ├── ItemDetailsGenerator.cs        # Details 面板生成
+│   ├── VaultContextCommands.cs        # 上下文菜单命令构建
+│   ├── VaultPageCommands.cs           # 页面嵌套命令类
+│   └── VaultPageHelpers.cs            # 共享辅助方法
+├── Services/
+│   ├── BitwardenCliService.cs         # Bitwarden CLI 封装服务
+│   ├── IconService.cs                 # 网站图标服务（带缓存）
+│   └── SettingsManager.cs             # 设置管理服务
+├── Strings/
+│   ├── en-US/
+│   │   └── Resources.resw             # 英文资源
+│   └── zh-CN/
+│       └── Resources.resw             # 简体中文资源
+└── docs/
+    ├── ARCHITECTURE.md                # 架构概述
+    ├── Project-Architecture.md        # 详细项目架构
+    ├── CHANGELOG.md                   # 更新日志
+    ├── Troubleshooting.md             # 问题解决指南
+    ├── Adaptive-Cards-Guide.md        # Adaptive Cards 开发指南
+    ├── Bitwarden-CLI-Guide.md         # Bitwarden CLI 指南
+    ├── CommandPalette-Extensions-Guide.md  # 扩展开发指南
+    └── Localization-Guide.md          # 本地化指南
+```
+
+### 架构分层
+
+- **Pages/** - UI 页面层：仅包含继承自 `ContentPage`、`ListPage`、`DynamicListPage` 等的页面类
+- **Vault/** - 业务逻辑层：包含与密码库操作相关的业务逻辑，与 UI 解耦
+- **Services/** - 服务层：外部服务封装（Bitwarden CLI、图标、设置）
+- **Commands/** - 命令层：复制、编辑等操作命令
+- **Models/** - 数据模型层：数据结构定义
+
+## 技术栈
+
+- **.NET 10.0** - Windows 10.0.26100.0
+- **Microsoft.CommandPalette.Extensions** - PowerToys Command Palette 扩展 SDK
+- **Bitwarden CLI** - 本地密码库交互
+- **WinRT ResourceLoader** - 多语言本地化支持
+
+## 多语言支持
+
+本项目支持多语言界面，目前已实现：
+- **英文 (en-US)** - 默认语言
+- **简体中文 (zh-CN)** - 部分翻译
+
+### 添加新语言
+
+1. 在 `Strings/` 目录下创建新的语言文件夹（如 `ja-JP`）
+2. 复制 `en-US/Resources.resw` 到新文件夹
+3. 翻译 `<value>` 标签中的内容
+4. 重新构建项目，资源会自动包含
+
+### 资源结构
+
+所有 UI 文本都存储在 `.resw` 文件中，通过 `ResourceHelper` 类访问。关键资源包括：
+- `AppDisplayName` - 应用名称
+- `Action*` - 操作按钮（复制、打开等）
+- `Command*` - 命令名称
+- `Toast*` - 提示消息
+- `UnlockPage*`, `FilterPage*`, `MainPage*` - 页面相关文本
+- `Status*` - 状态消息
+- `Item*` - 项目类型和字段名称
+
+## 性能优化
+
+### 图标缓存
+`IconService` 使用内存缓存来存储网站图标 URL，避免重复请求：
+- 最多缓存 200 个图标
+- 超出限制时自动清理旧条目
+- 以域名为键进行缓存
+
+## 开发说明
+
+### 构建
+
+```bash
+dotnet build -p:Platform=x64
+# 或
+dotnet build -p:Platform=ARM64
+```
+
+### 调试
+
+1. 在 Visual Studio 中设置断点
+2. 部署应用
+3. 在 Command Palette 中执行 Reload
+4. 附加到 `BitwardenForCommandPalette.exe` 进程
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 致谢
+
+- [Microsoft PowerToys](https://github.com/microsoft/PowerToys) - Command Palette 扩展框架
+- [Bitwarden](https://bitwarden.com/) - 开源密码管理器
+- [bitwarden-cli-bio](https://github.com/jeanregisser/bitwarden-cli-bio) - Bitwarden CLI with biometric unlock
+
+**许可证信息**: 本项目引用了上述第三方项目，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) 文件。
