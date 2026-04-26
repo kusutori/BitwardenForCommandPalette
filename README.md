@@ -158,6 +158,14 @@ Notes:
 
 Issues and PRs are welcome.
 
+## Acknowledgements
+
+- [Microsoft PowerToys](https://github.com/microsoft/PowerToys) - Command Palette extension framework
+- [Bitwarden](https://bitwarden.com/) - Open source password manager
+- [bitwarden-cli-bio](https://github.com/jeanregisser/bitwarden-cli-bio) - Bitwarden CLI with biometric unlock
+
+**License notice**: This project references the third-party projects above. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for details.
+
 ## License
 
 MIT License. See [LICENSE](LICENSE).
