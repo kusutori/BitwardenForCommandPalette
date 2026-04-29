@@ -12,6 +12,6 @@ files:
       locale:
         zh-CN: zh-CN
         es-ES: es-ES
-        fr-FR: fr
-        ja-JP: ja
-        ko-KR: ko
+        fr: fr-FR
+        ja: ja-JP
+        ko: ko-KR
